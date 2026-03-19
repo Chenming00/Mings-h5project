@@ -94,7 +94,7 @@ npm run build
 
 <div align="center">
 
-Made by **Chenming00**
+Conceived by **Chenming00**
 
 ---
 
