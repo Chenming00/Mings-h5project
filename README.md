@@ -95,4 +95,10 @@ npm run build
 
 Made by **Chenming00**
 
+---
+
+🤖 本项目由 [Google Antigravity](https://deepmind.google/technologies/gemini/) AI 编程助手自动完成开发
+
+使用模型：`Gemini 3.1 Pro (High)` · `Claude Sonnet 4.6 (Thinking)`
+
 </div>
