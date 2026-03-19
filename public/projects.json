@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Interactive Particles",
+    "path": "/projects/project-a/",
+    "tags": [
+      "project"
+    ]
+  },
+  {
+    "name": "Canvas Game",
+    "path": "/projects/project-b/",
+    "tags": [
+      "project"
+    ]
+  },
+  {
+    "name": "project-c",
+    "path": "/projects/project-c/",
+    "tags": [
+      "project"
+    ]
+  }
+]
