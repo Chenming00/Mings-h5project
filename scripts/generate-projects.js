@@ -46,12 +46,9 @@ function generateProjectsData() {
           name = titleMatch[1].trim();
         }
         
-        // Use clean URL only for standard index.html
-        if (targetFile === 'index.html') {
-          entryFile = ''; // Cloudflare Pages defaults to index.html automatically
-        } else {
-          entryFile = targetFile; // Must explicitly point to index.htm, game.htm etc.
-        }
+        // Always use explicit filename so both Vite dev server and Cloudflare Pages work correctly.
+        // Cloudflare also handles explicit /index.html paths fine.
+        entryFile = targetFile;
       }
       
       const thumbnailPath = path.join(itemPath, 'cover.png');

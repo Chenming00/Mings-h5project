@@ -1,65 +1,86 @@
 import React from 'react';
-import { Layers, FolderKanban, Tag, X } from 'lucide-react';
+import { Layers, Hash, LayoutGrid, X } from 'lucide-react';
 
 export default function Sidebar({ tags, selectedTag, setSelectedTag, isOpen, onClose }) {
   return (
     <>
+      {/* Mobile overlay */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity" 
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={onClose}
         />
       )}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-950 border-r border-slate-200 dark:border-gray-800 flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-gray-800/50">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-          <Layers size={18} />
-        </div>
-        <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-          H5 Hub
-        </h1>
-      </div>
 
-      <div className="px-5 py-4 flex-col gap-1 hidden">
-        <button className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-white bg-gray-900 dark:bg-white/10 transition-colors w-full text-left">
-          <FolderKanban size={18} /> All Projects
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 mt-4 pb-6">
-        <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 px-2">
-          Categories
-        </h2>
-        <div className="flex flex-col gap-1">
+      {/* Sidebar panel */}
+      <aside
+        className={[
+          'fixed inset-y-0 left-0 z-50 w-60 flex flex-col',
+          'bg-white dark:bg-gray-950',
+          'border-r border-gray-200 dark:border-gray-800',
+          'transform transition-transform duration-300 ease-in-out',
+          'md:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
+        ].join(' ')}
+      >
+        {/* Brand */}
+        <div className="flex items-center justify-between px-5 h-14 border-b border-gray-200 dark:border-gray-800 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center">
+              <Layers size={15} className="text-white" />
+            </div>
+            <span className="font-bold text-gray-900 dark:text-white text-sm tracking-tight">H5 Hub</span>
+          </div>
+          {/* Close btn — mobile only */}
           <button
-            onClick={() => {setSelectedTag(null); onClose();}}
-            className={`flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-              selectedTag === null
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-gray-800/50 dark:hover:text-white'
-            }`}
+            onClick={onClose}
+            className="md:hidden w-7 h-7 flex items-center justify-center rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
-            <FolderKanban size={16} /> 
-            All Projects
+            <X size={16} />
           </button>
-          
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto py-4 px-3">
+          <p className="px-2 mb-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            分类
+          </p>
+
+          <button
+            onClick={() => { setSelectedTag(null); onClose(); }}
+            className={[
+              'flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md text-sm font-medium transition-colors',
+              selectedTag === null
+                ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100',
+            ].join(' ')}
+          >
+            <LayoutGrid size={15} className="shrink-0 opacity-80" />
+            全部项目
+          </button>
+
           {tags.map(tag => (
             <button
               key={tag}
-              onClick={() => {setSelectedTag(tag); onClose();}}
-              className={`flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              onClick={() => { setSelectedTag(tag); onClose(); }}
+              className={[
+                'flex items-center gap-2.5 w-full px-2.5 py-2 mt-0.5 rounded-md text-sm font-medium transition-colors capitalize',
                 selectedTag === tag
-                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-gray-800/50 dark:hover:text-white'
-              }`}
+                  ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100',
+              ].join(' ')}
             >
-              <Tag size={16} /> 
-              <span className="capitalize">{tag}</span>
+              <Hash size={14} className="shrink-0 opacity-70" />
+              {tag}
             </button>
           ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="px-5 py-4 border-t border-gray-200 dark:border-gray-800 shrink-0">
+          <p className="text-[11px] text-gray-400 dark:text-gray-600">自动扫描项目目录</p>
         </div>
-      </div>
-    </aside>
+      </aside>
     </>
   );
 }
