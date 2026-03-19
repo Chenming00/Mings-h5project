@@ -78,10 +78,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 flex transition-colors duration-300 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-slate-900 dark:text-slate-100 flex transition-colors duration-500 overflow-x-hidden bg-mesh relative">
       <Sidebar tags={allTags} selectedTag={selectedTag} setSelectedTag={setSelectedTag} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <main className="flex-1 md:ml-64 flex flex-col relative w-full min-w-0">
+      <main className="flex-1 md:ml-64 flex flex-col relative w-full min-w-0 min-h-screen z-10">
         <Header 
           searchQuery={searchQuery} 
           setSearchQuery={setSearchQuery} 
@@ -90,31 +90,62 @@ export default function App() {
           onOpenSidebar={() => setIsSidebarOpen(true)}
         />
         
-        <div className="p-6 md:p-8 flex-1">
+        <div className="p-6 md:p-10 flex-1 max-w-7xl w-full mx-auto">
+          {/* Hero Section */}
+          <div className="mb-14 mt-6 transform transition-all animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-medium mb-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              Auto-Discovery Enabled
+            </div>
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 dark:from-blue-400 dark:via-indigo-400 dark:to-violet-400 drop-shadow-sm">
+              Explore Interactive Hub
+            </h1>
+            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+              A curated collection of high-performance web applications, 
+              interactive games, and creative experimental prototypes. Built with React and automated deployment.
+            </p>
+          </div>
+
           {loading ? (
-            <div className="flex flex-col items-center justify-center h-[60vh]">
-              <Loader2 className="animate-spin text-blue-500 mb-4" size={40} />
-              <p className="text-gray-500 dark:text-gray-400">Loading projects...</p>
+            <div className="flex flex-col items-center justify-center h-[40vh] animate-in fade-in duration-500">
+              <div className="relative">
+                <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
+                <Loader2 className="animate-spin text-blue-600 dark:text-blue-400 mb-4 relative z-10" size={48} />
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 font-medium">Loading extraordinary experiences...</p>
             </div>
           ) : error && projects.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-[60vh] text-red-500">
-              <AlertCircle size={48} className="mb-4 opacity-80" />
-              <p className="font-medium">Failed to load projects from API</p>
+            <div className="flex flex-col items-center justify-center h-[40vh] text-red-500 animate-in fade-in zoom-in duration-300">
+              <AlertCircle size={56} className="mb-4 opacity-90 drop-shadow-md" />
+              <p className="font-semibold text-lg">Failed to load projects from API</p>
             </div>
           ) : (
             <>
               {filteredProjects.length === 0 ? (
-                <div className="text-center py-20">
-                  <p className="text-xl text-gray-400">No projects found matching your criteria.</p>
+                <div className="text-center py-20 animate-in fade-in duration-300">
+                  <div className="w-24 h-24 bg-slate-100 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Search className="text-slate-400 opacity-50" size={40} />
+                  </div>
+                  <p className="text-xl text-slate-500 dark:text-slate-400 font-medium">No projects found matching your criteria.</p>
+                  <button 
+                    onClick={() => {setSearchQuery(''); setSelectedTag(null)}}
+                    className="mt-4 px-6 py-2.5 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors shadow-sm font-medium"
+                  >
+                    Clear Filters
+                  </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 relative z-10 w-full">
                   {filteredProjects.map((project, i) => (
                     <ProjectCard 
                       key={i} 
                       project={project} 
                       onClick={setSelectedProject} 
                       onOpenNew={handleOpenNew}
+                      index={i}
                     />
                   ))}
                 </div>
