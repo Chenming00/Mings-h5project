@@ -5,37 +5,151 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>报价模板系统</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
-    .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 12px; }
-    h2 { margin-bottom: 10px; }
-    .row { display: flex; margin-bottom: 10px; }
-    .row label { width: 180px; }
-    .row input, .row select { flex: 1; padding: 6px; }
-    .btns { margin-top: 20px; display: flex; gap: 10px; }
-    button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
-    .primary { background: #007bff; color: white; }
-    .success { background: #28a745; color: white; }
-    .warning { background: #ffc107; }
-    textarea { width: 100%; height: 200px; margin-top: 10px; font-family: monospace; }
-    .output-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    .output-box { display: flex; flex-direction: column; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+    body { 
+      font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif; 
+      padding: 20px; 
+      background: linear-gradient(135deg, #eef2f7 0%, #f5f7fa 100%);
+      min-height: 100vh;
+    }
+    .container { 
+      max-width: 950px; 
+      margin: 30px auto; 
+      background: #fff; 
+      padding: 30px; 
+      border-radius: 20px; 
+      box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+    } 
+    h2 { 
+      margin-bottom: 25px; 
+      color: #1f2937;
+      font-size: 24px;
+      font-weight: 700;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+    .row { 
+      display: flex; 
+      margin-bottom: 16px; 
+      align-items: center; 
+      gap: 12px;
+    }
+    .row label { 
+      width: 180px; 
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
+    }
+    .row input, .row select { 
+      flex: 1; 
+      padding: 10px 12px; 
+      border-radius: 8px; 
+      border: 1px solid #e2e8f0;
+      font-size: 14px;
+    }
+    .row input:focus, .row select:focus {
+      border-color: #1677ff;
+      box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.1);
+    }
+    .row input:disabled {
+      background-color: #f9fafb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+    .months {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      flex: 1;
+    }
+    .month-btn {
+      padding: 10px 6px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      text-align: center;
+      background: #f9fafb;
+      font-size: 13px;
+    }
+    .month-btn:hover { background: #f3f4f6; }
+    .month-btn.active {
+      background: #1677ff;
+      color: #fff;
+      border-color: #1677ff;
+    }
+    .btns { 
+      margin-top: 30px; 
+      display: flex; 
+      gap: 12px; 
+      flex-wrap: wrap;
+    }
+    button { 
+      padding: 12px 20px; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .primary { background: #1677ff; color: white; }
+    .success { background: #16a34a; color: white; }
+    .warning { background: #f59e0b; color: white; }
+    .output-wrap { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 20px; 
+      margin-top: 25px; 
+    }
+    textarea { 
+      width: 100%; 
+      height: 220px; 
+      font-family: 'Consolas', 'Microsoft YaHei', monospace; 
+      border-radius: 8px; 
+      border: 1px solid #e2e8f0; 
+      padding: 12px;
+      font-size: 14px;
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: #1f2937;
+      color: white;
+      border-radius: 8px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+    .toast.show { opacity: 1; }
+    @media (max-width: 768px) {
+      .row { flex-direction: column; align-items: flex-start; }
+      .row label { width: 100%; margin-bottom: 6px; }
+      .output-wrap { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>报价模板系统（稳定版）</h2>
-
-    <div class="row"><label>公司 Company</label><input id="company" value="DYHO GROUP LIMITED"></div>
-    <div class="row"><label>产品 Material</label><input id="material" value="YS-W01 / YS-C01"></div>
-
-    <div class="row"><label>贸易方式 Trade</label>
-      <select id="trade">
+    <h2>报价模板系统</h2>
+    <div class="row"><label>公司名称</label><input id="company" value="DYHO GROUP LIMITED" placeholder="请输入公司名称"></div>
+    <div class="row"><label>产品型号</label><input id="material" value="YS-W01 / YS-C01" placeholder="请输入产品型号"></div>
+    <div class="row"><label>贸易方式</label>
+      <select id="trade" onchange="togglePort()">
         <option value="FOB">FOB</option>
         <option value="CIF">CIF</option>
       </select>
     </div>
-
-    <div class="row"><label>付款方式 Payment</label>
+    <div class="row" id="portRow" style="display:none;">
+      <label>目的地港口</label>
+      <input id="port" placeholder="e.g. Manila" required>
+    </div>
+    <div class="row"><label>付款方式</label>
       <select id="payment">
         <option>LC AT SIGHT</option>
         <option>LC 30 DAYS</option>
@@ -47,117 +161,187 @@
         <option>OA 60 DAYS</option>
       </select>
     </div>
-
-    <div class="row"><label>包装规格 Packing</label>
+    <div class="row"><label>包装规格</label>
       <select id="packing">
-        <option value="1.1">1.1 吨包</option>
-        <option value="1.15">1.15 吨包</option>
+        <option value="1.1">1.1 吨/包</option>
+        <option value="1.15">1.15 吨/包</option>
       </select>
     </div>
-
-    <div class="row"><label>数量 Quantity (MT)</label><input id="qty" type="number" value="46"></div>
-    <div class="row"><label>柜数 Containers (自动)</label><input id="container" disabled></div>
-
-    <div class="row"><label>单柜运费 USD/Container</label><input id="containerFreight" type="number" value="0"></div>
-
-    <div class="row"><label>当日价格 Price (USD/MT)</label><input id="price" type="number" value="835"></div>
-    <div class="row"><label>其他费用 Other</label><input id="other" type="number" value="1"></div>
-    <div class="row"><label>中信保 Insurance</label><input id="insurance" type="number" value="1"></div>
-
-    <div class="row"><label>运费 Freight/MT</label><input id="freight" disabled></div>
-    <div class="row"><label>合同价格 Contract</label><input id="contract" disabled></div>
-
-    <div class="btns">
-      <button class="primary" onclick="calc()">计算价格</button>
-      <button class="success" onclick="copyText()">一键复制</button>
-      <button class="warning" onclick="exportTxt()">导出报价</button>
-    </div>
-
-    <div class="output-wrap">
-      <div class="output-box">
-        <label>中文报价</label>
-        <textarea id="outputCN"></textarea>
+    <div class="row"><label>采购数量 (MT)</label><input id="qty" type="number" value="46" min="0" step="0.01" placeholder="请输入采购数量"></div>
+    <div class="row"><label>预估柜数</label><input id="containerCount" disabled placeholder="自动计算"></div>
+    <div class="row"><label>单柜运费 (USD)</label><input id="containerFreight" type="number" value="0" min="0" step="0.01" placeholder="请输入单柜运费"></div>
+    <div class="row"><label>运费分摊 (USD/MT)</label><input id="freightPerTon" disabled placeholder="自动计算"></div>
+    <div class="row"><label>基础单价 (USD/MT)</label><input id="price" type="number" value="835" min="0" step="0.01" placeholder="请输入基础单价"></div>
+    <div class="row"><label>其他费用 (USD/MT)</label><input id="other" type="number" value="1" min="0" step="0.01" placeholder="请输入其他费用"></div>
+    <div class="row"><label>中信保费用 (USD/MT)</label><input id="insurance" type="number" value="1" min="0" step="0.01" placeholder="请输入中信保费用"></div>
+    <div class="row"><label>报价有效期</label><input id="validity" type="date" placeholder="请选择有效期"></div>
+    <div class="row">
+      <label>计划发货时间</label>
+      <div style="flex:1">
+        <div class="months" id="months"></div>
+        <small id="shipmentPreview" style="color:#666">未选择</small>
       </div>
-      <div class="output-box">
-        <label>English Quotation</label>
-        <textarea id="outputEN"></textarea>
+    </div>
+    <div class="row"><label>最终合同价 (USD/MT)</label><input id="contract" disabled placeholder="自动计算"></div>
+    <div class="btns">
+      <button class="primary" onclick="calc()">计算报价</button>
+      <button class="success" onclick="copyText()">复制报价</button>
+      <button class="warning" onclick="exportTxt()">导出文件</button>
+    </div>
+    <div class="output-wrap">
+      <div>
+        <label>中文报价单</label>
+        <textarea id="outputCN" placeholder="点击「计算报价」生成内容"></textarea>
+      </div>
+      <div>
+        <label>英文报价单 (English)</label>
+        <textarea id="outputEN" placeholder="Click 「Calculate Quote」 to generate content"></textarea>
       </div>
     </div>
   </div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    function calc() {
-      const trade = document.getElementById('trade').value;
-      const packing = parseFloat(document.getElementById('packing').value);
-      const qty = parseFloat(document.getElementById('qty').value) || 0;
-      const bags = 20;
-      const containerFreight = parseFloat(document.getElementById('containerFreight').value) || 0;
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let selectedMonths = [];
 
-      const price = parseFloat(document.getElementById('price').value) || 0;
-      const other = parseFloat(document.getElementById('other').value) || 0;
-      const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+    window.addEventListener('DOMContentLoaded', function() {
+      const today = new Date();
+      document.getElementById('validity').value = today.toISOString().slice(0,10);
+      initMonthButtons();
+      togglePort();
+    });
 
-      const tonPerContainer = packing * bags;
+    function initMonthButtons() {
+      const container = document.getElementById('months');
+      monthNames.forEach((m, i) => {
+        const btn = document.createElement('div');
+        btn.className = 'month-btn';
+        btn.innerText = `${monthNames[i]}`;
+        btn.onclick = () => {
+          if (selectedMonths.includes(i)) {
+            selectedMonths = selectedMonths.filter(x => x !== i);
+            btn.classList.remove('active');
+          } else {
+            selectedMonths.push(i);
+            btn.classList.add('active');
+          }
+          updateShipmentPreview();
+        };
+        container.appendChild(btn);
+      });
+    }
 
-      const containers = Math.ceil(qty / tonPerContainer);
-      document.getElementById('container').value = containers;
+    function updateShipmentPreview() {
+      const text = formatMonths();
+      document.getElementById('shipmentPreview').innerText = text || '未选择发货月份';
+    }
 
-      let freightPerTon = 0;
-      if (trade === "CIF") {
-        freightPerTon = Math.ceil(containerFreight / tonPerContainer);
+    function formatMonths() {
+      if (selectedMonths.length===0) return '';
+      selectedMonths.sort((a,b)=>a-b);
+      let start = selectedMonths[0], end = start, ranges = [];
+      for(let i=1;i<selectedMonths.length;i++){
+        if(selectedMonths[i]===end+1) end = selectedMonths[i];
+        else {
+          ranges.push([start,end]);
+          start = selectedMonths[i];
+          end = start;
+        }
       }
+      ranges.push([start,end]);
+      return ranges.map(([s,e])=> s===e ? monthNames[s] : `${monthNames[s]}-${monthNames[e]}`).join(', ');
+    }
 
-      document.getElementById('freight').value = freightPerTon.toFixed(2);
+    function togglePort() {
+      document.getElementById('portRow').style.display = document.getElementById('trade').value === 'CIF' ? 'flex' : 'none';
+    }
 
-      let total = price + freightPerTon + other + insurance;
-      total = Math.round(total);
+    function showToast(message, duration = 2000) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), duration);
+    }
 
-      document.getElementById('contract').value = total;
+    function calc() {
+      try {
+        const trade = document.getElementById('trade').value;
+        const packing = parseFloat(document.getElementById('packing').value) || 0;
+        const qty = parseFloat(document.getElementById('qty').value) || 0;
+        const containerFreight = parseFloat(document.getElementById('containerFreight').value) || 0;
+        const price = parseFloat(document.getElementById('price').value) || 0;
+        const other = parseFloat(document.getElementById('other').value) || 0;
+        const insurance = parseFloat(document.getElementById('insurance').value) || 0;
 
-      const textCN = `报价单
-==================================================
-公司: ${company.value}
+        if (qty <= 0) {
+          showToast('采购数量必须大于0', 3000);
+          document.getElementById('qty').focus();
+          return;
+        }
+        if (trade === 'CIF' && !document.getElementById('port').value) {
+          showToast('CIF贸易方式需填写目的地港口', 3000);
+          document.getElementById('port').focus();
+          return;
+        }
+
+        // 1. 计算预估柜数
+        const tonPerContainer = packing * 20;
+        const containerCount = Math.ceil(qty / tonPerContainer);
+        document.getElementById('containerCount').value = containerCount;
+
+        // 2. 计算运费分摊 - 核心修改：向上取整
+        let freightPerTon = trade === "CIF" ? Math.ceil(containerFreight / tonPerContainer) : 0;
+        document.getElementById('freightPerTon').value = freightPerTon; // 向上取整后无小数
+
+        // 3. 计算最终合同价（基于向上取整的运费分摊）
+        let total = price + freightPerTon + other + insurance;
+        total = Math.round(total * 100) / 100;
+        document.getElementById('contract').value = total.toFixed(2);
+
+        const company = document.getElementById('company').value;
+        const material = document.getElementById('material').value;
+        const payment = document.getElementById('payment').value;
+        const validity = document.getElementById('validity').value;
+        const port = document.getElementById('port').value;
+        const shipment = formatMonths();
+
+        // 中文报价单（仅保留核心信息）
+        document.getElementById('outputCN').value = `报价单
+公司: ${company}
 数量: ${qty} 吨
-产品: ${material.value}
-贸易方式: ${trade}
-付款方式: ${payment.value}
-包装: ${packing} 吨/包
---------------------------------------------------
-基础价格:   USD ${price.toFixed(2)}
-运费:       USD ${freightPerTon.toFixed(2)}
-其他费用:   USD ${other.toFixed(2)}
-中信保:     USD ${insurance.toFixed(2)}
---------------------------------------------------
-合同价格:   USD ${total.toFixed(2)}
-==================================================
-有效期: 以最终确认为准`;
+产品: ${material}
+贸易方式: ${trade === 'CIF' ? 'CIF ' + port : trade}
+付款方式: ${payment}
+有效期: ${validity}
+发货时间: ${shipment}
+最终合同价: USD ${total.toFixed(2)}/MT`;
 
-      const textEN = `QUOTATION
-==================================================
-Company: ${company.value}
+        // 英文报价单（仅保留核心信息）
+        document.getElementById('outputEN').value = `QUOTATION
+Company: ${company}
 Quantity: ${qty} MT
-Material: ${material.value}
-Trade Terms: ${trade}
-Payment: ${payment.value}
-Packing: ${packing} MT BAG
---------------------------------------------------
-Base Price:   USD ${price.toFixed(2)}
-Freight:      USD ${freightPerTon.toFixed(2)}
-Other Charges:USD ${other.toFixed(2)}
-Insurance:    USD ${insurance.toFixed(2)}
---------------------------------------------------
-Contract Price: USD ${total.toFixed(2)}
-==================================================
-Validity: Subject to final confirmation`;
+Material: ${material}
+Trade Terms: ${trade === 'CIF' ? `CIF ${port}` : trade}
+Payment: ${payment}
+Validity of Quotation: ${validity}
+Shipment: ${shipment}
+Price: USD ${total.toFixed(2)}`;
 
-      document.getElementById('outputCN').value = textCN;
-      document.getElementById('outputEN').value = textEN;
+        showToast('报价计算完成');
+      } catch (error) {
+        showToast(`计算出错: ${error.message}`, 3000);
+      }
     }
 
     function copyText() {
-      const text = document.getElementById('outputEN').value;
-      navigator.clipboard.writeText(text);
-      alert('已复制英文报价');
+      try {
+        const text = document.getElementById('outputEN');
+        text.select();
+        navigator.clipboard.writeText(text.value).then(() => showToast('英文报价已复制'));
+      } catch (error) {
+        showToast('复制失败，请手动复制', 3000);
+      }
     }
 
     function exportTxt() {
@@ -165,8 +349,9 @@ Validity: Subject to final confirmation`;
       const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'Quotation.txt';
+      a.download = `报价单_${new Date().toISOString().slice(0,10)}.txt`;
       a.click();
+      showToast('文件导出成功');
     }
   </script>
 </body>
