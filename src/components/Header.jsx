@@ -31,10 +31,10 @@ export default function Header({ searchQuery, setSearchQuery, isDark, toggleDark
       <div className="flex-1 flex justify-end">
         <button
           onClick={toggleDark}
-          className="p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-gray-800 transition-all duration-300 hover:scale-110 active:scale-90 hover:text-amber-500 dark:hover:text-blue-400"
+          className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-gray-800 transition-colors"
           aria-label="Toggle dark mode"
         >
-          {isDark ? <Sun size={20} className="animate-in spin-in-180 duration-500" /> : <Moon size={20} className="animate-in spin-in-[-180deg] duration-500" />}
+          {isDark ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
     </header>

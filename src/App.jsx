@@ -78,7 +78,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-slate-900 dark:text-slate-100 flex transition-colors duration-500 overflow-x-hidden bg-mesh relative">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-slate-900 dark:text-slate-100 flex transition-colors duration-200 overflow-x-hidden relative">
       <Sidebar tags={allTags} selectedTag={selectedTag} setSelectedTag={setSelectedTag} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
       <main className="flex-1 md:ml-64 flex flex-col relative w-full min-w-0 min-h-screen z-10">
@@ -90,25 +90,7 @@ export default function App() {
           onOpenSidebar={() => setIsSidebarOpen(true)}
         />
         
-        <div className="p-6 md:p-10 flex-1 max-w-7xl w-full mx-auto">
-          {/* Hero Section */}
-          <div className="mb-14 mt-6 transform transition-all animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-medium mb-4">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              Auto-Discovery Enabled
-            </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 dark:from-blue-400 dark:via-indigo-400 dark:to-violet-400 drop-shadow-sm">
-              Explore Interactive Hub
-            </h1>
-            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-              A curated collection of high-performance web applications, 
-              interactive games, and creative experimental prototypes. Built with React and automated deployment.
-            </p>
-          </div>
-
+        <div className="p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-[40vh] animate-in fade-in duration-500">
               <div className="relative">
