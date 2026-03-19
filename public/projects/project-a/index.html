@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Particles</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #1a1a1a; display: flex; justify-content: center; align-items: center; color: white; font-family: sans-serif; height: 100vh; }
+    h1 { z-index: 10; cursor: default; }
+    canvas { position: absolute; top: 0; left: 0; }
+  </style>
+</head>
+<body>
+  <h1>Interactive Particles Demo</h1>
+  <canvas id="cvs"></canvas>
+  <script>
+    const cvs = document.getElementById('cvs');
+    const ctx = cvs.getContext('2d');
+    let w = cvs.width = window.innerWidth;
+    let h = cvs.height = window.innerHeight;
+    const particles = [];
+
+    for(let i=0; i<100; i++) particles.push({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2 });
+
+    function draw() {
+      ctx.fillStyle = 'rgba(26,26,26,0.2)';
+      ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = '#00ffcc';
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<0||p.x>w) p.vx*=-1;
+        if(p.y<0||p.y>h) p.vy*=-1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>

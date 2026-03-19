@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas Game</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #fafafa; display: flex; justify-content: center; align-items: center; color: #333; font-family: sans-serif; height: 100vh; flex-direction: column; }
+    button { padding: 10px 20px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Mini Canvas Game</h1>
+  <p>Click the square as fast as you can!</p>
+  <canvas id="cvs" width="400" height="400" style="background:#eee;border:1px solid #ccc;"></canvas>
+  <script>
+    const cvs = document.getElementById('cvs');
+    const ctx = cvs.getContext('2d');
+    let x = 200, y = 200;
+    
+    function draw() {
+      ctx.clearRect(0,0,400,400);
+      ctx.fillStyle = '#ff3366';
+      ctx.fillRect(x-20, y-20, 40, 40);
+    }
+    draw();
+    cvs.onclick = (e) => {
+      const rect = cvs.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      if (Math.abs(clickX-x) < 20 && Math.abs(clickY-y) < 20) {
+        x = Math.random() * 360 + 20;
+        y = Math.random() * 360 + 20;
+        draw();
+      }
+    };
+  </script>
+</body>
+</html>
