@@ -89,6 +89,37 @@ npm run build
 
 ---
 
+## ☁️ 部署到 Cloudflare Pages (详细教程)
+
+本项目天然支持作为**纯静态站点**部署至 Cloudflare Pages。无需任何服务器费用，同时享有全球 CDN 加速。
+
+### 步骤 1：准备工作
+1. 确保您的项目已经推送到了 GitHub 仓库（例如 `Chenming00/Mings-project`）。
+2. 使用您的 GitHub 账号注册并登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)。
+
+### 步骤 2：创建 Pages 应用
+1. 在 Cloudflare 面板左侧边栏，点击 **"Workers 和 Pages" (Workers & Pages)**。
+2. 点击蓝色的 **"创建应用" (Create application)** 按钮。
+3. 选择 **"Pages"** 选项卡。
+4. 点击 **"连接到 Git" (Connect to Git)**。
+5. 选择您的 GitHub 账户，并在弹出的授权窗口中选择本项目对应的仓库 (`Chenming00/Mings-project`)。
+6. 点击 **"开始设置" (Begin setup)**。
+
+### 步骤 3：配置构建逻辑
+在配置页面中，请填写以下**关键部署参数**：
+- **项目名称 (Project name)**: 默认即可（例如 mings-project）。
+- **生产分支 (Production branch)**: `main` 或 `master`。
+- **框架预设 (Framework preset)**: 可以在下拉菜单中选择 `Vite` 或者是 `None`。
+- **构建命令 (Build command)**: 填写 `npm run build`。
+- **构建输出目录 (Build output directory)**: 填写 `dist`。（**非常重要！**）
+
+### 步骤 4：保存并部署
+- 确认上述构建信息无误后，点击 **"保存并部署" (Save and Deploy)**。
+- Cloudflare 会自动拉取您的源码、安装依赖、并执行构建。在控制台输出中看到绿色的成功提示后，您的项目就已经上线了！ 🎉
+- 以后您每次往 GitHub `main` 分支 `push` 新代码或添加新的 H5 项目文件夹，Cloudflare 都会自动为您重新构建并发布。
+
+---
+
 ## 🧑‍💻 开发者信息
 
 **Auther**: Chenming00
