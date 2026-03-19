@@ -16,12 +16,14 @@
     .primary { background: #007bff; color: white; }
     .success { background: #28a745; color: white; }
     .warning { background: #ffc107; }
-    textarea { width: 100%; height: 220px; margin-top: 15px; font-family: monospace; }
+    textarea { width: 100%; height: 200px; margin-top: 10px; font-family: monospace; }
+    .output-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .output-box { display: flex; flex-direction: column; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>报价模板系统（升级版）</h2>
+    <h2>报价模板系统（稳定版）</h2>
 
     <div class="row"><label>公司 Company</label><input id="company" value="DYHO GROUP LIMITED"></div>
     <div class="row"><label>产品 Material</label><input id="material" value="YS-W01 / YS-C01"></div>
@@ -30,13 +32,6 @@
       <select id="trade">
         <option value="FOB">FOB</option>
         <option value="CIF">CIF</option>
-      </select>
-    </div>
-
-    <div class="row"><label>语言 Language</label>
-      <select id="lang">
-        <option value="CN">中文</option>
-        <option value="EN">English</option>
       </select>
     </div>
 
@@ -60,8 +55,8 @@
       </select>
     </div>
 
-    <div class="row"><label>每柜包数 Bags/Container</label><input id="bags" type="number" value="20"></div>
-    <div class="row"><label>柜数 Containers</label><input id="container" type="number" value="2"></div>
+    <div class="row"><label>数量 Quantity (MT)</label><input id="qty" type="number" value="46"></div>
+    <div class="row"><label>柜数 Containers (自动)</label><input id="container" disabled></div>
 
     <div class="row"><label>单柜运费 USD/Container</label><input id="containerFreight" type="number" value="0"></div>
 
@@ -69,7 +64,7 @@
     <div class="row"><label>其他费用 Other</label><input id="other" type="number" value="1"></div>
     <div class="row"><label>中信保 Insurance</label><input id="insurance" type="number" value="1"></div>
 
-    <div class="row"><label>运费(自动分摊) Freight/MT</label><input id="freight" disabled></div>
+    <div class="row"><label>运费 Freight/MT</label><input id="freight" disabled></div>
     <div class="row"><label>合同价格 Contract</label><input id="contract" disabled></div>
 
     <div class="btns">
@@ -78,26 +73,38 @@
       <button class="warning" onclick="exportTxt()">导出报价</button>
     </div>
 
-    <textarea id="output"></textarea>
+    <div class="output-wrap">
+      <div class="output-box">
+        <label>中文报价</label>
+        <textarea id="outputCN"></textarea>
+      </div>
+      <div class="output-box">
+        <label>English Quotation</label>
+        <textarea id="outputEN"></textarea>
+      </div>
+    </div>
   </div>
 
   <script>
     function calc() {
-      let trade = document.getElementById('trade').value;
-      let packing = parseFloat(document.getElementById('packing').value);
-      let bags = parseFloat(document.getElementById('bags').value) || 20;
-      let containerFreight = parseFloat(document.getElementById('containerFreight').value) || 0;
+      const trade = document.getElementById('trade').value;
+      const packing = parseFloat(document.getElementById('packing').value);
+      const qty = parseFloat(document.getElementById('qty').value) || 0;
+      const bags = 20;
+      const containerFreight = parseFloat(document.getElementById('containerFreight').value) || 0;
 
-      let price = parseFloat(document.getElementById('price').value) || 0;
-      let other = parseFloat(document.getElementById('other').value) || 0;
-      let insurance = parseFloat(document.getElementById('insurance').value) || 0;
+      const price = parseFloat(document.getElementById('price').value) || 0;
+      const other = parseFloat(document.getElementById('other').value) || 0;
+      const insurance = parseFloat(document.getElementById('insurance').value) || 0;
 
-      let tonPerContainer = packing * bags;
+      const tonPerContainer = packing * bags;
+
+      const containers = Math.ceil(qty / tonPerContainer);
+      document.getElementById('container').value = containers;
 
       let freightPerTon = 0;
-
       if (trade === "CIF") {
-        freightPerTon = Math.ceil(containerFreight / tonPerContainer); // 向上取整
+        freightPerTon = Math.ceil(containerFreight / tonPerContainer);
       }
 
       document.getElementById('freight').value = freightPerTon.toFixed(2);
@@ -107,12 +114,10 @@
 
       document.getElementById('contract').value = total;
 
-      let text = "";
-
-      if (document.getElementById('lang').value === "CN") {
-        text = `报价单
+      const textCN = `报价单
 ==================================================
 公司: ${company.value}
+数量: ${qty} 吨
 产品: ${material.value}
 贸易方式: ${trade}
 付款方式: ${payment.value}
@@ -126,10 +131,11 @@
 合同价格:   USD ${total.toFixed(2)}
 ==================================================
 有效期: 以最终确认为准`;
-      } else {
-        text = `QUOTATION
+
+      const textEN = `QUOTATION
 ==================================================
 Company: ${company.value}
+Quantity: ${qty} MT
 Material: ${material.value}
 Trade Terms: ${trade}
 Payment: ${payment.value}
@@ -143,21 +149,21 @@ Insurance:    USD ${insurance.toFixed(2)}
 Contract Price: USD ${total.toFixed(2)}
 ==================================================
 Validity: Subject to final confirmation`;
-      }
 
-      document.getElementById('output').value = text;
+      document.getElementById('outputCN').value = textCN;
+      document.getElementById('outputEN').value = textEN;
     }
 
     function copyText() {
-      let text = document.getElementById('output');
-      text.select();
-      document.execCommand('copy');
-      alert('已复制');
+      const text = document.getElementById('outputEN').value;
+      navigator.clipboard.writeText(text);
+      alert('已复制英文报价');
     }
 
     function exportTxt() {
-      let blob = new Blob([document.getElementById('output').value], { type: 'text/plain;charset=utf-8' });
-      let a = document.createElement('a');
+      const content = document.getElementById('outputCN').value + "\n\n" + document.getElementById('outputEN').value;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'Quotation.txt';
       a.click();
