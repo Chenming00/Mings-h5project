@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>报价模板系统</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 12px; }
+    h2 { margin-bottom: 10px; }
+    .row { display: flex; margin-bottom: 10px; }
+    .row label { width: 180px; }
+    .row input, .row select { flex: 1; padding: 6px; }
+    .btns { margin-top: 20px; display: flex; gap: 10px; }
+    button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+    .primary { background: #007bff; color: white; }
+    .success { background: #28a745; color: white; }
+    .warning { background: #ffc107; }
+    textarea { width: 100%; height: 220px; margin-top: 15px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>报价模板系统（升级版）</h2>
+
+    <div class="row"><label>公司 Company</label><input id="company" value="DYHO GROUP LIMITED"></div>
+    <div class="row"><label>产品 Material</label><input id="material" value="YS-W01 / YS-C01"></div>
+
+    <div class="row"><label>贸易方式 Trade</label>
+      <select id="trade">
+        <option value="FOB">FOB</option>
+        <option value="CIF">CIF</option>
+      </select>
+    </div>
+
+    <div class="row"><label>语言 Language</label>
+      <select id="lang">
+        <option value="CN">中文</option>
+        <option value="EN">English</option>
+      </select>
+    </div>
+
+    <div class="row"><label>付款方式 Payment</label>
+      <select id="payment">
+        <option>LC AT SIGHT</option>
+        <option>LC 30 DAYS</option>
+        <option>LC 60 DAYS</option>
+        <option>TT 30/70</option>
+        <option>TT 20/80</option>
+        <option>TT 100%</option>
+        <option>OA 30 DAYS</option>
+        <option>OA 60 DAYS</option>
+      </select>
+    </div>
+
+    <div class="row"><label>包装规格 Packing</label>
+      <select id="packing">
+        <option value="1.1">1.1 吨包</option>
+        <option value="1.15">1.15 吨包</option>
+      </select>
+    </div>
+
+    <div class="row"><label>每柜包数 Bags/Container</label><input id="bags" type="number" value="20"></div>
+    <div class="row"><label>柜数 Containers</label><input id="container" type="number" value="2"></div>
+
+    <div class="row"><label>单柜运费 USD/Container</label><input id="containerFreight" type="number" value="0"></div>
+
+    <div class="row"><label>当日价格 Price (USD/MT)</label><input id="price" type="number" value="835"></div>
+    <div class="row"><label>其他费用 Other</label><input id="other" type="number" value="1"></div>
+    <div class="row"><label>中信保 Insurance</label><input id="insurance" type="number" value="1"></div>
+
+    <div class="row"><label>运费(自动分摊) Freight/MT</label><input id="freight" disabled></div>
+    <div class="row"><label>合同价格 Contract</label><input id="contract" disabled></div>
+
+    <div class="btns">
+      <button class="primary" onclick="calc()">计算价格</button>
+      <button class="success" onclick="copyText()">一键复制</button>
+      <button class="warning" onclick="exportTxt()">导出报价</button>
+    </div>
+
+    <textarea id="output"></textarea>
+  </div>
+
+  <script>
+    function calc() {
+      let trade = document.getElementById('trade').value;
+      let packing = parseFloat(document.getElementById('packing').value);
+      let bags = parseFloat(document.getElementById('bags').value) || 20;
+      let containerFreight = parseFloat(document.getElementById('containerFreight').value) || 0;
+
+      let price = parseFloat(document.getElementById('price').value) || 0;
+      let other = parseFloat(document.getElementById('other').value) || 0;
+      let insurance = parseFloat(document.getElementById('insurance').value) || 0;
+
+      let tonPerContainer = packing * bags;
+
+      let freightPerTon = 0;
+
+      if (trade === "CIF") {
+        freightPerTon = Math.ceil(containerFreight / tonPerContainer); // 向上取整
+      }
+
+      document.getElementById('freight').value = freightPerTon.toFixed(2);
+
+      let total = price + freightPerTon + other + insurance;
+      total = Math.round(total);
+
+      document.getElementById('contract').value = total;
+
+      let text = "";
+
+      if (document.getElementById('lang').value === "CN") {
+        text = `报价单
+==================================================
+公司: ${company.value}
+产品: ${material.value}
+贸易方式: ${trade}
+付款方式: ${payment.value}
+包装: ${packing} 吨/包
+--------------------------------------------------
+基础价格:   USD ${price.toFixed(2)}
+运费:       USD ${freightPerTon.toFixed(2)}
+其他费用:   USD ${other.toFixed(2)}
+中信保:     USD ${insurance.toFixed(2)}
+--------------------------------------------------
+合同价格:   USD ${total.toFixed(2)}
+==================================================
+有效期: 以最终确认为准`;
+      } else {
+        text = `QUOTATION
+==================================================
+Company: ${company.value}
+Material: ${material.value}
+Trade Terms: ${trade}
+Payment: ${payment.value}
+Packing: ${packing} MT BAG
+--------------------------------------------------
+Base Price:   USD ${price.toFixed(2)}
+Freight:      USD ${freightPerTon.toFixed(2)}
+Other Charges:USD ${other.toFixed(2)}
+Insurance:    USD ${insurance.toFixed(2)}
+--------------------------------------------------
+Contract Price: USD ${total.toFixed(2)}
+==================================================
+Validity: Subject to final confirmation`;
+      }
+
+      document.getElementById('output').value = text;
+    }
+
+    function copyText() {
+      let text = document.getElementById('output');
+      text.select();
+      document.execCommand('copy');
+      alert('已复制');
+    }
+
+    function exportTxt() {
+      let blob = new Blob([document.getElementById('output').value], { type: 'text/plain;charset=utf-8' });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Quotation.txt';
+      a.click();
+    }
+  </script>
+</body>
+</html>
