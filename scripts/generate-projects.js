@@ -46,11 +46,11 @@ function generateProjectsData() {
           name = titleMatch[1].trim();
         }
         
-        // Use clean URL for index files, otherwise point to exact file
-        if (targetFile === 'index.html' || targetFile === 'index.htm') {
-          entryFile = '';
+        // Use clean URL only for standard index.html
+        if (targetFile === 'index.html') {
+          entryFile = ''; // Cloudflare Pages defaults to index.html automatically
         } else {
-          entryFile = targetFile;
+          entryFile = targetFile; // Must explicitly point to index.htm, game.htm etc.
         }
       }
       
