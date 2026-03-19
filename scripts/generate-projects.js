@@ -26,14 +26,31 @@ function generateProjectsData() {
     if (stat.isDirectory()) {
       let name = item;
       let tags = ["project"];
+      let entryFile = '';
       
-      // Try to read title from index.html
-      const indexPath = path.join(itemPath, 'index.html');
-      if (fs.existsSync(indexPath)) {
+      const dirFiles = fs.readdirSync(itemPath);
+      // Priority: index.html, index.htm, then any .html or .htm
+      const isHtml = f => f.endsWith('.html') || f.endsWith('.htm');
+      const htmlFiles = dirFiles.filter(isHtml);
+      
+      let targetFile = null;
+      if (htmlFiles.includes('index.html')) targetFile = 'index.html';
+      else if (htmlFiles.includes('index.htm')) targetFile = 'index.htm';
+      else if (htmlFiles.length > 0) targetFile = htmlFiles[0];
+
+      if (targetFile) {
+        const indexPath = path.join(itemPath, targetFile);
         const html = fs.readFileSync(indexPath, 'utf-8');
         const titleMatch = html.match(/<title>(.*?)<\/title>/i);
         if (titleMatch && titleMatch[1]) {
           name = titleMatch[1].trim();
+        }
+        
+        // Use clean URL for index files, otherwise point to exact file
+        if (targetFile === 'index.html' || targetFile === 'index.htm') {
+          entryFile = '';
+        } else {
+          entryFile = targetFile;
         }
       }
       
@@ -44,7 +61,7 @@ function generateProjectsData() {
       
       projects.push({
         name,
-        path: `/projects/${item}/`,
+        path: `/projects/${item}/${entryFile}`,
         tags,
         ...(hasCover && { thumbnail: `/projects/${item}/cover.png` })
       });

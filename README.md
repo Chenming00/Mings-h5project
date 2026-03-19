@@ -1,5 +1,10 @@
 # H5 项目集合平台 (Pro Version) 🚀
 
+![React](https://img.shields.io/badge/React-19-00d8ff?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind-4-38B2AC?logo=tailwindcss&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare_Pages-Deployed-F38020?logo=cloudflare&logoColor=white)
+
 这是一个基于 **React 19 + Vite + Tailwind CSS v4** 构建的专业级前端 H5 迷你项目托管聚合平台。它被设计为一个“前端项目画廊”或“工具导航站”，允许您在一个精美的主界面中集中展示、分类和预览各种独立的静态 H5 小应用。
 
 ## ✨ 核心特性
@@ -41,11 +46,11 @@
 得益于全新的自动化更新机制，添加一个新的静态 H5 项目仅仅需要一步：
 
 ### 步骤 1：放入项目文件
-将您的整个项目文件夹（假设叫 `my-awesome-app`）拷贝到 `public/projects/` 目录下。确保项目内包含名为 `index.html` 的入口文件。
+将您的整个项目文件夹（假设叫 `my-awesome-app`）拷贝到 `public/projects/` 目录下。确保项目内包含常见的 HTML 文件。系统会自动按优先级寻找 `index.html`、`index.htm`，如果没有，它甚至会随便抓取里面任意一个 `.html` / `.htm` 文件作为入口！
 **此时您的路径应为**: `/public/projects/my-awesome-app/index.html`
 
 > **专业配置（推荐）**：
-> 1. **定制名称**：系统会自动抓取 `index.html` 中的 `<title>这是您的项目名称</title>` 作为卡片标题展示。如果没写，将退化使用您的所在文件夹名 (`my-awesome-app`)。
+> 1. **定制名称**：系统会自动抓取入口 HTML 文件中的 `<title>这是您的项目名称</title>` 作为卡片标题展示。如果没写，将退化使用您的所在文件夹名 (`my-awesome-app`)。
 > 2. **定制封面**：在该文件夹内存放一张名为 `cover.png` 的缩略图，平台会自动提取并展示。如果是游戏或炫酷动画效果，推荐截一张好看的封面！
 
 ### 步骤 2：启动/构建
