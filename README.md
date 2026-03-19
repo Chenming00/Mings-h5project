@@ -85,7 +85,44 @@ npm run build
 ## 🖌 配置说明
 
 - **样式与主题**：项目使用了完整的 Tailwind CSS v4 标准，样式配置入口为 `src/index.css`。如果您需要修改主题颜色变量，请在该文件中调整 `--background` 和 `--foreground` 的原生 CSS 变量。
-- **更新子项目**：如果您想添加新的 H5 项目，只需将其完整文件夹（例如 `my-new-app/`）放到 `public/projects/` 下，然后确保可以通过 `/api/projects` API 返回对应的元数据即可（或在 `App.jsx` 的 Mock Fallback 数组中手动追加）。
+- **响应式界面**：UI 天然兼容从 iPhone 到超大宽屏的设计，移动端会自动转化为侧边栏抽屉模式。
+
+---
+
+## 📦 如何添加独立的新项目 (详细步骤)
+
+由于平台完全拥抱静态化设计，添加一个新的纯静态 H5 项目（比如 HTML 游戏、3D Demo 或小工具）非常简单：
+
+### 步骤 1：放入项目文件
+1. 将您的整个项目文件夹（假设叫 `my-awesome-app`）拷贝到 `public/projects/` 目录下。
+2. 确保项目入口文件名为 `index.html`。
+   **此时的路径应为**: `/public/projects/my-awesome-app/index.html`
+   
+> **可选**：您可以在该文件夹内存放一张名为 `cover.png` 的缩略图，平台将会自动提取展示（虽然目前默认为配置式，您可以为它自定义封面）。
+
+### 步骤 2：注册项目数据
+在现在的纯静态演示阶段（尚未接入 Cloudflare Worker 动态数据库时），您需要手动在前端兜底注册：
+1. 打开 `src/App.jsx` 文件。
+2. 找到 `console.warn("API failed, using fallback data");` 下方的 `setProjects([ ... ])` 数组。
+3. 在数组中追加一个新对象（照猫画虎即可）：
+   ```javascript
+   {
+     name: "我的超酷应用",
+     path: "/projects/my-awesome-app/",   // 注意斜杠结尾
+     tags: ["游戏", "日常工具"],              // 添加用于过滤的自定义标签
+     thumbnail: "/projects/my-awesome-app/cover.png" // (可选)
+   }
+   ```
+4. （如果您开启了开发环境 Mock API 以调试），同样在 `vite.config.js` 文件的 `plugins > mock-projects-api` 中，将上述对象追加到 `res.end(JSON.stringify([...]))` 列表中。
+
+### 步骤 3：提交上线
+- 完成添加后，在终端执行以下 Git 提交命令：
+  ```bash
+  git add .
+  git commit -m "feat: 新增我的超酷应用项目"
+  git push
+  ```
+- **完成！** Cloudflare Pages 会即刻收到 GitHub 的变更事件，在一分钟左右为您自动打包上线新项目，现在您就能在画廊中看到它了！
 
 ---
 
