@@ -1,10 +1,17 @@
 import React from 'react';
-import { Search, Moon, Sun } from 'lucide-react';
+import { Search, Moon, Sun, Menu } from 'lucide-react';
 
-export default function Header({ searchQuery, setSearchQuery, isDark, toggleDark }) {
+export default function Header({ searchQuery, setSearchQuery, isDark, toggleDark, onOpenSidebar }) {
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800/50">
-      <div className="flex-1"></div>
+    <header className="sticky top-0 z-20 flex items-center justify-between px-4 md:px-6 py-4 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800/50">
+      <div className="flex-1 flex items-center pr-2">
+        <button 
+          onClick={onOpenSidebar}
+          className="md:hidden p-2 -ml-2 mr-2 text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:focus:ring-gray-700 transition-colors rounded-xl flex items-center"
+        >
+          <Menu size={24} />
+        </button>
+      </div>
       
       <div className="flex-1 max-w-xl mx-auto flex items-center">
         <div className="relative w-full group">

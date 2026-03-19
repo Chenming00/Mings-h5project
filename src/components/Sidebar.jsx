@@ -1,9 +1,16 @@
 import React from 'react';
-import { Layers, FolderKanban, Tag } from 'lucide-react';
+import { Layers, FolderKanban, Tag, X } from 'lucide-react';
 
-export default function Sidebar({ tags, selectedTag, setSelectedTag }) {
+export default function Sidebar({ tags, selectedTag, setSelectedTag, isOpen, onClose }) {
   return (
-    <aside className="w-64 h-screen fixed left-0 top-0 bg-gray-50/50 dark:bg-[#0a0a0a] border-r border-gray-200 dark:border-gray-800 flex flex-col">
+    <>
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden transition-opacity" 
+          onClick={onClose}
+        />
+      )}
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-50 dark:bg-[#0a0a0a] border-r border-gray-200 dark:border-gray-800 flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       <div className="p-6 flex items-center gap-3">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
           <Layers size={18} />
@@ -51,5 +58,6 @@ export default function Sidebar({ tags, selectedTag, setSelectedTag }) {
         </div>
       </div>
     </aside>
+    </>
   );
 }

@@ -13,6 +13,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -77,15 +78,16 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 flex transition-colors duration-300">
-      <Sidebar tags={allTags} selectedTag={selectedTag} setSelectedTag={setSelectedTag} />
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 flex transition-colors duration-300 overflow-x-hidden">
+      <Sidebar tags={allTags} selectedTag={selectedTag} setSelectedTag={setSelectedTag} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <main className="flex-1 ml-64 flex flex-col relative w-full">
+      <main className="flex-1 md:ml-64 flex flex-col relative w-full min-w-0">
         <Header 
           searchQuery={searchQuery} 
           setSearchQuery={setSearchQuery} 
           isDark={isDark} 
           toggleDark={() => setIsDark(!isDark)} 
+          onOpenSidebar={() => setIsSidebarOpen(true)}
         />
         
         <div className="p-6 md:p-8 flex-1">
