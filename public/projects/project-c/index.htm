@@ -1,483 +1,855 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>俞可宁 - 个人简历</title>
-    <style>
-        /* --- 全局样式 --- */
-        :root {
-            --primary-color: #2c3e50; /* 深蓝主色 */
-            --accent-color: #3498db;  /* 亮蓝强调色 */
-            --bg-color: #f8f9fa;      /* 浅灰背景 */
-            --text-color: #333;
-            --text-secondary: #666;
-            --white: #ffffff;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>俞可宁 - 求职简历</title>
+        <style>
+            /* ===== 全局样式 ===== */
+            :root {
+                --primary: #1a5f7a;
+                --secondary: #159895;
+                --accent: #57c5b6;
+                --bg: #f4f7f5;
+                --white: #ffffff;
+                --text: #2d3436;
+                --text-light: #636e72;
+                --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-size: 14px; /* 手机适配字体大小 */
-        }
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    "Microsoft YaHei", sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                font-size: 14px;
+            }
 
-        /* --- 头部区域 --- */
-        header {
-            background: linear-gradient(135deg, var(--primary-color), #4ca1af);
-            color: var(--white);
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-            position: relative;
-        }
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 20px;
+            }
 
-        .avatar {
-            width: 100px;
-            height: 100px;
-            background-color: #ddd;
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            border: 4px solid rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            color: #666;
-            background-image: url('https://via.placeholder.com/150'); /* 占位图，可替换为您的照片 */
-            background-size: cover;
-            background-position: center;
-        }
+            /* ===== 头部区域 ===== */
+            header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary) 0%,
+                    var(--secondary) 100%
+                );
+                color: var(--white);
+                padding: 40px 25px;
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                margin-bottom: 20px;
+            }
 
-        h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
+            .header-content {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
 
-        .subtitle {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
+            .avatar {
+                width: 80px;
+                height: 80px;
+                background: var(--white);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 36px;
+                font-weight: bold;
+                color: var(--primary);
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                flex-shrink: 0;
+            }
 
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            font-size: 13px;
-        }
+            .header-info {
+                flex: 1;
+            }
 
-        .contact-item {
-            background: rgba(255,255,255,0.15);
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+            .header-info h1 {
+                font-size: 28px;
+                margin-bottom: 5px;
+                letter-spacing: 1px;
+            }
 
-        /* --- 容器与卡片 --- */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 15px 40px;
-        }
+            .header-info p {
+                opacity: 0.9;
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
 
-        .section {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+            .contact-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
 
-        .section-title {
-            font-size: 18px;
-            color: var(--primary-color);
-            border-left: 4px solid var(--accent-color);
-            padding-left: 10px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
+            .contact-item {
+                background: rgba(255, 255, 255, 0.15);
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 13px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
 
-        /* --- 内容样式 --- */
-        .summary-text {
-            color: var(--text-secondary);
-            text-align: justify;
-        }
+            /* ===== 卡片样式 ===== */
+            .card {
+                background: var(--white);
+                border-radius: 10px;
+                padding: 25px;
+                box-shadow: var(--shadow);
+                margin-bottom: 20px;
+            }
 
-        /* 核心优势标签 */
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+            .card-title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 18px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid var(--bg);
+            }
 
-        .tag {
-            background-color: #eef2f7;
-            color: var(--primary-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-        }
+            .card-title h2 {
+                font-size: 18px;
+                color: var(--primary);
+            }
 
-        /* 经历时间轴样式 */
-        .timeline-item {
-            position: relative;
-            padding-left: 20px;
-            margin-bottom: 25px;
-            border-left: 2px solid #eee;
-        }
+            .card-title::before {
+                content: "";
+                width: 4px;
+                height: 24px;
+                background: var(--accent);
+                border-radius: 2px;
+            }
 
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
+            /* ===== 摘要区域 ===== */
+            .summary {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                border-left: 4px solid var(--secondary);
+            }
 
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: 5px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--accent-color);
-        }
+            .summary p {
+                color: var(--text-light);
+                text-align: justify;
+                margin-bottom: 10px;
+            }
 
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            margin-bottom: 5px;
-        }
+            /* ===== 经历时间轴 ===== */
+            .timeline {
+                position: relative;
+                padding-left: 30px;
+            }
 
-        .role {
-            font-weight: bold;
-            color: #333;
-            font-size: 16px;
-        }
+            .timeline::before {
+                content: "";
+                position: absolute;
+                left: 7px;
+                top: 5px;
+                bottom: 0;
+                width: 2px;
+                background: var(--bg);
+            }
 
-        .company {
-            color: #555;
-            font-weight: 500;
-        }
+            .timeline-item {
+                position: relative;
+                margin-bottom: 25px;
+            }
 
-        .date {
-            color: #999;
-            font-size: 12px;
-            white-space: nowrap;
-        }
+            .timeline-item::before {
+                content: "";
+                position: absolute;
+                left: -29px;
+                top: 6px;
+                width: 18px;
+                height: 18px;
+                background: var(--secondary);
+                border-radius: 50%;
+                border: 3px solid var(--white);
+                box-shadow: 0 0 0 2px var(--bg);
+            }
 
-        .timeline-content {
-            font-size: 13px;
-            color: #555;
-            line-height: 1.7;
-        }
-        
-        .timeline-content ul {
-            padding-left: 18px;
-            margin-top: 5px;
-        }
-        
-        .timeline-content li {
-            margin-bottom: 4px;
-        }
+            .timeline-item:last-child {
+                margin-bottom: 0;
+            }
 
-        /* 教育经历样式 */
-        .edu-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #eee;
-        }
-        
-        .edu-item:last-child {
-            border-bottom: none;
-        }
+            .timeline-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
 
-        .edu-info h4 {
-            color: #333;
-            margin-bottom: 2px;
-        }
-        
-        .edu-info p {
-            color: #666;
-            font-size: 13px;
-        }
+            .timeline-role {
+                font-weight: 600;
+                color: var(--text);
+                font-size: 15px;
+            }
 
-        .edu-date {
-            text-align: right;
-            color: var(--accent-color);
-            font-weight: bold;
-            font-size: 13px;
-            min-width: 90px;
-        }
+            .timeline-company {
+                color: var(--text-light);
+                font-size: 13px;
+            }
 
-        /* 技能列表 */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
-        .skill-box {
-            background: #f0f4f8;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        
-        .skill-title {
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 4px;
-        }
+            .timeline-date {
+                color: var(--accent);
+                font-weight: 600;
+                font-size: 13px;
+                white-space: nowrap;
+            }
 
-        /* 底部 */
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: #999;
-            font-size: 12px;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            padding: 10px 30px;
-            border-radius: 25px;
-            margin-top: 15px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        
-        .cta-button:hover {
-            background-color: var(--accent-color);
-        }
+            .timeline-content {
+                color: var(--text-light);
+                font-size: 13px;
+                line-height: 1.7;
+            }
 
-    </style>
-</head>
-<body>
+            .timeline-content ul {
+                margin-top: 8px;
+                padding-left: 18px;
+            }
 
-    <!-- 头部信息 -->
-    <header>
-        <!-- 您可以在此处替换真实的头像图片 URL -->
-        <div class="avatar" id="avatar">Y</div>
-        <h1>俞可宁</h1>
-        <div class="subtitle">金融硕士 | 数据分析 | 投资研究</div>
-        <div class="contact-info">
-            <div class="contact-item">📞 153 7201 1598</div>
-            <div class="contact-item">✉️ keningyu420@gmail.com</div>
+            .timeline-content li {
+                margin-bottom: 5px;
+            }
+
+            /* ===== 教育区域 ===== */
+            .edu-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding: 15px 0;
+                border-bottom: 1px dashed #ddd;
+            }
+
+            .edu-item:last-child {
+                border-bottom: none;
+            }
+
+            .edu-school {
+                font-weight: 600;
+                color: var(--text);
+                font-size: 15px;
+                margin-bottom: 3px;
+            }
+
+            .edu-major {
+                color: var(--text-light);
+                font-size: 13px;
+            }
+
+            .edu-date {
+                color: var(--accent);
+                font-weight: 600;
+                font-size: 13px;
+                text-align: right;
+            }
+
+            .edu-honor {
+                color: #e94560;
+                font-size: 12px;
+                margin-top: 3px;
+                font-weight: 500;
+            }
+
+            /* ===== 技能网格 ===== */
+            .skills-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+            }
+
+            .skill-card {
+                background: var(--bg);
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+            }
+
+            .skill-card .icon {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .skill-card h4 {
+                color: var(--primary);
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+
+            .skill-card p {
+                color: var(--text-light);
+                font-size: 12px;
+            }
+
+            /* ===== 标签 ===== */
+            .tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .tag {
+                background: linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--secondary)
+                );
+                color: var(--white);
+                padding: 6px 15px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            /* ===== 行动按钮 ===== */
+            .action-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 30px;
+                border-radius: 25px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s;
+                font-size: 14px;
+            }
+
+            .btn-primary {
+                background: var(--primary);
+                color: var(--white);
+                box-shadow: 0 4px 15px rgba(26, 95, 122, 0.3);
+            }
+
+            .btn-primary:hover {
+                background: var(--secondary);
+                transform: translateY(-2px);
+            }
+
+            .btn-secondary {
+                background: var(--white);
+                color: var(--primary);
+                border: 2px solid var(--primary);
+            }
+
+            .btn-secondary:hover {
+                background: var(--primary);
+                color: var(--white);
+            }
+
+            /* ===== 页脚 ===== */
+            footer {
+                text-align: center;
+                padding: 30px 20px;
+                color: var(--text-light);
+                font-size: 12px;
+            }
+
+            /* ===== 响应式 ===== */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 15px;
+                }
+
+                header {
+                    padding: 30px 20px;
+                }
+
+                .header-content {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .contact-row {
+                    justify-content: center;
+                }
+
+                .card {
+                    padding: 20px;
+                }
+
+                .timeline-header {
+                    flex-direction: column;
+                }
+
+                .timeline-date {
+                    margin-top: 5px;
+                }
+            }
+
+            /* ===== 打印样式 ===== */
+            @media print {
+                body {
+                    background: white;
+                    -webkit-print-color-adjust: exact;
+                }
+
+                .container {
+                    max-width: 100%;
+                    padding: 0;
+                }
+
+                header,
+                .card {
+                    box-shadow: none;
+                    border: 1px solid #ddd;
+                }
+
+                .action-buttons {
+                    display: none;
+                }
+
+                .card {
+                    page-break-inside: avoid;
+                }
+            }
+
+            /* ===== 动画 ===== */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .card {
+                animation: fadeIn 0.5s ease-out;
+            }
+
+            .card:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+            .card:nth-child(3) {
+                animation-delay: 0.2s;
+            }
+            .card:nth-child(4) {
+                animation-delay: 0.3s;
+            }
+            .card:nth-child(5) {
+                animation-delay: 0.4s;
+            }
+            .card:nth-child(6) {
+                animation-delay: 0.5s;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- 头部信息 -->
+            <header>
+                <div class="header-content">
+                    <div class="avatar">YK</div>
+                    <div class="header-info">
+                        <h1>俞可宁</h1>
+                        <p>🎯 求职意向：投资分析师 / 行业研究员 / 财务分析师</p>
+                        <div class="contact-row">
+                            <div class="contact-item">📞 +86 153-7201-1598</div>
+                            <div class="contact-item">
+                                ✉️ keningyu420@gmail.com
+                            </div>
+                            <div class="contact-item">🎓 约翰霍普金斯大学</div>
+                            <div class="contact-item">🌍 GRE 334</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 专业概要 -->
+            <section class="card">
+                <div class="card-title">
+                    <h2>📋 专业概要</h2>
+                </div>
+                <div class="summary">
+                    <p>
+                        金融硕士（GPA
+                        3.79/4.00，前10%），拥有3段一级市场投资与供应链金融相关实习经验。独立完成12份尽职调查报告，熟悉上市公司财务分析、估值建模及投后管理全流程。
+                    </p>
+                    <p>
+                        擅长利用Excel和Bloomberg进行财务建模与数据可视化，具备跨境沟通协作能力。毕业论文获Carey商学院年度TOP
+                        10。
+                    </p>
+                </div>
+                <div class="tags">
+                    <span class="tag">财务建模</span>
+                    <span class="tag">行业研究</span>
+                    <span class="tag">投资分析</span>
+                    <span class="tag">数据可视化</span>
+                    <span class="tag">尽职调查</span>
+                    <span class="tag">供应链管理</span>
+                </div>
+            </section>
+
+            <!-- 工作经历 -->
+            <section class="card">
+                <div class="card-title">
+                    <h2>💼 工作经历</h2>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div>
+                                <div class="timeline-role">投后部实习生</div>
+                                <div class="timeline-company">
+                                    中电海康 | 一级市场基金投资
+                                </div>
+                            </div>
+                            <div class="timeline-date">
+                                2023.07 – 2023.09 (2个月)
+                            </div>
+                        </div>
+                        <div class="timeline-content">
+                            <ul>
+                                <li>
+                                    独立研究<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >12家目标企业</span
+                                    >，完成12份尽职调查报告（覆盖科技制造、医疗、新能源赛道）
+                                </li>
+                                <li>
+                                    通过Bloomberg、Wind、行业研报及<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >10+场客户访谈</span
+                                    >收集数据，识别3个关键投资风险提示，报告被投决会采纳
+                                </li>
+                                <li>
+                                    组织<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >5场</span
+                                    >项目讨论会并输出纪要，跟踪已投企业季度运营数据，更新投后管理报告供投资决策参考
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div>
+                                <div class="timeline-role">
+                                    战略投资部实习生
+                                </div>
+                                <div class="timeline-company">
+                                    恒逸集团 | 企业战略投资
+                                </div>
+                            </div>
+                            <div class="timeline-date">
+                                2023.05 – 2023.07 (2个月)
+                            </div>
+                        </div>
+                        <div class="timeline-content">
+                            <ul>
+                                <li>
+                                    协助团队与银行及债券公司沟通，分析<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >5+家</span
+                                    >金融机构融资渠道与债务结构
+                                </li>
+                                <li>
+                                    整理并分析公司财务债务表，识别潜在风险点并提出<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >2项优化建议</span
+                                    >
+                                </li>
+                                <li>
+                                    参与内部投资评估会议，协助完成1份投资可行性报告，推动团队对项目决策
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div>
+                                <div class="timeline-role">
+                                    采购共享部实习生
+                                </div>
+                                <div class="timeline-company">
+                                    杭州恒逸工程有限公司 | 供应链金融
+                                </div>
+                            </div>
+                            <div class="timeline-date">
+                                2024.06 – 2024.08 (2个月)
+                            </div>
+                        </div>
+                        <div class="timeline-content">
+                            <ul>
+                                <li>
+                                    独立操作<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >2个采购包OA全流程</span
+                                    >（发布、竞价、合同敲定），优化竞价流程缩短决策周期
+                                </li>
+                                <li>
+                                    参与晶科能源和卧龙电机实地考察，撰写<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >2份</span
+                                    >智能制造与自动化技术考察报告
+                                </li>
+                                <li>
+                                    深入理解制造业采购端与金融工具衔接点，协助团队降低采购成本
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 教育背景 -->
+            <section class="card">
+                <div class="card-title">
+                    <h2>🎓 教育背景</h2>
+                </div>
+                <div class="edu-item">
+                    <div>
+                        <div class="edu-school">
+                            美国约翰霍普金斯大学 · Carey商学院
+                        </div>
+                        <div class="edu-major">金融学硕士 (MS Finance)</div>
+                        <div class="edu-honor">
+                            🏆 毕业论文获年度TOP 10 |
+                            核心课程：公司金融、投资组合管理、金融衍生工具、投资估值
+                        </div>
+                    </div>
+                    <div class="edu-date">2024.08 – 2025.08</div>
+                </div>
+                <div class="edu-item">
+                    <div>
+                        <div class="edu-school">
+                            南卡罗莱纳大学 · Darla Moore商学院
+                        </div>
+                        <div class="edu-major">
+                            金融学学士 (BS Finance) | 辅修：酒店管理
+                        </div>
+                        <div class="edu-honor">
+                            🎓 GPA: 3.79/4.00 (专业前10%) | Dean's List
+                        </div>
+                    </div>
+                    <div class="edu-date">2020.09 – 2024.05</div>
+                </div>
+            </section>
+
+            <!-- 校园项目 -->
+            <section class="card">
+                <div class="card-title">
+                    <h2>📊 校园项目</h2>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div>
+                                <div class="timeline-role">投资组合经理</div>
+                                <div class="timeline-company">
+                                    约翰霍普金斯大学 · 模拟盘交易项目
+                                </div>
+                            </div>
+                            <div class="timeline-date">2024.09 – 2024.12</div>
+                        </div>
+                        <div class="timeline-content">
+                            <ul>
+                                <li>
+                                    管理<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >$50,000虚拟资金</span
+                                    >，配置股票/债券/期权多元投资组合
+                                </li>
+                                <li>
+                                    运用Bloomberg终端跟踪宏观经济指标与企业财报，制定基于技术分析与基本面分析的交易策略
+                                </li>
+                                <li>
+                                    运用技术指标（MACD、RSI）与财报分析，完成<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >20+笔</span
+                                    >交易决策
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div>
+                                <div class="timeline-role">
+                                    股票交易分析项目负责人
+                                </div>
+                                <div class="timeline-company">
+                                    南卡罗莱纳大学 · 股票交易分析项目
+                                </div>
+                            </div>
+                            <div class="timeline-date">2023.03 – 2023.05</div>
+                        </div>
+                        <div class="timeline-content">
+                            <ul>
+                                <li>
+                                    基于南卡罗莱纳地区<span
+                                        style="
+                                            color: var(--secondary);
+                                            font-weight: 600;
+                                        "
+                                        >2家上市公司</span
+                                    >的月度数据，设计并执行投资回报与风险分析模型
+                                </li>
+                                <li>
+                                    绘制股票价格增长与波动趋势图，直观呈现市场表现
+                                </li>
+                                <li>
+                                    通过历史数据分析与市场趋势研究，预测未来6个月股票价格变化，为社团投资模拟比赛提供策略建议
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 专业技能 -->
+            <section class="card">
+                <div class="card-title">
+                    <h2>🔧 专业技能</h2>
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <div class="icon">📈</div>
+                        <h4>财务分析</h4>
+                        <p>
+                            Excel建模（DCF估值、三表联动）、Bloomberg、Wind、财务建模
+                        </p>
+                    </div>
+                    <div class="skill-card">
+                        <div class="icon">📊</div>
+                        <h4>数据可视化</h4>
+                        <p>PivotTable、动态图表、数据趋势分析、回归分析</p>
+                    </div>
+                    <div class="skill-card">
+                        <div class="icon">🌐</div>
+                        <h4>语言能力</h4>
+                        <p>
+                            英语（GRE
+                            334/170×2）、全英文工作环境、普通话（母语）
+                        </p>
+                    </div>
+                    <div class="skill-card">
+                        <div class="icon">💼</div>
+                        <h4>软技能</h4>
+                        <p>
+                            时间管理、团队协作、会议组织、投决会纪要、快速学习
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 行动按钮 -->
+            <div class="action-buttons">
+                <a href="mailto:keningyu420@gmail.com" class="btn btn-primary"
+                    >✉️ 发送邮件</a
+                >
+                <a href="tel:+8615372011598" class="btn btn-secondary"
+                    >📞 拨打电话咨询</a
+                >
+            </div>
         </div>
-    </header>
 
-    <div class="container">
-
-        <!-- 个人概述 -->
-        <section class="section">
-            <div class="section-title">个人概述</div>
-            <p class="summary-text">
-                南卡罗莱纳大学金融学士（GPA 3.79）与约翰霍普金斯大学金融硕士。具备扎实的财务分析、投资决策及市场研究能力。通过恒逸集团、中电海康等三段实习，系统掌握采购流程优化、一级市场基金投资及投后管理。擅长数据建模支持商业决策，精通 Excel 及英语（GRE 334）。
+        <footer>
+            <p>© 2024 俞可宁 | 简历更新于2024年 | 本页面支持移动端查看</p>
+            <p style="margin-top: 10px">
+                建议使用 Chrome/Safari 浏览器获得最佳体验
             </p>
-        </section>
+        </footer>
 
-        <!-- 核心优势 -->
-        <section class="section">
-            <div class="section-title">核心优势</div>
-            <div class="tags-container">
-                <div class="tag">量化分析能力</div>
-                <div class="tag">一级市场实战经验</div>
-                <div class="tag">供应链金融视角</div>
-                <div class="tag">国际化学术背景</div>
-            </div>
-        </section>
+        <script>
+            // 点击头像显示个人信息
+            document
+                .querySelector(".avatar")
+                .addEventListener("click", function () {
+                    alert(
+                        "俞可宁\n金融硕士 (约翰霍普金斯大学)\n求职意向：投资分析师/行业研究员/财务分析师\n联系方式：+86 153-7201-1598",
+                    );
+                });
 
-        <!-- 工作经历 -->
-        <section class="section">
-            <div class="section-title">工作经历</div>
-            
-            <div class="timeline-item">
-                <div class="timeline-header">
-                    <div class="company">杭州恒逸工程有限公司 | <span class="role">采购共享部实习生</span></div>
-                    <div class="date">2024.06 – 2024.08</div>
-                </div>
-                <div class="timeline-content">
-                    <ul>
-                        <li>独立操作采购包 OA 流程（发布、竞价、合同），熟练掌握业务操作，有效降低采购成本。</li>
-                        <li>参与晶科能源和卧龙电机实地考察，深入研究智能制造与自动化技术，撰写专业考察报告。</li>
-                        <li>快速掌握企业文化及产业链结构，融入团队支持项目执行。</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-header">
-                    <div class="company">恒逸集团 | <span class="role">战略投资部实习生</span></div>
-                    <div class="date">2023.05 – 2023.07</div>
-                </div>
-                <div class="timeline-content">
-                    <ul>
-                        <li>协助完成投资可行性报告，推动团队对某项目的投资决策，提升效率与准确性。</li>
-                        <li>整理分析财务债务表，识别潜在风险点并提出优化建议。</li>
-                        <li>与银行及债券公司沟通，深入了解融资渠道与债务结构。</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-header">
-                    <div class="company">中电海康 | <span class="role">投后部实习生</span></div>
-                    <div class="date">2023.07 – 2023.09</div>
-                </div>
-                <div class="timeline-content">
-                    <ul>
-                        <li>参与一级市场基金投资研究，分析目标企业财务报表与市场潜力。</li>
-                        <li>通过线上研报与线下访谈收集信息，完成尽职调查报告。</li>
-                        <li>组织投资项目讨论会，撰写会议纪要，梳理关键问题与行动计划。</li>
-                        <li>跟踪已投资企业运营状况，定期更新投后管理报告。</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- 项目经历 -->
-        <section class="section">
-            <div class="section-title">项目经历</div>
-            <div class="timeline-item">
-                <div class="timeline-header">
-                    <div class="role">中电海康科技项目 (路为科技/柔性传感器)</div>
-                    <div class="date">2023.08 – 2023.09</div>
-                </div>
-                <div class="timeline-content">
-                    <ul>
-                        <li>负责收集与整理路为科技及柔性传感器领域的研报、学术论文及行业新闻，构建市场信息数据库。</li>
-                        <li>参与线下客户访谈与行业会议，深入了解柔性传感器技术应用场景与市场接受度。</li>
-                        <li>协助完成市场调研报告，深入分析目标赛道的竞争格局与增长潜力。</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- 教育背景 -->
-        <section class="section">
-            <div class="section-title">教育背景</div>
-            
-            <div class="edu-item">
-                <div class="edu-info">
-                    <h4>美国约翰霍普金斯大学 (Carey 商学院)</h4>
-                    <p>金融 - 硕士 (GPA Top 10 论文)</p>
-                </div>
-                <div class="edu-date">2024.08 – 2025.08</div>
-            </div>
-
-            <div class="edu-item">
-                <div class="edu-info">
-                    <h4>南卡罗莱纳大学 (达拉摩尔商学院)</h4>
-                    <p>金融 - 本科 (辅修酒店管理) / GPA: 3.79</p>
-                </div>
-                <div class="edu-date">2020.09 – 2024.05</div>
-            </div>
-        </section>
-
-        <!-- 校园经历 -->
-        <section class="section">
-            <div class="section-title">校园经历</div>
-            <div class="timeline-item">
-                <div class="timeline-header">
-                    <div class="role">约翰霍普金斯大学 | 模拟盘交易项目</div>
-                    <div class="date">2024.09 – 2024.12</div>
-                </div>
-                <div class="timeline-content">
-                    <ul>
-                        <li>利用彭博终端跟踪宏观经济指标，制定基于技术与基本面的交易策略。</li>
-                        <li>设计多元化投资组合（股票、债券及衍生品），实现模拟收益。</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-header">
-                    <div class="role">南卡罗莱纳大学 | 股票交易分析项目</div>
-                    <div class="date">2023.03 – 2023.05</div>
-                </div>
-                <div class="timeline-content">
-                    <ul>
-                        <li>设计投资回报与风险分析模型，计算月度收益与损失。</li>
-                        <li>通过历史数据预测未来 6 个月价格变化，为模拟比赛提供策略建议。</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- 专业技能 -->
-        <section class="section">
-            <div class="section-title">专业技能</div>
-            <div class="skills-grid">
-                <div class="skill-box">
-                    <div class="skill-title">数据分析</div>
-                    <div>Excel (财务建模/可视化)</div>
-                </div>
-                <div class="skill-box">
-                    <div class="skill-title">语言能力</div>
-                    <div>英语 (GRE 334)</div>
-                </div>
-                <div class="skill-box">
-                    <div class="skill-title">办公/工具</div>
-                    <div>Office / Bloomberg / OA 系统</div>
-                </div>
-                <div class="skill-box">
-                    <div class="skill-title">软技能</div>
-                    <div>时间管理 / 团队协作</div>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <footer>
-        <p>感谢查阅</p>
-        <a href="mailto:keningyu420@gmail.com" class="cta-button">联系我</a>
-        <p style="margin-top: 20px;">© 2024 俞可宁 | H5 Resume</p>
-    </footer>
-
-    <script>
-        // 简单的平滑滚动效果
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    document
+                        .querySelector(this.getAttribute("href"))
+                        .scrollIntoView({
+                            behavior: "smooth",
+                        });
                 });
             });
-        });
 
-        // 头像点击切换颜色的小互动
-        const avatar = document.getElementById('avatar');
-        avatar.addEventListener('click', () => {
-            avatar.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                avatar.style.transform = 'scale(1)';
-            }, 200);
-        });
-    </script>
-</body>
+            // 页面加载动画
+            window.addEventListener("load", () => {
+                document.querySelectorAll(".card").forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.1}s`;
+                });
+            });
+
+            // 控制台打印信息
+            console.log(
+                "%c 俞可宁简历页面 ",
+                "color: #1a5f7a; font-size: 16px; font-weight: bold;",
+            );
+            console.log(
+                "%c 如有任何问题，请联系：keningyu420@gmail.com ",
+                "color: #636e72; font-size: 12px;",
+            );
+        </script>
+    </body>
 </html>
