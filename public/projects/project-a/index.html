@@ -1,493 +1,439 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>萧山锦上观澜 vs 得力壹号院 | 房产对比分析报告</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            background-color: #FFFFFF;
-        }
-        .card {
-            background-color: white;
-            border: 1px solid #E5E7EB;
-            border-radius: 1.25rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden;
-            position: relative;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
-        }
-        .highlight-gradient-blue {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0), rgba(59, 130, 246, 0.05));
-        }
-        .highlight-gradient-purple {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0), rgba(139, 92, 246, 0.05));
-        }
-        .highlight-gradient-teal {
-            background: linear-gradient(135deg, rgba(20, 184, 166, 0), rgba(20, 184, 166, 0.05));
-        }
-        .highlight-gradient-orange {
-            background: linear-gradient(135deg, rgba(249, 115, 22, 0), rgba(249, 115, 22, 0.05));
-        }
-        .highlight-gradient-red {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0), rgba(239, 68, 68, 0.05));
-        }
-        .highlight-gradient-green {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0), rgba(34, 197, 94, 0.05));
-        }
-        .table-wrapper {
-            overflow-x: auto;
-        }
-        .chart-container {
-            position: relative;
-            height: 100%;
-            width: 100%;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>装柜计算器（单用户版）</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fa;
+    --surface2: #e9ecef;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.15);
+    --accent: #20c997;
+    --accent2: #495057;
+    --text: #212529;
+    --muted: #6c757d;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Noto Sans SC', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  /* 网格背景（浅色版） */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.01) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.01) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 头部样式 */
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-block { display: flex; flex-direction: column; gap: 4px; }
+
+  .logo-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* 区块样式 */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(32,201,151,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(32,201,151,0.2);
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* 表单字段 */
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  .field label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .field input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 12px;
+    height: 42px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--text);
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(32,201,151,0.1);
+  }
+
+  .field input[readonly] {
+    color: var(--accent);
+    cursor: default;
+    opacity: 0.9;
+    background: rgba(32,201,151,0.05);
+  }
+
+  /* 分隔线 */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.25rem 0;
+  }
+
+  /* 结果展示 */
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .metric {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  .metric-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .metric-value {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .metric-unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 3px;
+  }
+
+  .metric-note {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+
+  /* 按钮样式 */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button.primary { background: var(--accent); color: white; border-color: var(--accent); font-weight: 600; }
+  button.primary:hover { background: #19a780; color: white; }
+
+  /* 页脚 */
+  footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* 打印样式 */
+  @media print {
+    body { background: #fff; color: #111; padding: 1rem; }
+    body::before { display: none; }
+    .btn-row, footer { display: none; }
+    .section { border: 1px solid #ddd; background: #fafafa; }
+    .metric { background: #f5f5f5; border: 1px solid #ddd; }
+    .metric-value { color: #111; }
+    .section-badge { background: #e8f9f1; color: #1a7a50; border-color: #b0e8d0; }
+    .field input { background: #f0f0f0; color: #111; border-color: #ccc; }
+    h1 em { color: #1a7a50; }
+    .logo-label { color: #1a7a50; }
+    .metric-note { color: #1a7a50; }
+  }
+
+  /* 移动端适配 */
+  @media (max-width: 540px) {
+    .result-grid { grid-template-columns: 1fr 1fr; }
+    header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .header-meta { text-align: left; }
+  }
+</style>
 </head>
-<body class="bg-white">
-    <div class="max-w-7xl mx-auto p-4 md:p-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
-            <!-- 标题卡片 -->
-            <div class="card md:col-span-4 p-8 flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"></div>
-                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2 z-10">萧山房产对比分析报告</h1>
-                <p class="text-xl text-gray-500 z-10">锦上观澜 <span class="text-blue-500">VS</span> 得力壹号院</p>
-                <div class="mt-6 flex space-x-4 text-sm text-gray-400 z-10">
-                    <span><i class="fa-solid fa-calendar-alt mr-1"></i> 2026年3月</span>
-                    <span><i class="fa-solid fa-chart-line mr-1"></i> 多维度分析</span>
-                    <span><i class="fa-solid fa-user-check mr-1"></i> 购房决策支持</span>
-                </div>
-            </div>
-
-            <!-- 项目基本信息卡片 -->
-            <div class="card md:col-span-2 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-building-circle-info text-2xl text-purple-500 mr-3"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">项目基本信息</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow z-10">
-                    <div class="bg-purple-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-purple-800 mb-2">锦上观澜</h3>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-map-marker-alt w-4 mr-1"></i> 建设一路与宁税路交叉口</p>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-home w-4 mr-1"></i> 住宅 | 70年产权</p>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-ruler-combined w-4 mr-1"></i> 171㎡ | 700万</p>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-money-bill-wave w-4 mr-1"></i> 单价 4.09万/㎡</p>
-                        <p class="text-sm text-gray-600"><i class="fa-solid fa-calendar-check w-4 mr-1"></i> 2028年3月交付</p>
-                    </div>
-                    <div class="bg-purple-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-purple-800 mb-2">得力壹号院</h3>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-map-marker-alt w-4 mr-1"></i> 晨晖路1722号</p>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-building w-4 mr-1"></i> 商业 | 40年产权</p>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-ruler-combined w-4 mr-1"></i> 280㎡ | 500万</p>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fa-solid fa-money-bill-wave w-4 mr-1"></i> 单价 1.79万/㎡</p>
-                        <p class="text-sm text-gray-600"><i class="fa-solid fa-calendar-check w-4 mr-1"></i> 现房</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 价格对比卡片 -->
-            <div class="card md:col-span-2 p-6 flex flex-col justify-center items-center">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-orange"></div>
-                <div class="text-center z-10">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">价格对比</h2>
-                    <div class="flex justify-around items-end w-full">
-                        <div class="text-center">
-                            <div class="text-sm text-gray-500 mb-1">锦上观澜</div>
-                            <div class="text-4xl font-bold text-orange-500">4.09<span class="text-xl ml-1">万/㎡</span></div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-sm text-gray-500 mb-1">得力壹号院</div>
-                            <div class="text-4xl font-bold text-orange-500">1.79<span class="text-xl ml-1">万/㎡</span></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 text-center">
-                        <p class="text-gray-600">得力壹号院单价仅为锦上观澜的<span class="font-bold text-orange-500">44%</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 年度居住成本对比卡片 -->
-            <div class="card md:col-span-2 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-teal"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-calculator text-2xl text-teal-500 mr-3"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">年度居住成本</h2>
-                </div>
-                <div class="chart-container z-10 flex-grow">
-                    <canvas id="costChart"></canvas>
-                </div>
-            </div>
-
-            <!-- 产权与教育对比卡片 -->
-            <div class="card md:col-span-2 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-red"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-id-card-alt text-2xl text-red-500 mr-3"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">产权与教育</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow z-10">
-                    <div>
-                        <h3 class="font-bold text-gray-700 mb-3">产权年限</h3>
-                        <div class="flex items-center mb-2">
-                            <div class="w-2/5 text-sm text-gray-600">锦上观澜</div>
-                            <div class="w-3/5 flex items-center">
-                                <div class="bg-red-100 h-4 rounded-full flex-1 mr-2">
-                                    <div class="bg-red-500 h-4 rounded-full" style="width: 100%"></div>
-                                </div>
-                                <span class="text-sm font-bold text-red-600">70年</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-2/5 text-sm text-gray-600">得力壹号院</div>
-                            <div class="w-3/5 flex items-center">
-                                <div class="bg-red-100 h-4 rounded-full flex-1 mr-2">
-                                    <div class="bg-red-400 h-4 rounded-full" style="width: 57%"></div>
-                                </div>
-                                <span class="text-sm font-bold text-red-600">40年</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-700 mb-3">教育资源</h3>
-                        <div class="bg-red-50 p-3 rounded-lg mb-2">
-                            <div class="flex items-center">
-                                <i class="fa-solid fa-check-circle text-green-500 mr-2"></i>
-                                <span class="text-sm font-medium text-gray-700">锦上观澜</span>
-                            </div>
-                            <p class="text-xs text-gray-600 ml-6">可落户，子女可按"一表生"资格就近入学</p>
-                        </div>
-                        <div class="bg-red-50 p-3 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fa-solid fa-times-circle text-red-500 mr-2"></i>
-                                <span class="text-sm font-medium text-gray-700">得力壹号院</span>
-                            </div>
-                            <p class="text-xs text-gray-600 ml-6">不能落户，不能作为学区房，子女入学受限</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 交通便利性卡片 -->
-            <div class="card md:col-span-1 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-blue"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-subway text-2xl text-blue-500 mr-3"></i>
-                    <h2 class="text-xl font-bold text-gray-800">交通便利性</h2>
-                </div>
-                <div class="space-y-4 flex-grow z-10">
-                    <div class="bg-blue-50 p-3 rounded-lg">
-                        <h3 class="font-bold text-blue-800 mb-1">锦上观澜</h3>
-                        <p class="text-sm text-gray-600 mb-1">地铁2号线建设一路站</p>
-                        <p class="text-lg font-bold text-blue-600">750米</p>
-                        <p class="text-xs text-gray-500">步行约10分钟</p>
-                    </div>
-                    <div class="bg-blue-50 p-3 rounded-lg">
-                        <h3 class="font-bold text-blue-800 mb-1">得力壹号院</h3>
-                        <p class="text-sm text-gray-600 mb-1">地铁2号线曹家桥站</p>
-                        <p class="text-lg font-bold text-blue-600">900米</p>
-                        <p class="text-xs text-gray-500">步行约12分钟</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 开发商实力卡片 -->
-            <div class="card md:col-span-1 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-green"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-industry text-2xl text-green-500 mr-3"></i>
-                    <h2 class="text-xl font-bold text-gray-800">开发商实力</h2>
-                </div>
-                <div class="space-y-4 flex-grow z-10">
-                    <div class="bg-green-50 p-3 rounded-lg">
-                        <h3 class="font-bold text-green-800 mb-1">锦上观澜</h3>
-                        <p class="text-sm text-gray-600 mb-1">滨江集团等三大本土房企</p>
-                        <div class="flex space-x-1">
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                        </div>
-                        <p class="text-xs text-gray-500">国家一级资质物业</p>
-                    </div>
-                    <div class="bg-green-50 p-3 rounded-lg">
-                        <h3 class="font-bold text-green-800 mb-1">得力壹号院</h3>
-                        <p class="text-sm text-gray-600 mb-1">浙江得力房地产</p>
-                        <div class="flex space-x-1">
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                            <i class="fa-solid fa-star text-yellow-400"></i>
-                            <i class="fa-regular fa-star text-yellow-400"></i>
-                            <i class="fa-regular fa-star text-yellow-400"></i>
-                        </div>
-                        <p class="text-xs text-gray-500">物业信息未明确</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 贷款与转让税费卡片 -->
-            <div class="card md:col-span-2 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-purple"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-file-invoice-dollar text-2xl text-purple-500 mr-3"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">贷款与转让税费</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow z-10">
-                    <div>
-                        <h3 class="font-bold text-gray-700 mb-3">贷款政策</h3>
-                        <div class="table-wrapper">
-                            <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                                <thead class="bg-purple-100">
-                                    <tr>
-                                        <th class="py-2 px-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">项目</th>
-                                        <th class="py-2 px-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">首付比例</th>
-                                        <th class="py-2 px-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">贷款年限</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="py-2 px-3 text-sm text-gray-900">锦上观澜</td>
-                                        <td class="py-2 px-3 text-sm text-gray-900">20%-30%</td>
-                                        <td class="py-2 px-3 text-sm text-gray-900">最长30年</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 px-3 text-sm text-gray-900">得力壹号院</td>
-                                        <td class="py-2 px-3 text-sm text-gray-900">最低30%</td>
-                                        <td class="py-2 px-3 text-sm text-gray-900">最长10-15年</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-700 mb-3">转让税费</h3>
-                        <div class="table-wrapper">
-                            <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                                <thead class="bg-purple-100">
-                                    <tr>
-                                        <th class="py-2 px-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">项目</th>
-                                        <th class="py-2 px-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">综合税费</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="py-2 px-3 text-sm text-gray-900">锦上观澜</td>
-                                        <td class="py-2 px-3 text-sm text-gray-900">约1%-3%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 px-3 text-sm text-gray-900">得力壹号院</td>
-                                        <td class="py-2 px-3 text-sm text-red-600 font-medium">约15%-20%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 20年总成本对比卡片 -->
-            <div class="card md:col-span-2 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-orange"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-chart-pie text-2xl text-orange-500 mr-3"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">20年总成本对比</h2>
-                </div>
-                <div class="chart-container z-10 flex-grow">
-                    <canvas id="totalCostChart"></canvas>
-                </div>
-            </div>
-
-            <!-- 综合建议卡片 -->
-            <div class="card md:col-span-2 p-6 flex flex-col">
-                <div class="absolute top-0 left-0 w-full h-full highlight-gradient-green"></div>
-                <div class="flex items-center mb-4 z-10">
-                    <i class="fa-solid fa-lightbulb text-2xl text-green-500 mr-3"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">综合建议</h2>
-                </div>
-                <div class="flex-grow z-10">
-                    <div class="bg-green-50 p-4 rounded-lg mb-4">
-                        <h3 class="font-bold text-green-800 mb-2">推荐选择：锦上观澜</h3>
-                        <ul class="space-y-2 text-sm text-gray-700">
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                <span>居住成本低：每年节省1.1万元，20年节省22.97万元</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                <span>教育保障：可解决子女入学问题，这是无价的</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                <span>产权无忧：70年产权自动续期，无后顾之忧</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                <span>品质保证：滨江品牌，品质有保障</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
-                                <span>位置优越：地铁口，配套完善，升值潜力大</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-red-800 mb-2">选择得力壹号院需接受</h3>
-                        <ul class="space-y-2 text-sm text-gray-700">
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>
-                                <span>每年多支出1.1万元居住成本</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>
-                                <span>无法落户，子女无法就近入学</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>
-                                <span>40年后面临高额续期费用</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa-solid fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>
-                                <span>未来出售困难，税费高昂</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+<body>
+<div class="page">
+  <!-- 头部 -->
+  <header>
+    <div class="logo-block">
+      <span class="logo-label">Container Load Calculator</span>
+      <h1>装柜<em>计算器</em></h1>
     </div>
-</body>
-<script>
-    // 年度居住成本对比图表
-    const costCtx = document.getElementById('costChart').getContext('2d');
-    const costChart = new Chart(costCtx, {
-        type: 'bar',
-        data: {
-            labels: ['物业费', '电费', '水费', '燃气费', '年度总成本'],
-            datasets: [
-                {
-                    label: '锦上观澜',
-                    data: [8695.2, 1734.72, 417.6, 558, 11305.52],
-                    backgroundColor: 'rgba(20, 184, 166, 0.6)',
-                    borderColor: 'rgba(20, 184, 166, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: '得力壹号院',
-                    data: [16464, 4680, 718.8, 930, 22792.8],
-                    backgroundColor: 'rgba(249, 115, 22, 0.6)',
-                    borderColor: 'rgba(249, 115, 22, 1)',
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '¥' + value.toLocaleString();
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: '年度居住成本对比 (元)'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(context.parsed.y);
-                            }
-                            return label;
-                        }
-                    }
-                }
-            }
-        }
-    });
+    <div class="header-meta">
+      <span id="dateStr"></span><br>
+      PET Resin · CIF Shipment Tool
+    </div>
+  </header>
 
-    // 20年总成本对比图表
-    const totalCostCtx = document.getElementById('totalCostChart').getContext('2d');
-    const totalCostChart = new Chart(totalCostCtx, {
-        type: 'bar',
-        data: {
-            labels: ['锦上观澜', '得力壹号院'],
-            datasets: [
-                {
-                    label: '20年总成本 (万元)',
-                    data: [50, 98],
-                    backgroundColor: [
-                        'rgba(20, 184, 166, 0.6)',
-                        'rgba(249, 115, 22, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(20, 184, 166, 1)',
-                        'rgba(249, 115, 22, 1)'
-                    ],
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value + ' 万';
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: '20年总居住成本对比'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.x !== null) {
-                                label += context.parsed.x + ' 万元';
-                            }
-                            return label;
-                        }
-                    }
-                }
-            }
-        }
-    });
+  <!-- 基础参数区块 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge">基础参数</span>
+      <span class="section-title">每柜装载配置</span>
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label>每柜包数 (Bags/CTN)</label>
+        <input type="number" id="packs" value="20" min="1" step="1">
+      </div>
+      <div class="field">
+        <label>每包重量 MT (Wt/Bag)</label>
+        <input type="number" id="weight" value="1.15" step="0.01" min="0.01">
+      </div>
+      <div class="field">
+        <label>每柜载重 MT (Load/CTN)</label>
+        <input type="number" id="perCont" readonly>
+      </div>
+    </div>
+  </div>
+
+  <!-- 客户需求区块 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge blue">客户需求</span>
+      <span class="section-title">Customer Requirement</span>
+    </div>
+    <div class="field-grid" style="margin-bottom:1.25rem;">
+      <div class="field">
+        <label>客户名称 Customer</label>
+        <input type="text" id="customerName" value="SMI（秘鲁）" placeholder="输入客户名称">
+      </div>
+      <div class="field">
+        <label>目标货量 MT Target</label>
+        <input type="number" id="targetQty" value="1760" min="0" step="0.01">
+      </div>
+    </div>
+    <hr class="divider">
+    <!-- 计算结果展示 -->
+    <div class="result-grid">
+      <div class="metric">
+        <div class="metric-label">所需柜数 CTN</div>
+        <div class="metric-value" id="needContainers">0<span class="metric-unit">柜</span></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">实际装载 Actual MT</div>
+        <div class="metric-value" id="actualLoad">0<span class="metric-unit">MT</span></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">超出目标 Surplus</div>
+        <div class="metric-value" id="surplusQty">0<span class="metric-unit">MT</span></div>
+        <div class="metric-note" id="surplusRate"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 按钮区域 -->
+  <div class="btn-row">
+    <button class="primary" onclick="window.print()">🖨 打印 / Print</button>
+    <button onclick="resetCalculator()">重置 Reset</button>
+  </div>
+
+  <!-- 页脚 -->
+  <footer>
+    <span class="footer-text">CONTAINER LOAD CALCULATOR · PET RESIN</span>
+    <span class="footer-text" id="footerDate"></span>
+  </footer>
+</div>
+
+<script>
+// 初始化日期显示
+const now = new Date();
+const dateStr = now.toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric' });
+document.getElementById('dateStr').textContent = dateStr;
+document.getElementById('footerDate').textContent = now.toISOString().slice(0,10);
+
+// 获取基础参数并计算每柜载重
+function getBaseParams() {
+  const packs = parseFloat(document.getElementById('packs').value) || 0;
+  const weight = parseFloat(document.getElementById('weight').value) || 0;
+  const perCont = parseFloat((packs * weight).toFixed(6));
+  document.getElementById('perCont').value = perCont.toFixed(3);
+  return perCont;
+}
+
+// 核心计算逻辑
+function calculate() {
+  // 获取基础参数
+  const perCont = getBaseParams();
+  // 获取客户目标货量
+  const targetQty = parseFloat(document.getElementById('targetQty').value) || 0;
+  
+  // 计算核心数据（向上取整保证装满所有柜）
+  const needContainers = perCont > 0 ? Math.ceil(targetQty / perCont) : 0;
+  const actualLoad = parseFloat((needContainers * perCont).toFixed(3));
+  const surplusQty = parseFloat((actualLoad - targetQty).toFixed(3));
+  const surplusRate = targetQty > 0 ? ((surplusQty / targetQty) * 100).toFixed(1) : 0;
+
+  // 更新页面显示
+  document.getElementById('needContainers').textContent = needContainers;
+  document.getElementById('actualLoad').textContent = actualLoad.toLocaleString('zh-CN');
+  document.getElementById('surplusQty').textContent = surplusQty.toFixed(2);
+  
+  // 显示超出比例（仅当超出时）
+  const surplusRateEl = document.getElementById('surplusRate');
+  if (surplusQty > 0) {
+    surplusRateEl.textContent = `+${surplusRate}%`;
+    surplusRateEl.style.display = 'block';
+  } else {
+    surplusRateEl.textContent = '';
+    surplusRateEl.style.display = 'none';
+  }
+}
+
+// 重置计算器
+function resetCalculator() {
+  // 重置基础参数
+  document.getElementById('packs').value = 20;
+  document.getElementById('weight').value = 1.15;
+  // 重置客户信息
+  document.getElementById('customerName').value = 'SMI（秘鲁）';
+  document.getElementById('targetQty').value = 1760;
+  // 重新计算
+  calculate();
+}
+
+// 绑定输入事件（实时计算）
+document.getElementById('packs').addEventListener('input', calculate);
+document.getElementById('weight').addEventListener('input', calculate);
+document.getElementById('targetQty').addEventListener('input', calculate);
+document.getElementById('customerName').addEventListener('input', calculate);
+
+// 页面初始化
+calculate();
 </script>
+</body>
 </html>
