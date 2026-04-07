@@ -18,7 +18,7 @@ export default function PreviewPane({ project, onClose, onOpenNew }) {
       />
 
       {/* Panel — full screen on mobile, side panel on md+ */}
-      <div className="fixed z-50 inset-0 md:inset-y-0 md:right-0 md:left-auto md:w-[65vw] lg:w-[58vw] xl:w-[52vw] flex flex-col bg-gradient-to-b from-white via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 md:border-l border-gray-200/80 dark:border-gray-800/80 shadow-2xl animate-in slide-in-from-right duration-300">
+      <div className="fixed z-50 inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[95vw] md:w-[65vw] lg:w-[58vw] xl:w-[52vw] flex flex-col bg-gradient-to-b from-white via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 sm:border-l border-gray-200/80 dark:border-gray-800/80 shadow-2xl animate-in slide-in-from-right duration-300">
         
         {/* Toolbar */}
         <div className="flex items-center gap-3 px-5 h-16 border-b border-gray-200/80 dark:border-gray-800/80 shrink-0 bg-gradient-to-r from-white/95 via-white/90 to-white/95 dark:from-gray-950/95 dark:via-gray-950/90 dark:to-gray-950/90 backdrop-blur-xl">

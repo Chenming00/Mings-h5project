@@ -80,7 +80,7 @@ export default function App() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0 md:pl-60">
+        <div className="flex-1 flex flex-col min-w-0 md:pl-72">
         <Header
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}

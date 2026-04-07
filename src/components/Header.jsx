@@ -22,7 +22,7 @@ export default function Header({ searchQuery, setSearchQuery, isDark, toggleDark
 
       {/* Search */}
       <div className="flex-1 flex justify-center">
-        <div className="relative w-full max-w-md group">
+        <div className="relative w-full max-w-xs sm:max-w-md group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none transition-colors group-focus-within:text-indigo-500" size={18} />
           <input
             type="text"

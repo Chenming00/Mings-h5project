@@ -22,11 +22,11 @@ export default function ProjectListRow({ project, onClick, onOpenNew }) {
       </div>
 
       {/* Tags */}
-      <div className="hidden sm:flex items-center gap-2 shrink-0">
+      <div className="hidden sm:flex items-center gap-2 shrink-0 max-w-[120px] overflow-hidden">
         {project.tags?.map((tag, i) => (
           <span
             key={i}
-            className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-gray-600 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50"
+            className="flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-full bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-gray-600 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50 truncate"
           >
             <Hash size={10} className="text-indigo-400" />
             {tag}

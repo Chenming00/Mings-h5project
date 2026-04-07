@@ -53,11 +53,11 @@ export default function ProjectCard({ project, onClick, onOpenNew }) {
           {project.name}
         </h3>
         {project.tags?.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-auto">
+          <div className="flex flex-wrap gap-1.5 mt-auto max-w-full">
             {project.tags.map((tag, i) => (
               <span
                 key={i}
-                className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-gray-600 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50 hover:border-indigo-300 dark:hover:border-indigo-600 transition-colors"
+                className="text-[11px] font-semibold px-2 py-1 rounded-full bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-gray-600 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50 hover:border-indigo-300 dark:hover:border-indigo-600 transition-colors truncate max-w-full"
               >
                 #{tag}
               </span>
