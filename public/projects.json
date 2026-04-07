@@ -1,6 +1,6 @@
 [
   {
-    "name": "萧山锦上观澜 vs 得力壹号院 | 房产对比分析报告",
+    "name": "装柜计算器（单用户版）",
     "path": "/projects/project-a/index.html",
     "tags": [
       "project"
@@ -14,8 +14,15 @@
     ]
   },
   {
-    "name": "杭州萧山房产深度对比：锦上观澜 vs 得力壹号院",
+    "name": "俞可宁 - 求职简历",
     "path": "/projects/project-c/index.htm",
+    "tags": [
+      "project"
+    ]
+  },
+  {
+    "name": "报价模板系统",
+    "path": "/projects/project-d/index.html",
     "tags": [
       "project"
     ]
