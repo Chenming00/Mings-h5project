@@ -40,12 +40,19 @@
   <script>
     async function getRate() {
       try {
-        const res = await fetch("https://currency.owo.nz/api/latest/USD");
+        // 因为 api 本身没有配置跨域 (CORS) 头，浏览器会拦截，所以这里加了一个跨域代理
+        const url = "https://currency.owo.nz/api/latest/USD";
+        const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+        
+        const res = await fetch(proxyUrl);
         const json = await res.json();
-        return parseFloat(json.data.boc_conversion_rate) / 100;
+        
+        // allorigins 返回的真实数据在 contents 字段里
+        const realData = JSON.parse(json.contents);
+        return parseFloat(realData.data.boc_conversion_rate) / 100;
       } catch (e) {
         console.error(e);
-        alert("汇率获取失败，使用默认7.2");
+        alert("汇率获取失败，使用默认7.2\n你可以按 F12 查看控制台报错");
         return 7.2;
       }
     }
