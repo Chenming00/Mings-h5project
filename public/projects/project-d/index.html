@@ -40,9 +40,9 @@
   <script>
     async function getRate() {
       try {
-        const res = await fetch("https://currency.owo.nz/rate?from=USD&to=CNY");
-        const data = await res.json();
-        return data.rate;
+        const res = await fetch("https://currency.owo.nz/api/latest/USD");
+        const json = await res.json();
+        return parseFloat(json.data.boc_conversion_rate) / 100;
       } catch (e) {
         console.error(e);
         alert("汇率获取失败，使用默认7.2");
