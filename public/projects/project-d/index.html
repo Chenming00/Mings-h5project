@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="light" data-lang="zh">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -14,11 +14,15 @@
   <script>
     (() => {
       let theme = 'light';
+      let language = 'zh';
       try {
         theme = localStorage.getItem('ming-resume-theme') ||
           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        language = localStorage.getItem('ming-resume-language') || 'zh';
       } catch (_) {}
       document.documentElement.dataset.theme = theme;
+      document.documentElement.dataset.lang = language;
+      document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en';
     })();
   </script>
   <style>
@@ -110,7 +114,7 @@
       transition: border-color .2s, background-color .2s;
     }
     .site-header.scrolled { border-color: var(--line); }
-    .nav { display: flex; align-items: center; justify-content: space-between; gap: 22px; min-height: 66px; }
+    .nav { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 22px; min-height: 66px; }
     .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 800; letter-spacing: .02em; }
     .brand-mark {
       display: grid; place-items: center; width: 31px; height: 31px; color: var(--inverse-ink);
@@ -133,7 +137,17 @@
       border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer;
       transition: color .2s, background .2s, border-color .2s;
     }
-    .theme-toggle:hover, .menu-toggle:hover { color: var(--inverse-ink); border-color: var(--inverse-bg); background: var(--inverse-bg); }
+    .theme-toggle:hover, .language-toggle:hover, .menu-toggle:hover { color: var(--inverse-ink); border-color: var(--inverse-bg); background: var(--inverse-bg); }
+    .language-toggle {
+      display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 57px; height: 40px;
+      padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent;
+      font-family: var(--mono); font-size: 9px; font-weight: 700; cursor: pointer;
+      transition: color .2s, background .2s, border-color .2s;
+    }
+    .language-toggle i { color: var(--faint); font-style: normal; }
+    .language-toggle .en { color: var(--muted); }
+    :root[data-lang="en"] .language-toggle .zh { color: var(--muted); }
+    :root[data-lang="en"] .language-toggle .en { color: var(--ink); }
     .theme-icon { width: 16px; height: 16px; }
     .theme-icon .sun { display: none; }
     .theme-icon .moon { display: block; }
@@ -350,7 +364,7 @@
       .section { padding: 88px 0; }
       .nav { min-height: 61px; }
       .nav-links {
-        position: absolute; top: 68px; right: 15px; left: 15px; display: none; flex-direction: column; align-items: stretch; gap: 0;
+        position: absolute; top: calc(100% + 8px); right: 15px; left: 15px; display: none; flex-direction: column; align-items: stretch; gap: 0;
         padding: 8px 18px; border: 1px solid var(--line); background: var(--bg); box-shadow: var(--shadow);
       }
       .nav-links.open { display: flex; }
@@ -413,6 +427,65 @@
       .footer-links { flex-wrap: wrap; }
     }
 
+    /* Mobile H5 refinements */
+    @media (max-width: 720px) {
+      html { scroll-padding-top: 82px; }
+      body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+      .site-header { top: calc(2px + env(safe-area-inset-top)); }
+      .nav { min-height: 58px; }
+      .nav-actions { flex-shrink: 0; gap: 7px; }
+      .brand { min-width: 0; gap: 9px; }
+      .brand-mark { width: 29px; height: 29px; flex: 0 0 auto; }
+      .theme-toggle, .language-toggle, .menu-toggle { flex: 0 0 auto; }
+      .theme-toggle, .menu-toggle { width: 38px; height: 38px; }
+      .language-toggle { min-width: 52px; height: 38px; padding: 0 8px; }
+      .nav-links { padding-right: 16px; padding-left: 16px; }
+      .button { min-height: 44px; }
+      .hero { padding-top: calc(111px + env(safe-area-inset-top)); }
+      .hero-topline { font-size: 7px; }
+      .hero h1 { max-width: 100%; font-size: clamp(52px, 15.5vw, 76px); overflow-wrap: anywhere; }
+      :root[data-lang="en"] .hero h1 { font-size: clamp(43px, 13.7vw, 68px); letter-spacing: -.06em; }
+      .hero-lede { line-height: 1.76; overflow-wrap: anywhere; }
+      .hero-stats { overflow: hidden; }
+      .hero-stat { min-width: 0; }
+      .hero-stat span { line-height: 1.35; }
+      .profile-info strong { overflow-wrap: anywhere; }
+      .section-head h2, .statement-copy, .principle h3, .job-title h3, .project-content h3, .contact-main h2 { overflow-wrap: anywhere; }
+      .job-title .current { display: inline-flex; margin-top: 7px; margin-left: 0; }
+      .job .tags { gap: 5px; }
+      .job .tags span, .tags span { line-height: 1.25; }
+      .tool-group .tags span { max-width: 100%; overflow-wrap: anywhere; }
+      .project-actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+      .project-actions .button { width: 100%; padding-right: 10px; padding-left: 10px; }
+      .contact-side a { min-height: 48px; }
+      footer { padding-bottom: calc(34px + env(safe-area-inset-bottom)); }
+    }
+
+    @media (max-width: 370px) {
+      .shell { width: min(calc(100% - 24px), var(--max)); }
+      .brand { gap: 7px; font-size: 12px; }
+      .brand small { display: none; }
+      .nav-actions { gap: 5px; }
+      .language-toggle { min-width: 48px; padding: 0 6px; }
+      .theme-toggle, .menu-toggle { width: 36px; height: 36px; }
+      .hero h1 { font-size: 51px; }
+      .hero-lede { font-size: 13px; }
+      .hero-stat { padding-right: 7px; }
+      .hero-stat + .hero-stat { padding-left: 7px; }
+      .hero-stat strong { font-size: 21px; }
+      .profile-card { min-height: 450px; }
+      .monogram-wrap { min-height: 205px; }
+      .job { grid-template-columns: 56px 1fr; gap: 14px; }
+      .job-title h3 { font-size: 20px; }
+      .project-content { min-height: 445px; padding-right: 18px; padding-left: 18px; }
+      .project-actions { grid-template-columns: 1fr; }
+      .contact-main { padding-right: 17px; padding-left: 17px; }
+    }
+
+    @media (hover: none) {
+      .button:hover, .project:hover { transform: none; }
+    }
+
     @media print {
       @page { size: A4; margin: 13mm; }
       :root, :root[data-theme="dark"] { --bg: #fff; --surface: #fff; --surface-2: #f4f4f4; --ink: #111; --ink-soft: #333; --muted: #666; --line: #ddd; --inverse-bg: #111; --inverse-ink: #fff; color-scheme: light; }
@@ -459,6 +532,7 @@
         <a href="#education">Education</a>
       </nav>
       <div class="nav-actions">
+        <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch to English" title="切换中英文" aria-pressed="false"><span class="zh">中</span><i>/</i><span class="en">EN</span></button>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换为深色模式" title="切换黑白主题">
           <svg class="theme-icon" viewBox="0 0 20 20" aria-hidden="true">
             <path class="moon" d="M15.7 12.4A6.3 6.3 0 0 1 7.6 4.3a6.3 6.3 0 1 0 8.1 8.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
@@ -706,16 +780,217 @@
       const menuToggle = $('menuToggle');
       const toast = $('toast');
       const themeColor = document.querySelector('meta[name="theme-color"]');
+      const languageToggle = $('languageToggle');
+      const metaDescription = document.querySelector('meta[name="description"]');
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      const ogDescription = document.querySelector('meta[property="og:description"]');
+
+      const textCopy = {
+        '跳到主要内容': ['跳到主要内容', 'Skip to content'],
+        'MARKET / PRODUCT / STORY': ['市场 / 产品 / 叙事', 'MARKET / PRODUCT / STORY'],
+        'About': ['关于', 'About'],
+        'Experience': ['经历', 'Experience'],
+        'Projects': ['项目', 'Projects'],
+        'Education': ['学历', 'Education'],
+        '下载名片 ↓': ['下载名片 ↓', 'Download vCard ↓'],
+        'Personal resume / 2026': ['个人简历 / 2026', 'Personal resume / 2026'],
+        'PX markets · Digital products · Communication': ['PX 市场 · 数字产品 · 策略传播', 'PX markets · Digital products · Communication'],
+        'Ming Chen / Profile': ['Ming Chen / 个人简介', 'Ming Chen / Profile'],
+        '读懂市场，': ['读懂市场，', 'Read markets,'],
+        '做出': ['做出', 'build'],
+        '产品。': ['产品。', 'products.'],
+        '我在': ['我在', 'I work across'],
+        '商品市场与数字产品之间工作': ['商品市场与数字产品之间工作', 'commodity markets and digital products'],
+        '：研究 PX 供需、库存和价格，也把自己的 Yudan 系列作为个人项目，把家庭生活中的真实问题做成好用的 Web 工具。管理、金融与传播背景，让我既能看数据，也能讲清故事。': ['：研究 PX 供需、库存和价格，也把自己的 Yudan 系列作为个人项目，把家庭生活中的真实问题做成好用的 Web 工具。管理、金融与传播背景，让我既能看数据，也能讲清故事。', ', researching PX supply and demand, inventory and pricing. I also build Yudan as a personal project, turning real family needs into useful web tools. My background in management, finance and communication helps me read data and explain it clearly.'],
+        '查看项目 ↓': ['查看项目 ↓', 'View projects ↓'],
+        '联系我 ↗': ['联系我 ↗', 'Contact me ↗'],
+        'OPEN TO CONNECT': ['开放交流', 'OPEN TO CONNECT'],
+        'Current role': ['当前职位', 'Current role'],
+        'PX Research Analyst': ['PX 市场研究分析师', 'PX Research Analyst'],
+        'Company': ['公司', 'Company'],
+        'Also co-founded': ['联合创办', 'Also co-founded'],
+        'Focus': ['关注方向', 'Focus'],
+        'Market × Product': ['市场 × 产品', 'Market × Product'],
+        'SELECTED WORK / 2019—NOW': ['经历概览 / 2019—至今', 'SELECTED WORK / 2019—NOW'],
+        'Working lenses': ['工作视角', 'Working lenses'],
+        'Career chapters': ['职业阶段', 'Career chapters'],
+        'Products shipped': ['已上线产品', 'Products shipped'],
+        'Working thesis': ['工作方法', 'Working thesis'],
+        '把结构做进去，': ['把结构做进去，', 'Build structure into it,'],
+        '把故事讲出来，': ['把故事讲出来，', 'tell the story,'],
+        '再把它做成产品。': ['再把它做成产品。', 'then turn it into a product.'],
+        '01 / Research': ['01 / 研究', '01 / Research'],
+        '市场研究': ['市场研究', 'Market Research'],
+        '从供需、库存、基差与价格中识别变化，把复杂信息整理成可以支持判断的结论。': ['从供需、库存、基差与价格中识别变化，把复杂信息整理成可以支持判断的结论。', 'Identify change across supply, demand, inventory and pricing, then turn complex information into decisions people can use.'],
+        'SIGNAL → DECISION': ['信号 → 判断', 'SIGNAL → DECISION'],
+        '02 / Product': ['02 / 产品', '02 / Product'],
+        '产品构建': ['产品构建', 'Product Building'],
+        '从真实生活问题出发，用现代 Web 技术做出可持续使用、可以不断迭代的工具。': ['从真实生活问题出发，用现代 Web 技术做出可持续使用、可以不断迭代的工具。', 'Start with real-life needs and use modern web technology to build tools that remain useful and easy to improve.'],
+        'NEED → PRODUCT': ['需求 → 产品', 'NEED → PRODUCT'],
+        '03 / Communication': ['03 / 传播', '03 / Communication'],
+        '策略传播': ['策略传播', 'Strategic Communication'],
+        '理解不同受众需要什么，把复杂结论讲清楚，推动团队和利益相关方走向下一步。': ['理解不同受众需要什么，把复杂结论讲清楚，推动团队和利益相关方走向下一步。', 'Understand what different audiences need, explain complex conclusions clearly and move teams and stakeholders forward.'],
+        'COMPLEX → CLARITY': ['复杂 → 清晰', 'COMPLEX → CLARITY'],
+        '01 / Experience': ['01 / 工作经历', '01 / Experience'],
+        '从研究到产品，': ['从研究到产品，', 'From research to product,'],
+        '我的工作轨迹。': ['我的工作轨迹。', 'this is my path.'],
+        '商品市场、企业创业、财务与供应链、传播与媒体实践。不同场景共同训练出同一种能力：把复杂问题拆开，再做成可执行的答案。': ['商品市场、企业创业、财务与供应链、传播与媒体实践。不同场景共同训练出同一种能力：把复杂问题拆开，再做成可执行的答案。', 'Commodity markets, entrepreneurship, finance and supply chain, plus communication and media. Different settings built one shared ability: break down complexity and turn it into action.'],
+        '— PRESENT': ['— 至今', '— PRESENT'],
+        'CURRENT': ['当前', 'CURRENT'],
+        'PX Futures & Physical Markets': ['PX 期货与现货市场', 'PX Futures & Physical Markets'],
+        'Research Analyst': ['研究分析师', 'Research Analyst'],
+        '分析 PX 期货与现货市场的供需基本面、库存趋势和价格变化；持续跟踪期货、现货与基差动态，并形成市场研究报告，支持交易和采购决策。': ['分析 PX 期货与现货市场的供需基本面、库存趋势和价格变化；持续跟踪期货、现货与基差动态，并形成市场研究报告，支持交易和采购决策。', 'Analyze PX futures and physical markets across supply and demand, inventory and price movements. Track futures, spot and basis dynamics, and prepare reports that support trading and procurement decisions.'],
+        'PX RESEARCH': ['PX 研究', 'PX RESEARCH'],
+        'SUPPLY / DEMAND': ['供需分析', 'SUPPLY / DEMAND'],
+        'INVENTORY': ['库存', 'INVENTORY'],
+        'PRICING': ['价格', 'PRICING'],
+        'Co-Founder': ['联合创始人', 'Co-Founder'],
+        '参与创办 OwO Network，持续参与产品方向与业务探索，将想法转化为可讨论、可推进的产品方案。': ['参与创办 OwO Network，持续参与产品方向与业务探索，将想法转化为可讨论、可推进的产品方案。', 'Co-founded OwO Network and continue to explore product direction and business opportunities, turning ideas into clear and actionable plans.'],
+        'CO-FOUNDER': ['联合创办', 'CO-FOUNDER'],
+        'PRODUCT': ['产品', 'PRODUCT'],
+        'BUSINESS': ['业务', 'BUSINESS'],
+        'Finance Intern': ['财务实习生', 'Finance Intern'],
+        '参与项目财务规划、成本效益分析与能源管理相关工作；使用 SAP 进行财务数据管理与流程优化。': ['参与项目财务规划、成本效益分析与能源管理相关工作；使用 SAP 进行财务数据管理与流程优化。', 'Supported project financial planning, cost-benefit analysis and energy management, using SAP for financial data management and process improvement.'],
+        'FINANCE': ['财务', 'FINANCE'],
+        'COST ANALYSIS': ['成本分析', 'COST ANALYSIS'],
+        'ENERGY': ['能源管理', 'ENERGY'],
+        'Product Development & Media Operations Intern': ['产品开发与媒体运营实习生', 'Product Development & Media Operations Intern'],
+        '执行社交媒体策略与营销活动，提高品牌市场曝光；参与内部流程优化，提升市场运营效率。': ['执行社交媒体策略与营销活动，提高品牌市场曝光；参与内部流程优化，提升市场运营效率。', 'Executed social media strategies and marketing campaigns to improve brand visibility, and helped optimize internal processes for greater marketing efficiency.'],
+        'MARKETING': ['市场营销', 'MARKETING'],
+        'SOCIAL MEDIA': ['社交媒体', 'SOCIAL MEDIA'],
+        'PROCESS': ['流程', 'PROCESS'],
+        'Manager Assistant': ['经理助理', 'Manager Assistant'],
+        '制定供应商评价标准并设计质量控制体系；优化文档处理效率，策划并组织总经理会议。': ['制定供应商评价标准并设计质量控制体系；优化文档处理效率，策划并组织总经理会议。', 'Developed supplier evaluation criteria and quality-control systems, improved document processing, and organized general manager meetings.'],
+        'SUPPLIER': ['供应商', 'SUPPLIER'],
+        'QUALITY CONTROL': ['质量控制', 'QUALITY CONTROL'],
+        'OPERATIONS': ['运营', 'OPERATIONS'],
+        '02 / Capabilities': ['02 / 能力工具', '02 / Capabilities'],
+        '数据、系统与表达，': ['数据、系统与表达，', 'Data, systems and communication —'],
+        '都是工具。': ['都是工具。', 'they are all tools.'],
+        '工具不是身份本身。核心能力是把合适的工具组合起来，回答问题、做出判断，并把结果交给别人使用。': ['工具不是身份本身。核心能力是把合适的工具组合起来，回答问题、做出判断，并把结果交给别人使用。', 'Tools are not the identity. The core ability is combining the right ones to answer questions, make judgments and deliver useful results.'],
+        'Toolbelt / 04': ['工具箱 / 04', 'Toolbelt / 04'],
+        '一套跨领域的': ['一套跨领域的', 'A cross-disciplinary'],
+        '工作台。': ['工作台。', 'workbench.'],
+        '研究与工程不是两套割裂的语言。好的产品，需要数据、结构和表达同时成立。': ['研究与工程不是两套割裂的语言。好的产品，需要数据、结构和表达同时成立。', 'Research and engineering do not need to be separate languages. A good product needs data, structure and communication to work together.'],
+        '01 / RESEARCH': ['01 / 研究', '01 / RESEARCH'],
+        'ANALYZE': ['分析', 'ANALYZE'],
+        'PX Market Research': ['PX 市场研究', 'PX Market Research'],
+        'Supply & Demand': ['供需分析', 'Supply & Demand'],
+        'Futures & Spot': ['期货与现货', 'Futures & Spot'],
+        'Data Analysis': ['数据分析', 'Data Analysis'],
+        'Inventory Trends': ['库存趋势', 'Inventory Trends'],
+        'Basis Dynamics': ['基差动态', 'Basis Dynamics'],
+        '02 / BUILD': ['02 / 构建', '02 / BUILD'],
+        'SHIP': ['交付', 'SHIP'],
+        '03 / OPERATE': ['03 / 运营', '03 / OPERATE'],
+        'SCALE': ['规模化', 'SCALE'],
+        'Project Management': ['项目管理', 'Project Management'],
+        'Marketing Strategy': ['营销策略', 'Marketing Strategy'],
+        'Social Media': ['社交媒体', 'Social Media'],
+        'Supply Chain': ['供应链', 'Supply Chain'],
+        'Quality Control': ['质量控制', 'Quality Control'],
+        '04 / COMMUNICATE': ['04 / 沟通', '04 / COMMUNICATE'],
+        'CONNECT': ['连接', 'CONNECT'],
+        'Strategic Communication': ['战略传播', 'Strategic Communication'],
+        'Event Planning': ['活动策划', 'Event Planning'],
+        'Stakeholder Alignment': ['利益相关方协同', 'Stakeholder Alignment'],
+        'Storytelling': ['叙事表达', 'Storytelling'],
+        'Team Coordination': ['团队协作', 'Team Coordination'],
+        '03 / Selected projects': ['03 / 个人项目', '03 / Selected projects'],
+        '不只分析问题，': ['不只分析问题，', 'I do more than analyze problems —'],
+        '也把答案做出来。': ['也把答案做出来。', 'I build the answer too.'],
+        'Yudan 是我的个人项目，起点是家庭日常场景：成长记录、接种管理、家庭账本和用品库存。技术不是目的，让日常少一点记忆负担才是。': ['Yudan 是我的个人项目，起点是家庭日常场景：成长记录、接种管理、家庭账本和用品库存。技术不是目的，让日常少一点记忆负担才是。', 'Yudan is my personal project series, rooted in everyday family needs: growth records, vaccination tracking, household finances and inventory. Technology is the tool; reducing mental load is the goal.'],
+        'TODAY / 成长看板': ['今日 / 成长看板', 'TODAY / GROWTH DASHBOARD'],
+        '鱼蛋': ['鱼蛋', 'Yudan'],
+        '鱼蛋宝贝 / 用品管家': ['鱼蛋宝贝 / 用品管家', 'Yudan Baby / Household Manager'],
+        '又长大了一点点。': ['又长大了一点点。', 'A little bigger today.'],
+        '体重': ['体重', 'Weight'],
+        '接种': ['接种', 'Vaccines'],
+        '提醒': ['提醒', 'Reminder'],
+        'PERSONAL PROJECT / 01': ['个人项目 / 01', 'PERSONAL PROJECT / 01'],
+        '把成长记录、疫苗接种、家庭账本和成长日志放到同一个地方；提供支出汇总、趋势图表与跨设备同步，让重要的家庭信息持续可见。': ['把成长记录、疫苗接种、家庭账本和成长日志放到同一个地方；提供支出汇总、趋势图表与跨设备同步，让重要的家庭信息持续可见。', 'A single place for growth records, vaccinations, household finances and a family journal, with spending summaries, trend charts and cross-device sync.'],
+        '打开网站 ↗': ['打开网站 ↗', 'Open website ↗'],
+        '纸尿裤 / L 码 / 第 2 批': ['纸尿裤 / L 码 / 第 2 批', 'Diapers / Size L / Batch 2'],
+        '米粉 / 铁强化 / 批次 2408': ['米粉 / 铁强化 / 批次 2408', 'Formula / Iron / Batch 2408'],
+        '维生素 D / 滴剂': ['维生素 D / 滴剂', 'Vitamin D / Drops'],
+        'PERSONAL PROJECT / 02': ['个人项目 / 02', 'PERSONAL PROJECT / 02'],
+        '追踪家庭用品的库存、批次与到期日，优先消耗临期物品，并给出低库存提醒和补货清单，让“物尽其用，生活有序”真正落地。': ['追踪家庭用品的库存、批次与到期日，优先消耗临期物品，并给出低库存提醒和补货清单，让“物尽其用，生活有序”真正落地。', 'Tracks household inventory, batches and expiry dates, prioritizes items that expire soon, and provides low-stock alerts and replenishment lists.'],
+        'PRIVATE REPO': ['私有仓库', 'PRIVATE REPO'],
+        '04 / Education': ['04 / 教育背景', '04 / Education'],
+        '管理搭框架，': ['管理搭框架，', 'Management provides structure,'],
+        '传播讲清故事。': ['传播讲清故事。', 'communication tells the story.'],
+        '管理训练组织与决策，战略传播训练受众意识。一个解决“怎么做”，一个解决“怎么说服人做”。': ['管理训练组织与决策，战略传播训练受众意识。一个解决“怎么做”，一个解决“怎么说服人做”。', 'Management develops organization and decision-making; strategic communication develops audience awareness. One answers how to act, the other how to move people to act.'],
+        'Master of Science in Management / 管理学硕士': ['管理学硕士', 'Master of Science in Management'],
+        'Bachelor of Science in Strategic Communication / 战略传播理学学士': ['战略传播理学学士', 'Bachelor of Science in Strategic Communication'],
+        'Open channel / 保持连接': ['保持联系 / Open channel', 'Open channel'],
+        '有市场问题？': ['有市场问题？', 'Have a market question?'],
+        '也有好点子。': ['也有好点子。', 'Or a good idea?'],
+        '无论是 PX 研究、供需分析、供应链与财务话题，还是一个值得被做出来的 Web 产品，都可以聊聊。给我一个上下文，我们从具体问题开始。': ['无论是 PX 研究、供需分析、供应链与财务话题，还是一个值得被做出来的 Web 产品，都可以聊聊。给我一个上下文，我们从具体问题开始。', 'Let us talk about PX research, supply and demand, supply chain and finance — or a web product worth building. Give me some context and we can start with the specific problem.'],
+        '发邮件给我 ↗': ['发邮件给我 ↗', 'Email me ↗'],
+        '复制邮箱': ['复制邮箱', 'Copy email'],
+        '打印 / 存 PDF': ['打印 / 存 PDF', 'Print / Save PDF'],
+        'PERSONAL SITE': ['个人网站', 'PERSONAL SITE'],
+        'WRITING': ['文章', 'WRITING'],
+        'Connect ↗': ['LinkedIn ↗', 'Connect ↗'],
+        'MING CHEN · INTERACTIVE RESUME': ['MING CHEN · 交互式简历', 'MING CHEN · INTERACTIVE RESUME'],
+        'Top ↑': ['顶部 ↑', 'Top ↑'],
+        '已完成': ['已完成', 'Done']
+      };
+
+      const translatedNodes = [];
+      const textWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      while (textWalker.nextNode()) {
+        const node = textWalker.currentNode;
+        const source = node.nodeValue.trim();
+        if (!Object.prototype.hasOwnProperty.call(textCopy, source)) continue;
+        const leading = node.nodeValue.match(/^\s*/)[0];
+        const trailing = node.nodeValue.match(/\s*$/)[0];
+        translatedNodes.push({ node, leading, trailing, zh: textCopy[source][0], en: textCopy[source][1] });
+      }
+      let currentLanguage = root.dataset.lang === 'en' ? 'en' : 'zh';
+      const localText = (zh, en) => currentLanguage === 'en' ? en : zh;
 
       const applyTheme = theme => {
+        const isEnglish = currentLanguage === 'en';
         root.dataset.theme = theme;
-        themeToggle.setAttribute('aria-label', theme === 'dark' ? '切换为浅色模式' : '切换为深色模式');
+        themeToggle.setAttribute('aria-label', isEnglish
+          ? (theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode')
+          : (theme === 'dark' ? '切换为浅色模式' : '切换为深色模式'));
+        themeToggle.setAttribute('title', isEnglish ? 'Switch light / dark theme' : '切换黑白主题');
         themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
         themeColor.setAttribute('content', theme === 'dark' ? '#0e0e0e' : '#f4f4f1');
         try { localStorage.setItem('ming-resume-theme', theme); } catch (_) {}
       };
 
-      applyTheme(root.dataset.theme || 'light');
+      const applyLanguage = language => {
+        currentLanguage = language === 'en' ? 'en' : 'zh';
+        const isEnglish = currentLanguage === 'en';
+        root.dataset.lang = currentLanguage;
+        root.lang = isEnglish ? 'en' : 'zh-CN';
+        translatedNodes.forEach(item => {
+          item.node.nodeValue = item.leading + (isEnglish ? item.en : item.zh) + item.trailing;
+        });
+        languageToggle.setAttribute('aria-label', isEnglish ? 'Switch to Chinese' : '切换为英文');
+        languageToggle.setAttribute('title', isEnglish ? 'Switch to Chinese' : '切换为英文');
+        languageToggle.setAttribute('aria-pressed', String(isEnglish));
+        const menuIsOpen = navLinks.classList.contains('open');
+        menuToggle.setAttribute('aria-label', menuIsOpen ? localText('关闭菜单', 'Close menu') : localText('打开菜单', 'Open menu'));
+        document.querySelectorAll('.brand').forEach(link => link.setAttribute('aria-label', isEnglish ? 'Ming Chen home' : 'Ming Chen 首页'));
+        document.title = isEnglish ? 'Ming Chen — Market Researcher × Product Builder' : 'Ming Chen — PX 市场研究 × 产品构建';
+        const description = isEnglish
+          ? 'Ming Chen’s interactive resume: PX market research, OwO Network co-founder, and personal Yudan projects.'
+          : 'Ming Chen 的交互式个人简历：PX 市场研究、OwO Network 联合创始人，以及 Yudan 个人项目构建。';
+        metaDescription.setAttribute('content', description);
+        ogTitle.setAttribute('content', document.title);
+        ogDescription.setAttribute('content', description);
+        try { localStorage.setItem('ming-resume-language', currentLanguage); } catch (_) {}
+        applyTheme(root.dataset.theme || 'light');
+      };
+
+      applyLanguage(currentLanguage);
+      languageToggle.addEventListener('click', () => {
+        applyLanguage(currentLanguage === 'en' ? 'zh' : 'en');
+      });
       themeToggle.addEventListener('click', () => {
         const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
         applyTheme(next);
@@ -725,7 +1000,7 @@
         navLinks.classList.toggle('open', open);
         menuToggle.classList.toggle('active', open);
         menuToggle.setAttribute('aria-expanded', String(open));
-        menuToggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+        menuToggle.setAttribute('aria-label', open ? localText('关闭菜单', 'Close menu') : localText('打开菜单', 'Open menu'));
         document.body.classList.toggle('menu-open', open);
       };
       menuToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('open')));
@@ -766,7 +1041,7 @@
       $('downloadVCard').addEventListener('click', () => {
         const card = [
           'BEGIN:VCARD', 'VERSION:3.0', 'N:Chen;Ming;;;', 'FN:Ming Chen', 'ORG:OwO Network',
-          'TITLE:PX Market Researcher & Co-Founder', 'URL:https://ming.fi',
+          'TITLE:' + localText('PX 市场研究员 / 联合创始人', 'PX Market Researcher & Co-Founder'), 'URL:https://ming.fi',
           'EMAIL;TYPE=INTERNET:mingchen@88.com', 'X-TWITTER:https://x.com/will_mingming', 'END:VCARD'
         ].join('\r\n');
         const blob = new Blob([card], { type: 'text/vcard;charset=utf-8' });
@@ -778,13 +1053,13 @@
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
-        showToast('名片已下载 · Ming-Chen.vcf');
+        showToast(localText('名片已下载 · Ming-Chen.vcf', 'vCard downloaded · Ming-Chen.vcf'));
       });
 
       $('copyEmail').addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText('mingchen@88.com');
-          showToast('邮箱已复制 · mingchen@88.com');
+          showToast(localText('邮箱已复制 · mingchen@88.com', 'Email copied · mingchen@88.com'));
         } catch (_) {
           const temp = document.createElement('textarea');
           temp.value = 'mingchen@88.com';
@@ -792,7 +1067,7 @@
           temp.select();
           document.execCommand('copy');
           temp.remove();
-          showToast('邮箱已复制 · mingchen@88.com');
+          showToast(localText('邮箱已复制 · mingchen@88.com', 'Email copied · mingchen@88.com'));
         }
       });
       $('printResume').addEventListener('click', () => window.print());
