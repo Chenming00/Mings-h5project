@@ -1,98 +1,135 @@
 import React from 'react';
-import { Layers, Hash, LayoutGrid, X, Sparkles } from 'lucide-react';
+import { FolderOpen, Hash, Layers3, Sparkles, X } from 'lucide-react';
 
-export default function Sidebar({ tags, selectedTag, setSelectedTag, isOpen, onClose }) {
+export default function Sidebar({
+  projectCount,
+  tags,
+  tagCounts,
+  selectedTag,
+  setSelectedTag,
+  isOpen,
+  onClose,
+}) {
+  const selectTag = tag => {
+    setSelectedTag(tag);
+    onClose();
+  };
+
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-sm z-40 md:hidden"
+        <button
+          type="button"
+          className="fixed inset-0 z-40 cursor-default bg-gray-950/55 backdrop-blur-sm md:hidden"
           onClick={onClose}
+          aria-label="关闭分类菜单"
         />
       )}
 
-      {/* Sidebar panel */}
       <aside
-        className={[
-          'fixed inset-y-0 left-0 z-50 w-72 flex flex-col',
-          'bg-gradient-to-b from-white via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900',
-          'border-r border-gray-200/80 dark:border-gray-800/80',
-          'transform transition-transform duration-300 ease-out',
-          'md:translate-x-0',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
-        ].join(' ')}
+        className={`fixed inset-y-0 left-0 z-50 flex w-[264px] flex-col overflow-hidden border-r border-gray-200/80 bg-white/92 shadow-2xl shadow-gray-950/10 backdrop-blur-xl transition-transform duration-300 ease-out dark:border-white/8 dark:bg-[#0b0d14]/94 dark:shadow-black/40 md:translate-x-0 md:shadow-none ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        aria-label="项目分类侧边栏"
       >
-        {/* Brand */}
-        <div className="flex items-center justify-between px-6 h-16 border-b border-gray-200/80 dark:border-gray-800/80 shrink-0">
+        <div className="surface-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
+
+        <div className="relative flex h-[72px] shrink-0 items-center justify-between border-b border-gray-200/70 px-5 dark:border-white/7">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 shadow-lg shadow-indigo-500/25">
               <Sparkles size={18} className="text-white" />
             </div>
             <div>
-              <span className="font-bold text-gray-900 dark:text-white text-sm tracking-tight block">奇点空间</span>
-              <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">Singularity Space</span>
+              <span className="block text-sm font-bold tracking-tight text-gray-950 dark:text-white">奇点空间</span>
+              <span className="mt-0.5 block text-[9px] font-bold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">
+                Singularity Space
+              </span>
             </div>
           </div>
-          {/* Close btn — mobile only */}
           <button
+            type="button"
             onClick={onClose}
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/8 dark:hover:text-gray-200 md:hidden"
+            aria-label="关闭菜单"
           >
-            <X size={16} />
+            <X size={17} />
           </button>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-5 px-4">
-          <p className="px-3 mb-3 text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 flex items-center gap-2">
-            <Layers size={14} />
+        <nav className="relative flex-1 overflow-y-auto px-4 py-6" aria-label="项目分类">
+          <p className="mb-3 flex items-center gap-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400 dark:text-gray-600">
+            <Layers3 size={13} />
             项目分类
           </p>
 
           <button
-            onClick={() => { setSelectedTag(null); onClose(); }}
-            className={[
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
+            type="button"
+            onClick={() => selectTag(null)}
+            className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition-all ${
               selectedTag === null
-                ? 'bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 hover:text-gray-900 dark:hover:text-gray-100',
-            ].join(' ')}
+                ? 'bg-gray-950 text-white shadow-lg shadow-gray-950/10 dark:bg-indigo-500 dark:shadow-indigo-950/30'
+                : 'text-gray-600 hover:bg-gray-100/80 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'
+            }`}
+            aria-current={selectedTag === null ? 'page' : undefined}
           >
-            <LayoutGrid size={16} className={`shrink-0 ${selectedTag === null ? 'text-indigo-500' : 'opacity-60'}`} />
+            <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+              selectedTag === null
+                ? 'bg-white/12 text-white'
+                : 'bg-gray-100 text-gray-500 group-hover:text-indigo-500 dark:bg-white/5 dark:text-gray-400'
+            }`}>
+              <FolderOpen size={16} />
+            </span>
             <span>全部项目</span>
-            {selectedTag === null && (
-              <span className="ml-auto text-xs font-bold text-indigo-500">●</span>
-            )}
+            <span className={`ml-auto text-[11px] font-bold ${
+              selectedTag === null ? 'text-white/65' : 'text-gray-400 dark:text-gray-600'
+            }`}>
+              {projectCount}
+            </span>
           </button>
 
-          <div className="mt-4 space-y-1">
-            {tags.map(tag => (
-              <button
-                key={tag}
-                onClick={() => { setSelectedTag(tag); onClose(); }}
-                className={[
-                  'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 capitalize',
-                  selectedTag === tag
-                    ? 'bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 hover:text-gray-900 dark:hover:text-gray-100',
-                ].join(' ')}
-              >
-                <Hash size={14} className={`shrink-0 ${selectedTag === tag ? 'text-indigo-500' : 'opacity-50'}`} />
-                <span>{tag}</span>
-                {selectedTag === tag && (
-                  <span className="ml-auto text-xs font-bold text-indigo-500">●</span>
-                )}
-              </button>
-            ))}
+          <div className="mt-2 space-y-1">
+            {tags.map(tag => {
+              const isSelected = selectedTag === tag;
+              return (
+                <button
+                  type="button"
+                  key={tag}
+                  onClick={() => selectTag(tag)}
+                  className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-all ${
+                    isSelected
+                      ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/12 dark:text-indigo-300'
+                      : 'text-gray-600 hover:bg-gray-100/80 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'
+                  }`}
+                  aria-current={isSelected ? 'page' : undefined}
+                >
+                  <span className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                      : 'bg-gray-100 text-gray-400 group-hover:text-indigo-500 dark:bg-white/5 dark:text-gray-500'
+                  }`}>
+                    <Hash size={14} />
+                  </span>
+                  <span className="truncate capitalize">{tag}</span>
+                  <span className={`ml-auto text-[11px] font-bold ${
+                    isSelected ? 'text-indigo-500' : 'text-gray-400 dark:text-gray-600'
+                  }`}>
+                    {tagCounts[tag] || 0}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </nav>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200/80 dark:border-gray-800/80 shrink-0">
-          <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span>自动扫描项目目录</span>
+        <div className="relative shrink-0 border-t border-gray-200/70 p-4 dark:border-white/7">
+          <div className="rounded-2xl border border-gray-200/70 bg-gray-50/80 p-3.5 dark:border-white/7 dark:bg-white/[0.035]">
+            <div className="flex items-center gap-2 text-[11px] font-semibold text-gray-600 dark:text-gray-400">
+              <span className="h-1.5 w-1.5 animate-soft-pulse rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.1)]" />
+              项目目录已同步
+            </div>
+            <p className="mt-1.5 text-[10px] leading-4 text-gray-400 dark:text-gray-600">
+              添加 HTML 入口文件后，项目会自动出现在这里
+            </p>
           </div>
         </div>
       </aside>
