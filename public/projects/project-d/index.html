@@ -3,1074 +3,677 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f4f4f1" />
-  <meta name="description" content="Ming Chen 的极简交互式个人简历：PX 市场研究、OwO Network 联合创始人，以及 Yudan 个人项目构建。" />
-  <meta property="og:title" content="Ming Chen — Market Researcher × Product Builder" />
-  <meta property="og:description" content="读懂市场，把想法做成产品，也把复杂的问题讲清楚。" />
+  <meta name="theme-color" content="#f6f6f2" />
+  <meta name="description" content="陈铭 Ming Chen 的个人主页与作品集。PX 市场研究、OwO Network 联合创办与 Yudan 系列个人项目。" />
+  <meta property="og:title" content="陈铭 Ming Chen — 市场研究与产品构建" />
+  <meta property="og:description" content="研究 PX 市场，也把真实生活需求做成 Web 工具。查看工作经历与精选作品。" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://ming.fi" />
-  <title>Ming Chen — Market Researcher × Product Builder</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23101010'/%3E%3Cpath d='M13 45V19h8l11 17 11-17h8v26h-7V29L33 45h-2l-11-16v16z' fill='%23f5f5f1'/%3E%3C/svg%3E" />
+  <meta property="og:url" content="https://h5.ming.fi/projects/project-d/" />
+  <link rel="canonical" href="https://h5.ming.fi/projects/project-d/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23202020'/%3E%3Cpath d='M13 45V19h8l11 17 11-17h8v26h-7V29L33 45h-2l-11-16v16z' fill='%23f6f6f2'/%3E%3C/svg%3E" />
+  <title>陈铭 Ming Chen — 市场研究与产品构建</title>
   <script>
     (() => {
-      let theme = 'light';
-      let language = 'zh';
+      document.documentElement.classList.add('js');
       try {
-        theme = localStorage.getItem('ming-resume-theme') ||
-          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        language = localStorage.getItem('ming-resume-language') || 'zh';
+        if (localStorage.getItem('ming-resume-theme') === 'dark') document.documentElement.dataset.theme = 'dark';
       } catch (_) {}
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.dataset.lang = language;
-      document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en';
     })();
   </script>
   <style>
     :root {
-      --bg: #f4f4f1;
-      --surface: #fbfbf8;
-      --surface-2: #e9e9e5;
-      --ink: #111111;
-      --ink-soft: #343434;
-      --muted: #6f6f6b;
-      --faint: #a4a4a0;
-      --line: #d6d6d1;
-      --line-strong: #a9a9a4;
-      --inverse-bg: #111111;
-      --inverse-ink: #f4f4f1;
-      --shadow: 0 18px 50px rgba(17,17,17,.08);
-      --max: 1200px;
-      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      --mono: "SFMono-Regular", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+      --bg: #f6f6f2; --paper: #fdfdfa; --subtle: #edede7; --ink: #222320;
+      --secondary: #52544d; --muted: #696c62; --line: #d8dad0; --heavy-line: #b9bcb0;
+      --button-bg: #282b24; --button-ink: #ffffff; --hover: #e5e7de;
+      --header: rgba(246,246,242,.94); --shadow: 0 12px 35px rgba(35,39,28,.06);
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
       color-scheme: light;
     }
-
     :root[data-theme="dark"] {
-      --bg: #0e0e0e;
-      --surface: #151515;
-      --surface-2: #202020;
-      --ink: #f1f1ed;
-      --ink-soft: #cecec9;
-      --muted: #999994;
-      --faint: #6f6f6b;
-      --line: #2d2d2d;
-      --line-strong: #494949;
-      --inverse-bg: #f1f1ed;
-      --inverse-ink: #0e0e0e;
-      --shadow: 0 18px 50px rgba(0,0,0,.28);
+      --bg: #191b18; --paper: #20231e; --subtle: #292c26; --ink: #eeefe9;
+      --secondary: #c5c9bd; --muted: #a4ab9b; --line: #3b4036; --heavy-line: #596150;
+      --button-bg: #e7eadd; --button-ink: #1b1e17; --hover: #34392e;
+      --header: rgba(25,27,24,.94); --shadow: 0 12px 35px rgba(0,0,0,.1);
       color-scheme: dark;
     }
-
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      overflow-x: hidden;
-      color: var(--ink);
-      background: var(--bg);
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      transition: color .25s ease, background-color .25s ease;
-    }
-    body.menu-open { overflow: hidden; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased; }
     a { color: inherit; text-decoration: none; }
-    button { color: inherit; font: inherit; }
-    img, svg { display: block; max-width: 100%; }
-    ::selection { color: var(--inverse-ink); background: var(--inverse-bg); }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    button, a, summary { -webkit-tap-highlight-color: transparent; }
+    button, input { border-radius: 0; }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; border-radius: 3px; }
+    ::selection { background: var(--ink); color: var(--bg); }
+    svg { display: block; max-width: 100%; }
+    p, h1, h2, h3, h4, dl, dd, figure { margin: 0; }
+    p, li, h3, a { overflow-wrap: break-word; }
+    [hidden] { display: none !important; }
+    .shell { width: min(1120px, calc(100% - 80px)); margin-inline: auto; }
+    .skip-link { position: fixed; left: 16px; top: -80px; padding: 12px 18px; background: var(--paper); border: 1px solid var(--ink); z-index: 200; }
+    .skip-link:focus { top: 12px; }
+    .muted { color: var(--muted); }
+    .mono { font-family: var(--mono); }
+    .eyebrow { font: 11px/1.5 var(--mono); letter-spacing: .13em; color: var(--muted); }
+    .section { padding: 64px 0; border-top: 1px solid var(--line); scroll-margin-top: 96px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 30px; }
+    .section-heading h2 { font-size: 34px; line-height: 1.3; letter-spacing: -.04em; font-weight: 650; }
+    .section-heading .eyebrow { display: block; margin-bottom: 8px; }
+    .section-heading > p { max-width: 330px; color: var(--secondary); font-size: 14px; line-height: 1.75; }
+    .button { display: inline-flex; justify-content: center; align-items: center; gap: 16px; min-height: 46px; padding: 10px 18px; border: 1px solid var(--line); background: transparent; font-size: 14px; font-weight: 550; line-height: 1.5; transition: background .18s, border-color .18s, transform .18s; }
+    .button:hover { background: var(--hover); border-color: var(--heavy-line); }
+    .button-primary { background: var(--button-bg); border-color: var(--button-bg); color: var(--button-ink); }
+    .button-primary:hover { background: var(--button-bg); border-color: var(--button-bg); transform: translateY(-2px); }
+    .text-link { display: inline-flex; gap: 10px; align-items: center; min-height: 44px; font-size: 14px; border-bottom: 1px solid transparent; }
+    .text-link:hover { border-bottom-color: currentColor; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tags span { border: 1px solid var(--line); border-radius: 3px; padding: 3px 8px; font: 11px/1.6 var(--mono); color: var(--secondary); }
+    .print-only { display: none; }
 
-    .skip-link {
-      position: fixed; z-index: 300; top: 10px; left: 10px; padding: 10px 14px;
-      color: var(--inverse-ink); background: var(--inverse-bg); transform: translateY(-180%); transition: transform .2s;
-    }
-    .skip-link:focus { transform: translateY(0); }
-    .shell { width: min(calc(100% - 48px), var(--max)); margin-inline: auto; }
-    .section { position: relative; padding: 124px 0; scroll-margin-top: 90px; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 10px; margin: 0;
-      color: var(--muted); font-family: var(--mono); font-size: 10px; font-weight: 700;
-      letter-spacing: .14em; text-transform: uppercase;
-    }
-    .eyebrow::before { width: 18px; height: 1px; background: currentColor; content: ""; }
-    .section-head {
-      display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(250px, .7fr);
-      align-items: end; gap: 48px; margin-bottom: 54px; padding-bottom: 28px; border-bottom: 1px solid var(--line);
-    }
-    .section-head h2 {
-      max-width: 800px; margin: 18px 0 0; font-size: clamp(43px, 6.2vw, 82px);
-      line-height: .98; letter-spacing: -.065em; font-weight: 760;
-    }
-    .section-head h2 span { color: var(--muted); }
-    .section-head > p { max-width: 340px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
-
-    /* Header */
-    .scroll-line { position: fixed; z-index: 150; top: 0; left: 0; width: 100%; height: 2px; pointer-events: none; }
-    .scroll-line span { display: block; width: 0; height: 100%; background: var(--ink); }
-    .site-header {
-      position: fixed; z-index: 120; top: 2px; left: 0; width: 100%;
-      border-bottom: 1px solid transparent; background: var(--bg);
-      background: color-mix(in srgb, var(--bg) 88%, transparent);
-      -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
-      transition: border-color .2s, background-color .2s;
-    }
-    .site-header.scrolled { border-color: var(--line); }
-    .nav { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 22px; min-height: 66px; }
-    .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 800; letter-spacing: .02em; }
-    .brand-mark {
-      display: grid; place-items: center; width: 31px; height: 31px; color: var(--inverse-ink);
-      background: var(--inverse-bg); font-family: var(--mono); font-size: 10px; font-weight: 800;
-    }
-    .brand small { display: block; margin-top: 2px; color: var(--muted); font-family: var(--mono); font-size: 7px; font-weight: 600; letter-spacing: .1em; }
-    .nav-links { display: flex; align-items: center; gap: 29px; }
-    .nav-links a {
-      position: relative; color: var(--muted); font-size: 12px; transition: color .2s;
-    }
-    .nav-links a::after {
-      position: absolute; right: 0; bottom: -7px; left: 0; height: 1px; background: var(--ink); content: "";
-      transform: scaleX(0); transform-origin: right; transition: transform .2s;
-    }
-    .nav-links a:hover { color: var(--ink); }
-    .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
-    .nav-actions { display: flex; align-items: center; gap: 9px; }
-    .theme-toggle, .menu-toggle {
-      position: relative; width: 40px; height: 40px; display: grid; place-items: center; padding: 0;
-      border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer;
-      transition: color .2s, background .2s, border-color .2s;
-    }
-    .theme-toggle:hover, .language-toggle:hover, .menu-toggle:hover { color: var(--inverse-ink); border-color: var(--inverse-bg); background: var(--inverse-bg); }
-    .language-toggle {
-      display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 57px; height: 40px;
-      padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent;
-      font-family: var(--mono); font-size: 9px; font-weight: 700; cursor: pointer;
-      transition: color .2s, background .2s, border-color .2s;
-    }
-    .language-toggle i { color: var(--faint); font-style: normal; }
+    /* Navigation */
+    .site-header { position: sticky; top: 0; z-index: 50; background: var(--header); backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 76px; }
+    .brand { display: inline-flex; gap: 12px; align-items: center; flex: 0 0 auto; font-size: 15px; font-weight: 650; letter-spacing: -.03em; }
+    .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--heavy-line); border-radius: 50%; font-size: 12px; letter-spacing: -.06em; }
+    .nav-links { display: flex; align-items: center; gap: 27px; }
+    .nav-links a { display: flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--secondary); position: relative; }
+    .nav-links a::after { content: ""; position: absolute; bottom: 2px; height: 2px; left: 0; right: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform .2s; }
+    .nav-links a:hover, .nav-links a[aria-current] { color: var(--ink); }
+    .nav-links a[aria-current]::after { transform: scaleX(1); }
+    .nav-actions { display: flex; align-items: center; gap: 6px; }
+    .control { min-width: 44px; height: 44px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; border: none; background: transparent; font: 12px/1 var(--mono); }
+    .control:hover { background: var(--hover); border-radius: 4px; }
     .language-toggle .en { color: var(--muted); }
-    :root[data-lang="en"] .language-toggle .zh { color: var(--muted); }
-    :root[data-lang="en"] .language-toggle .en { color: var(--ink); }
-    .theme-icon { width: 16px; height: 16px; }
-    .theme-icon .sun { display: none; }
-    .theme-icon .moon { display: block; }
-    :root[data-theme="dark"] .theme-icon .sun { display: block; }
-    :root[data-theme="dark"] .theme-icon .moon { display: none; }
+    [data-lang="en"] .language-toggle .en { color: var(--ink); }
+    [data-lang="en"] .language-toggle .zh { color: var(--muted); }
+    .language-toggle i { font-style: normal; color: var(--heavy-line); }
+    .theme-toggle svg { width: 18px; height: 18px; }
+    .theme-toggle .sun { display: none; }
+    [data-theme="dark"] .theme-toggle .sun { display: block; }
+    [data-theme="dark"] .theme-toggle .moon { display: none; }
     .menu-toggle { display: none; }
-    .menu-toggle i, .menu-toggle::before, .menu-toggle::after {
-      display: block; width: 14px; height: 1px; margin: 3px auto; background: currentColor; content: ""; transition: opacity .2s, transform .2s;
-    }
-    .menu-toggle.active::before { transform: translateY(4px) rotate(45deg); }
-    .menu-toggle.active i { opacity: 0; }
-    .menu-toggle.active::after { transform: translateY(-4px) rotate(-45deg); }
+    .menu-toggle span, .menu-toggle span::after { display: block; width: 18px; height: 1px; background: var(--ink); transition: transform .18s; }
+    .menu-toggle span::after { content: ""; transform: translateY(6px); }
+    .menu-toggle[aria-expanded="true"] span { transform: rotate(-45deg); }
+    .menu-toggle[aria-expanded="true"] span::after { transform: rotate(90deg); }
+    .menu-backdrop { display: none; }
 
-    .button {
-      position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      min-height: 44px; padding: 0 18px; overflow: hidden; border: 1px solid var(--ink); border-radius: 999px;
-      color: var(--ink); background: transparent; cursor: pointer; font-size: 12px; font-weight: 700;
-      transition: color .2s, background .2s, transform .2s;
-    }
-    .button:hover { color: var(--inverse-ink); background: var(--inverse-bg); transform: translateY(-2px); }
-    .button-primary { color: var(--inverse-ink); border-color: var(--inverse-bg); background: var(--inverse-bg); }
-    .button-primary:hover { color: var(--ink); border-color: var(--ink); background: transparent; }
-    .button-small { min-height: 38px; padding: 0 15px; font-size: 10px; }
+    /* Name first, work second. */
+    .hero { padding: 60px 0 42px; scroll-margin-top: 92px; }
+    .hero-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
+    .availability { display: inline-flex; align-items: center; gap: 8px; color: var(--secondary); font-size: 12px; }
+    .availability::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--secondary); box-shadow: 0 0 0 4px var(--subtle); }
+    .hero-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items: center; }
+    .hero h1 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 23px; line-height: 1.1; margin-bottom: 22px; letter-spacing: -.055em; }
+    .name-main { font-size: clamp(62px, 6.5vw, 88px); font-weight: 650; }
+    .name-alt { font-size: 29px; letter-spacing: -.04em; font-weight: 400; color: var(--muted); }
+    .role-line { font-size: 23px; line-height: 1.5; font-weight: 550; letter-spacing: -.035em; margin-bottom: 12px; }
+    .hero-intro { max-width: 540px; color: var(--secondary); font-size: 16px; line-height: 1.9; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .hero-contact { display: flex; align-items: center; gap: 10px; margin-top: 15px; color: var(--muted); font: 12px/1.6 var(--mono); }
+    .hero-contact a { display: inline-flex; align-items: center; min-height: 32px; border-bottom: 1px solid transparent; }
+    .hero-contact a:hover { border-color: currentColor; }
+    .now-card { border-top: 2px solid var(--ink); padding: 18px 0 4px; }
+    .now-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .now-heading .cross { font: 25px/1 var(--mono); color: var(--muted); }
+    .now-row { display: grid; grid-template-columns: 54px 1fr; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+    .now-icon { display: grid; place-items: center; width: 46px; height: 46px; background: var(--subtle); color: var(--secondary); font: 13px/1 var(--mono); border-radius: 3px; }
+    .now-row strong { display: block; font-size: 15px; font-weight: 600; }
+    .now-row p { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .now-note { margin-top: 14px; font-size: 12px; color: var(--muted); }
+    .hero-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 44px; padding-top: 17px; border-top: 1px solid var(--line); color: var(--muted); font: 11px/1.6 var(--mono); letter-spacing: .05em; }
+    [data-lang="en"] .hero-grid { grid-template-columns: 1.45fr 1fr; gap: 60px; }
+    [data-lang="en"] .name-main { font-size: clamp(55px, 5.9vw, 78px); }
+    [data-lang="en"] .name-alt { font-size: 24px; }
 
-    /* Hero */
-    .hero { padding: 151px 0 80px; }
-    .hero-topline {
-      display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 42px;
-      padding-bottom: 15px; border-bottom: 1px solid var(--line); color: var(--muted);
-      font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
-    }
-    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(340px, .78fr); align-items: stretch; gap: 72px; }
-    .hero-copy { display: flex; flex-direction: column; justify-content: center; min-height: 570px; }
-    .hero h1 {
-      max-width: 790px; margin: 0; font-size: clamp(61px, 8.2vw, 116px);
-      line-height: .96; letter-spacing: -.075em; font-weight: 780;
-    }
-    .hero h1 .quiet { color: var(--muted); }
-    .hero h1 .underline { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 9px; }
-    .hero-lede { max-width: 620px; margin: 31px 0 0; color: var(--ink-soft); font-size: 16px; line-height: 1.82; }
-    .hero-lede strong { color: var(--ink); font-weight: 700; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
-    .profile-card {
-      position: relative; min-height: 570px; display: flex; flex-direction: column; overflow: hidden;
-      border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow);
-    }
-    .profile-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); color: var(--muted); font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: .1em; }
-    .status { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); }
-    .status i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-    .monogram-wrap { position: relative; flex: 1; display: grid; place-items: center; min-height: 260px; overflow: hidden; border-bottom: 1px solid var(--line); }
-    .monogram-wrap::before {
-      position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-      background-size: 38px 38px; opacity: .5; content: "";
-    }
-    .monogram { position: relative; z-index: 1; font-size: clamp(100px, 13vw, 170px); line-height: .8; letter-spacing: -.11em; font-weight: 800; }
-    .monogram span { color: transparent; -webkit-text-stroke: 1px var(--ink); }
-    .profile-info { display: grid; grid-template-columns: 1fr 1fr; }
-    .profile-info div { min-height: 75px; padding: 14px 17px; }
-    .profile-info div:nth-child(odd) { border-right: 1px solid var(--line); }
-    .profile-info div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-    .profile-info span { display: block; color: var(--muted); font-family: var(--mono); font-size: 7px; letter-spacing: .1em; text-transform: uppercase; }
-    .profile-info strong { display: block; margin-top: 7px; font-size: 11px; line-height: 1.35; }
-    .profile-foot { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: auto; padding: 14px 17px; border-top: 1px solid var(--line); color: var(--muted); font-family: var(--mono); font-size: 7px; letter-spacing: .08em; }
-    .mini-bars { display: flex; align-items: end; gap: 3px; height: 18px; }
-    .mini-bars i { display: block; width: 3px; height: 25%; background: var(--ink); }
-    .mini-bars i:nth-child(2) { height: 45%; }.mini-bars i:nth-child(3) { height: 72%; }.mini-bars i:nth-child(4) { height: 52%; }.mini-bars i:nth-child(5) { height: 100%; }.mini-bars i:nth-child(6) { height: 67%; }
-    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 64px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .hero-stat { padding: 22px 18px 22px 0; }
-    .hero-stat + .hero-stat { padding-left: 18px; border-left: 1px solid var(--line); }
-    .hero-stat strong { display: block; font-size: clamp(24px, 3vw, 36px); line-height: 1; letter-spacing: -.05em; }
-    .hero-stat span { display: block; margin-top: 9px; color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; }
-
-    /* Statement */
-    .statement { padding: 0 0 130px; }
-    .statement-panel { display: grid; grid-template-columns: .42fr 1.58fr; gap: 56px; padding: 55px; color: var(--inverse-ink); background: var(--inverse-bg); }
-    .statement-panel .eyebrow { color: var(--inverse-ink); opacity: .65; }
-    .statement-copy { margin: 0; font-size: clamp(34px, 4.8vw, 67px); line-height: 1.08; letter-spacing: -.055em; font-weight: 690; }
-    .statement-copy .muted { color: var(--inverse-ink); opacity: .35; }
-
-    /* Principles */
-    .principles { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .principle { min-height: 300px; display: flex; flex-direction: column; padding: 26px; }
-    .principle + .principle { border-left: 1px solid var(--line); }
-    .principle-no { color: var(--muted); font-family: var(--mono); font-size: 9px; }
-    .principle h3 { margin: 65px 0 0; font-size: 25px; letter-spacing: -.04em; }
-    .principle p { margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.75; }
-    .principle .keyword { margin-top: auto; padding-top: 22px; color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .08em; }
+    /* Selected work */
+    .projects { padding-top: 46px; }
+    .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .project { min-width: 0; border: 1px solid var(--line); background: var(--paper); }
+    .project-visual { height: 254px; padding: 30px 32px 0; background: var(--subtle); overflow: hidden; position: relative; border-bottom: 1px solid var(--line); }
+    .project-visual::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 30px 30px; opacity: .3; }
+    .demo-window { position: relative; background: var(--paper); border: 1px solid var(--heavy-line); border-radius: 7px 7px 0 0; height: 248px; box-shadow: var(--shadow); transform: translateY(5px); transition: transform .25s; }
+    .project:hover .demo-window { transform: translateY(0); }
+    .demo-toolbar { height: 34px; padding: 0 12px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; font: 10px/1 var(--mono); color: var(--muted); }
+    .demo-dots { display: flex; gap: 4px; }
+    .demo-dots i { width: 4px; height: 4px; border: 1px solid var(--heavy-line); border-radius: 50%; }
+    .demo-layout { display: grid; grid-template-columns: 45px 1fr; height: calc(100% - 34px); }
+    .demo-sidebar { border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; gap: 15px; padding-top: 14px; }
+    .demo-sidebar b { font: 12px/1 var(--mono); background: var(--subtle); padding: 5px; }
+    .demo-sidebar span { width: 12px; height: 10px; border: 1px solid var(--line); border-radius: 2px; }
+    .demo-main { padding: 15px 17px; min-width: 0; }
+    .demo-main h4 { font-size: 13px; line-height: 1.4; font-weight: 600; }
+    .demo-tabs { display: flex; gap: 12px; margin-top: 9px; font-size: 9px; color: var(--muted); }
+    .demo-tabs span:first-child { color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 3px; }
+    .demo-chart { margin-top: 12px; padding: 10px; border: 1px solid var(--line); border-radius: 3px; }
+    .demo-chart-header { display: flex; align-items: center; justify-content: space-between; font-size: 9px; color: var(--muted); }
+    .demo-chart svg { width: 100%; height: 58px; margin-top: 7px; }
+    .demo-cells { display: flex; gap: 8px; margin-top: 10px; }
+    .demo-cells span { flex: 1; height: 24px; background: var(--subtle); border-radius: 2px; }
+    .inventory-demo { padding: 15px 18px; }
+    .inventory-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .inventory-head h4 { font-size: 13px; font-weight: 600; }
+    .inventory-head span { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 3px; }
+    .inventory-summary { display: flex; gap: 7px; margin: 13px 0 10px; }
+    .inventory-summary span { padding: 4px 8px; background: var(--subtle); border-radius: 3px; font-size: 9px; color: var(--secondary); }
+    .inventory-item { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); font-size: 10px; }
+    .item-box { flex: 0 0 22px; width: 22px; height: 22px; border: 1px solid var(--line); border-radius: 3px; background: var(--subtle); }
+    .inventory-item > span:nth-child(2) { flex: 1; }
+    .inventory-item small { font-size: 9px; color: var(--muted); border: 1px solid var(--line); padding: 1px 4px; border-radius: 2px; }
+    .demo-label { position: absolute; bottom: 8px; right: 10px; font: 9px/1.5 var(--mono); color: var(--secondary); background: var(--bg); padding: 2px 6px; border: 1px solid var(--line); border-radius: 2px; }
+    .project-body { padding: 25px 26px 24px; }
+    .project-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .project-type { color: var(--muted); font: 11px/1.5 var(--mono); }
+    .project h3 { font-size: 26px; line-height: 1.3; font-weight: 600; letter-spacing: -.035em; margin-bottom: 7px; }
+    .project-tagline { font-size: 14px; color: var(--secondary); margin-bottom: 18px; }
+    .project-case { font-size: 14px; line-height: 1.75; }
+    .project-case > div { display: grid; grid-template-columns: 44px 1fr; gap: 10px; margin-top: 9px; }
+    .project-case dt { color: var(--muted); }
+    .project-case dd { color: var(--secondary); }
+    .project .tags { margin-top: 18px; }
+    .project-actions { display: flex; gap: 22px; align-items: center; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
+    .private-label { color: var(--muted); font-size: 12px; }
+    .work-note { color: var(--muted); font-size: 12px; line-height: 1.7; margin-top: 16px; }
+    [data-lang="en"] .project-case > div { grid-template-columns: 49px 1fr; }
 
     /* Experience */
-    .experience-list { border-top: 1px solid var(--line); }
-    .job {
-      display: grid; grid-template-columns: 108px minmax(250px, .75fr) minmax(300px, 1.15fr);
-      gap: 32px; padding: 34px 0; border-bottom: 1px solid var(--line);
-    }
-    .job-time { color: var(--muted); font-family: var(--mono); font-size: 9px; line-height: 1.55; }
-    .job-title h3 { margin: 0; font-size: 24px; line-height: 1.12; letter-spacing: -.04em; }
-    .job-title .company { display: block; margin-top: 10px; color: var(--muted); font-size: 11px; line-height: 1.5; }
-    .current { display: inline-flex; align-items: center; gap: 6px; margin-left: 7px; color: var(--ink); font-family: var(--mono); font-size: 7px; letter-spacing: .08em; vertical-align: middle; }
-    .current::before { width: 5px; height: 5px; border-radius: 50%; background: currentColor; content: ""; }
-    .job-detail p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.72; }
-    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
-    .tags span { padding: 6px 8px; border: 1px solid var(--line); color: var(--muted); font-family: var(--mono); font-size: 7px; letter-spacing: .06em; }
+    .job { display: grid; grid-template-columns: 160px 1fr; column-gap: 42px; padding: 27px 0; border-top: 1px solid var(--line); }
+    .job:first-child { border-top-color: var(--heavy-line); }
+    .job-time { color: var(--muted); font: 12px/1.8 var(--mono); padding-top: 3px; }
+    .job-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+    .job h3 { font-size: 19px; line-height: 1.5; font-weight: 600; letter-spacing: -.02em; }
+    .company { font-size: 14px; color: var(--muted); margin-top: 3px; }
+    .current { color: var(--secondary); background: var(--subtle); border: 1px solid var(--line); font-size: 11px; white-space: nowrap; padding: 2px 7px; border-radius: 3px; margin-top: 3px; }
+    .job-points { margin: 13px 0 0; padding: 0; list-style: none; max-width: 710px; }
+    .job-points li { position: relative; padding-left: 15px; color: var(--secondary); font-size: 15px; line-height: 1.85; margin-top: 5px; }
+    .job-points li::before { position: absolute; content: ""; width: 4px; height: 4px; border-radius: 50%; left: 0; top: 12px; background: var(--muted); }
+    .earlier-experience { border-top: 1px solid var(--line); }
+    .earlier-experience > summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 64px; padding: 12px 0; list-style: none; cursor: pointer; color: var(--secondary); font-size: 14px; }
+    .earlier-experience > summary::-webkit-details-marker { display: none; }
+    .earlier-experience > summary::after { content: "+"; font: 22px/1 var(--mono); }
+    .earlier-experience[open] > summary::after { content: "−"; }
+    .earlier-experience .job { grid-template-columns: 160px 1fr; }
 
-    /* Toolkit */
-    .toolkit { display: grid; grid-template-columns: .7fr 1.3fr; border: 1px solid var(--line); }
-    .toolkit-intro { padding: 32px; border-right: 1px solid var(--line); }
-    .toolkit-intro h3 { margin: 72px 0 0; font-size: 37px; line-height: 1.02; letter-spacing: -.06em; }
-    .toolkit-intro p { margin: 18px 0 0; color: var(--muted); font-size: 12px; line-height: 1.75; }
-    .tool-groups { display: grid; grid-template-columns: 1fr 1fr; }
-    .tool-group { min-height: 190px; padding: 26px; }
-    .tool-group:nth-child(odd) { border-right: 1px solid var(--line); }
-    .tool-group:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-    .tool-head { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .1em; }
-    .tool-group .tags { margin-top: 31px; }
-
-    /* Projects */
-    .project-list { display: grid; gap: 20px; }
-    .project {
-      display: grid; grid-template-columns: 1fr 1fr; min-height: 520px; border: 1px solid var(--line); background: var(--surface);
-      transition: border-color .2s, transform .2s, box-shadow .2s;
-    }
-    .project:hover { border-color: var(--line-strong); transform: translateY(-3px); box-shadow: var(--shadow); }
-    .project-visual { position: relative; min-height: 420px; display: grid; place-items: center; overflow: hidden; border-right: 1px solid var(--line); background: var(--surface-2); }
-    .project-visual::before { position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 30px 30px; opacity: .55; content: ""; }
-    .mock-browser { position: relative; z-index: 1; width: 78%; overflow: hidden; border: 1px solid var(--ink); border-radius: 12px 12px 0 0; background: var(--bg); box-shadow: 0 20px 45px rgba(0,0,0,.14); }
-    .mock-bar { height: 24px; display: flex; align-items: center; gap: 5px; padding: 0 9px; border-bottom: 1px solid var(--line); }
-    .mock-bar i { width: 5px; height: 5px; border-radius: 50%; background: var(--line-strong); }
-    .mock-body { display: grid; grid-template-columns: 78px 1fr; min-height: 230px; }
-    .mock-side { padding: 15px 10px; border-right: 1px solid var(--line); }
-    .mock-side b { display: block; margin-bottom: 22px; font-size: 10px; }
-    .mock-side span { display: block; width: 78%; height: 5px; margin-top: 9px; background: var(--line); }
-    .mock-main { padding: 19px; }
-    .mock-main small { color: var(--muted); font-family: var(--mono); font-size: 6px; letter-spacing: .08em; }
-    .mock-main h4 { margin: 8px 0 15px; font-size: 19px; letter-spacing: -.04em; }
-    .mock-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .mock-stats div { min-height: 75px; padding: 9px; border: 1px solid var(--line); background: var(--surface); }
-    .mock-stats span { display: block; color: var(--muted); font-size: 6px; }
-    .mock-stats b { display: block; margin-top: 23px; font-family: var(--mono); font-size: 10px; }
-    .mock-inventory { position: relative; z-index: 1; width: 78%; padding: 17px; border: 1px solid var(--ink); background: var(--bg); box-shadow: 0 20px 45px rgba(0,0,0,.14); }
-    .inventory-head { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; font-weight: 800; }
-    .inventory-head span { color: var(--muted); font-family: var(--mono); font-size: 8px; }
-    .stock-line { height: 5px; margin: 16px 0; background: var(--line); }
-    .stock-line i { display: block; width: 68%; height: 100%; background: var(--ink); }
-    .inventory-list { display: grid; gap: 7px; }
-    .inventory-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 11px; border: 1px solid var(--line); font-size: 8px; }
-    .inventory-item b { font-family: var(--mono); font-size: 7px; }
-    .project-content { display: flex; flex-direction: column; padding: 36px; }
-    .project-index { color: var(--muted); font-family: var(--mono); font-size: 9px; letter-spacing: .1em; }
-    .project-content h3 { margin: 65px 0 0; font-size: clamp(32px, 4vw, 50px); line-height: .98; letter-spacing: -.06em; }
-    .project-content > p { max-width: 470px; margin: 16px 0 0; color: var(--muted); font-size: 12px; line-height: 1.75; }
-    .project-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 28px; }
-    .project-actions .button { min-height: 40px; padding: 0 15px; font-size: 10px; }
-
-    /* Education */
-    .education-list { border-top: 1px solid var(--line); }
-    .degree { display: grid; grid-template-columns: 120px 1fr 90px; align-items: center; gap: 28px; min-height: 130px; padding: 20px 0; border-bottom: 1px solid var(--line); }
-    .degree time { color: var(--muted); font-family: var(--mono); font-size: 9px; }
-    .degree h3 { margin: 0; font-size: 24px; letter-spacing: -.04em; }
-    .degree p { margin: 7px 0 0; color: var(--muted); font-size: 11px; }
-    .degree-code { justify-self: end; color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .1em; }
-    .education-note { display: grid; grid-template-columns: .55fr 1.45fr; gap: 45px; margin-top: 44px; padding: 30px; color: var(--inverse-ink); background: var(--inverse-bg); }
-    .education-note span { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; opacity: .6; }
-    .education-note p { margin: 0; font-size: 22px; line-height: 1.4; letter-spacing: -.03em; }
+    /* Education and tools */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
+    .subheading { font-size: 15px; font-weight: 600; margin-bottom: 23px; }
+    .degree { display: grid; grid-template-columns: 40px 1fr; gap: 15px; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .degree:last-child { margin-bottom: 0; }
+    .degree-mark { width: 38px; height: 38px; display: grid; place-items: center; background: var(--subtle); border: 1px solid var(--line); border-radius: 50%; font: 12px/1 var(--mono); }
+    .degree h3 { font-size: 17px; font-weight: 600; letter-spacing: -.025em; }
+    .degree p { font-size: 14px; color: var(--secondary); margin: 3px 0 5px; }
+    .degree time { color: var(--muted); font: 12px/1.5 var(--mono); }
+    .skill-row { margin-bottom: 19px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .skill-row:last-child { margin-bottom: 0; }
+    .skill-row h3 { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+    .skill-row p { font-size: 14px; line-height: 1.85; color: var(--secondary); }
 
     /* Contact */
-    .contact-section { padding: 150px 0 90px; }
-    .contact-main { display: grid; grid-template-columns: 1.35fr .65fr; gap: 60px; align-items: end; padding: 58px; color: var(--inverse-ink); background: var(--inverse-bg); }
-    .contact-main h2 { margin: 23px 0 0; font-size: clamp(52px, 7.6vw, 104px); line-height: .92; letter-spacing: -.075em; }
-    .contact-main p { max-width: 580px; margin: 25px 0 0; color: var(--inverse-ink); opacity: .65; font-size: 13px; line-height: 1.75; }
-    .contact-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 30px; }
-    .contact-actions .button { color: var(--inverse-ink); border-color: var(--inverse-ink); }
-    .contact-actions .button:hover { color: var(--ink); background: var(--bg); }
-    .contact-side { padding-left: 28px; border-left: 1px solid color-mix(in srgb, var(--inverse-ink) 24%, transparent); }
-    .contact-side a { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--inverse-ink) 24%, transparent); font-size: 12px; }
-    .contact-side a span { opacity: .55; font-family: var(--mono); font-size: 8px; letter-spacing: .08em; }
-    .contact-side a:hover { opacity: .6; }
+    .contact { padding: 45px 0 40px; }
+    .contact-grid { display: flex; justify-content: space-between; align-items: center; gap: 40px; }
+    .contact h2 { font-size: 31px; font-weight: 550; letter-spacing: -.04em; line-height: 1.4; margin: 8px 0; }
+    .contact p { color: var(--secondary); font-size: 14px; }
+    .contact-email { display: flex; gap: 14px; align-items: center; margin-top: 15px; }
+    .contact-email > a { font-size: 20px; letter-spacing: -.035em; border-bottom: 1px solid var(--heavy-line); }
+    .copy-button { border: 1px solid var(--line); border-radius: 3px; padding: 8px 11px; min-height: 44px; background: transparent; font-size: 12px; }
+    .copy-button:hover { background: var(--hover); }
+    .social-links { display: flex; flex-wrap: wrap; gap: 8px 20px; max-width: 370px; justify-content: flex-end; }
+    .social-links a, .social-links button { display: inline-flex; align-items: center; min-height: 44px; color: var(--secondary); font-size: 13px; background: transparent; border: 0; padding: 0; }
+    .social-links a:hover, .social-links button:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; }
+    footer { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); padding: 20px 0 26px; color: var(--muted); font: 11px/1.6 var(--mono); }
+    footer a { min-height: 32px; display: inline-flex; align-items: center; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 14px); opacity: 0; visibility: hidden; max-width: calc(100% - 32px); padding: 13px 19px; background: var(--paper); color: var(--ink); border: 1px solid var(--heavy-line); border-radius: 5px; box-shadow: var(--shadow); z-index: 100; font-size: 13px; transition: opacity .2s, transform .2s; }
+    .toast.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+    html:not(.js) .interactive { display: none; }
 
-    footer { padding: 26px 0 34px; border-top: 1px solid var(--line); }
-    .footer-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .footer-note { color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .08em; }
-    .footer-links { display: flex; gap: 19px; color: var(--muted); font-size: 10px; }
-    .footer-links a:hover { color: var(--ink); }
-
-    /* Interaction */
-    .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .toast {
-      position: fixed; z-index: 220; right: 20px; bottom: 20px; max-width: calc(100% - 40px); padding: 12px 16px;
-      border: 1px solid var(--line); color: var(--ink); background: var(--surface); box-shadow: var(--shadow);
-      font-size: 11px; opacity: 0; pointer-events: none; transform: translateY(10px); transition: opacity .2s, transform .2s;
+    @media (min-width: 1100px) {
+      .hero-copy { animation: arrive .55s both; }
+      .now-card { animation: arrive .55s .08s both; }
+      @keyframes arrive { from { opacity: .3; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     }
-    .toast.show { opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 980px) {
-      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-      .hero-copy { min-height: 0; }
-      .profile-card { width: min(100%, 520px); min-height: 520px; }
-      .section-head { grid-template-columns: 1fr; gap: 24px; }
-      .section-head > p { max-width: 540px; }
-      .job { grid-template-columns: 90px 1fr; }
-      .job-detail { grid-column: 2; }
-      .toolkit { grid-template-columns: 1fr; }
-      .toolkit-intro { border-right: 0; border-bottom: 1px solid var(--line); }
-      .toolkit-intro h3 { margin-top: 35px; }
-      .project { grid-template-columns: 1fr; }
-      .project-visual { min-height: 380px; border-right: 0; border-bottom: 1px solid var(--line); }
-      .project-content { min-height: 430px; }
-      .contact-main { grid-template-columns: 1fr; }
-      .contact-side { padding: 25px 0 0; border-top: 1px solid color-mix(in srgb, var(--inverse-ink) 24%, transparent); border-left: 0; }
+    @media (max-width: 1000px) {
+      .shell { width: calc(100% - 56px); }
+      .hero-grid, [data-lang="en"] .hero-grid { gap: 36px; grid-template-columns: 1.3fr 1fr; }
+      .nav { gap: 18px; }
+      .nav-links { gap: 18px; }
+      .name-main { font-size: 64px; }
+      .name-alt { font-size: 24px; }
+      .hero h1 { gap: 10px 17px; }
+      .role-line { font-size: 21px; }
+      .project-visual { padding: 27px 20px 0; }
+      .project-body { padding: 22px; }
+      .about-grid { gap: 40px; }
+      .job, .earlier-experience .job { grid-template-columns: 135px 1fr; gap: 26px; }
     }
-
-    @media (max-width: 720px) {
-      .shell { width: min(calc(100% - 30px), var(--max)); }
-      .section { padding: 88px 0; }
-      .nav { min-height: 61px; }
-      .nav-links {
-        position: absolute; top: calc(100% + 8px); right: 15px; left: 15px; display: none; flex-direction: column; align-items: stretch; gap: 0;
-        padding: 8px 18px; border: 1px solid var(--line); background: var(--bg); box-shadow: var(--shadow);
-      }
-      .nav-links.open { display: flex; }
-      .nav-links a { padding: 14px 0; border-bottom: 1px solid var(--line); }
-      .nav-links a:last-child { border-bottom: 0; }
+    @media (max-width: 760px) {
+      .shell { width: calc(100% - 40px); }
+      .nav { height: 66px; gap: 12px; }
+      .brand { gap: 9px; font-size: 14px; }
+      .brand-mark { width: 32px; height: 32px; font-size: 11px; }
+      .nav-actions { gap: 0; }
+      .control { min-width: 44px; }
+      .menu-toggle { display: inline-flex; }
+      .js .nav-links { display: none; position: absolute; top: 66px; left: 0; width: 100%; background: var(--bg); padding: 14px 20px 22px; border-bottom: 1px solid var(--line); box-shadow: var(--shadow); z-index: 52; }
+      .js .nav-links.open { display: grid; gap: 0; max-height: calc(100vh - 66px); max-height: calc(100dvh - 66px); overflow-y: auto; overscroll-behavior: contain; }
+      .nav-links a { padding: 12px 4px; font-size: 17px; min-height: 52px; border-bottom: 1px solid var(--line); }
       .nav-links a::after { display: none; }
-      .nav-actions .button { display: none; }
-      .menu-toggle { display: grid; }
-      .section-head { margin-bottom: 38px; padding-bottom: 22px; }
-      .section-head h2 { font-size: clamp(42px, 12.5vw, 65px); }
-      .hero { padding: 119px 0 68px; }
-      .hero-topline { margin-bottom: 29px; }
-      .hero-topline span:last-child { display: none; }
-      .hero-grid { gap: 34px; }
-      .hero h1 { font-size: clamp(54px, 16.5vw, 82px); line-height: 1; }
-      .hero-lede { margin-top: 24px; font-size: 14px; }
-      .hero-actions .button { flex: 1; min-width: 140px; }
-      .hero-stats { margin-top: 43px; }
-      .hero-stat { padding: 17px 10px 17px 0; }
-      .hero-stat + .hero-stat { padding-left: 10px; }
-      .hero-stat strong { font-size: 24px; }
-      .hero-stat span { font-size: 6.5px; }
-      .profile-card { min-height: 470px; }
-      .monogram-wrap { min-height: 220px; }
-      .monogram { font-size: 105px; }
-      .statement { padding-bottom: 90px; }
-      .statement-panel { grid-template-columns: 1fr; gap: 30px; padding: 28px 20px; }
-      .statement-copy { font-size: 38px; }
-      .principles { grid-template-columns: 1fr; }
-      .principle { min-height: 240px; }
-      .principle + .principle { border-top: 1px solid var(--line); border-left: 0; }
-      .principle h3 { margin-top: 45px; }
-      .job { grid-template-columns: 64px 1fr; gap: 18px; padding: 27px 0; }
-      .job-title h3 { font-size: 21px; }
-      .job-detail { grid-column: 2; }
-      .job-detail p { font-size: 11px; }
-      .tool-groups { grid-template-columns: 1fr; }
-      .tool-group { min-height: 170px; }
-      .tool-group:nth-child(odd) { border-right: 0; }
-      .tool-group:not(:last-child) { border-bottom: 1px solid var(--line); }
-      .project { min-height: 0; }
-      .project-visual { min-height: 310px; }
-      .mock-browser, .mock-inventory { width: 85%; }
-      .mock-body { grid-template-columns: 58px 1fr; min-height: 190px; }
-      .mock-main { padding: 14px; }
-      .mock-main h4 { font-size: 15px; }
-      .mock-stats div { min-height: 58px; padding: 7px; }
-      .mock-stats b { margin-top: 16px; font-size: 8px; }
-      .project-content { min-height: 420px; padding: 26px 22px; }
-      .project-content h3 { margin-top: 45px; }
-      .degree { grid-template-columns: 72px 1fr; gap: 16px; }
-      .degree-code { display: none; }
-      .education-note { grid-template-columns: 1fr; gap: 20px; padding: 24px 20px; }
-      .education-note p { font-size: 20px; }
-      .contact-section { padding: 104px 0 75px; }
-      .contact-main { gap: 40px; padding: 34px 21px; }
-      .contact-main h2 { font-size: clamp(50px, 15vw, 77px); }
-      .contact-actions .button { width: 100%; }
-      .footer-top { align-items: flex-start; flex-direction: column; }
-      .footer-links { flex-wrap: wrap; }
+      .menu-backdrop.show { display: block; position: fixed; inset: 66px 0 0; background: rgba(20,25,18,.2); z-index: 40; }
+      body.menu-open { overflow: hidden; }
+      html:not(.js) .nav { height: auto; flex-wrap: wrap; padding-block: 12px; }
+      html:not(.js) .nav-links { width: 100%; display: flex; flex-wrap: wrap; gap: 18px; }
+      html:not(.js) .nav-links a { font-size: 13px; padding: 4px 0; min-height: 36px; }
+      .hero { padding: 31px 0 25px; }
+      .hero-topline { margin-bottom: 24px; }
+      .hero-topline .eyebrow { font-size: 10px; letter-spacing: .08em; }
+      .availability { font-size: 11px; }
+      .hero-grid, [data-lang="en"] .hero-grid { grid-template-columns: 1fr; gap: 23px; }
+      .hero h1 { margin-bottom: 16px; gap: 10px 18px; }
+      .name-main, [data-lang="en"] .name-main { font-size: clamp(45px, 11vw, 64px); }
+      .name-alt, [data-lang="en"] .name-alt { font-size: 23px; }
+      .role-line { font-size: 20px; margin-bottom: 9px; }
+      .hero-intro { font-size: 15px; line-height: 1.8; max-width: 620px; }
+      .hero-actions { margin-top: 21px; gap: 8px; }
+      .hero-actions .button { font-size: 13px; padding: 10px 15px; }
+      .hero-contact { margin-top: 10px; }
+      .now-card { border-top: 1px solid var(--line); padding: 15px 0 0; }
+      .now-heading { margin: 0 0 8px; }
+      .now-heading .cross { display: none; }
+      .now-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .now-row { grid-template-columns: 1fr; gap: 0; padding: 5px 0 0; border: 0; }
+      .now-icon { display: none; }
+      .now-row strong { font-size: 13px; }
+      .now-row p { font-size: 12px; margin-top: 3px; }
+      .now-note, .hero-foot { display: none; }
+      .section { padding: 34px 0; scroll-margin-top: 86px; }
+      .section-heading { display: block; margin-bottom: 22px; }
+      .section-heading h2 { font-size: 28px; }
+      .section-heading > p { font-size: 14px; margin-top: 12px; max-width: none; }
+      .section-heading .eyebrow { font-size: 10px; margin-bottom: 6px; }
+      .project-grid { grid-template-columns: 1fr; gap: 22px; }
+      .project-visual { height: 223px; padding: 24px 24px 0; }
+      .demo-window { height: 240px; }
+      .project-body { padding: 21px 20px 18px; }
+      .project h3 { font-size: 25px; }
+      .project-tagline { font-size: 14px; margin-bottom: 16px; }
+      .project-case { font-size: 15px; }
+      .project .tags { margin-top: 16px; }
+      .project-actions { margin-top: 16px; padding-top: 10px; }
+      .work-note { font-size: 12px; }
+      .job, .earlier-experience .job { grid-template-columns: 1fr; gap: 8px; padding: 22px 0; }
+      .job-time { font-size: 12px; padding: 0; }
+      .job-heading { gap: 14px; }
+      .job h3 { font-size: 18px; }
+      .company { font-size: 13px; }
+      .job-points { margin-top: 11px; }
+      .job-points li { font-size: 15px; line-height: 1.85; }
+      .about-grid { grid-template-columns: 1fr; gap: 30px; }
+      .subheading { margin-bottom: 19px; }
+      .degree { padding-bottom: 18px; margin-bottom: 18px; }
+      .skill-row { margin-bottom: 14px; padding-bottom: 14px; }
+      .skill-row p { font-size: 14px; }
+      .contact-grid { display: block; }
+      .contact h2 { font-size: 28px; }
+      .contact-email { gap: 12px; }
+      .contact-email > a { font-size: 21px; }
+      .social-links { justify-content: flex-start; gap: 2px 21px; margin-top: 22px; max-width: none; }
+      footer { align-items: center; font-size: 10px; padding: 16px 0 22px; }
     }
-
-    /* Mobile H5 refinements */
-    @media (max-width: 720px) {
-      html { scroll-padding-top: 82px; }
-      body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
-      .site-header { top: calc(2px + env(safe-area-inset-top)); }
-      .nav { min-height: 58px; }
-      .nav-actions { flex-shrink: 0; gap: 7px; }
-      .brand { min-width: 0; gap: 9px; }
-      .brand-mark { width: 29px; height: 29px; flex: 0 0 auto; }
-      .theme-toggle, .language-toggle, .menu-toggle { flex: 0 0 auto; }
-      .theme-toggle, .menu-toggle { width: 38px; height: 38px; }
-      .language-toggle { min-width: 52px; height: 38px; padding: 0 8px; }
-      .nav-links { padding-right: 16px; padding-left: 16px; }
-      .button { min-height: 44px; }
-      .hero { padding-top: calc(111px + env(safe-area-inset-top)); }
-      .hero-topline { font-size: 7px; }
-      .hero h1 { max-width: 100%; font-size: clamp(52px, 15.5vw, 76px); overflow-wrap: anywhere; }
-      :root[data-lang="en"] .hero h1 { font-size: clamp(43px, 13.7vw, 68px); letter-spacing: -.06em; }
-      .hero-lede { line-height: 1.76; overflow-wrap: anywhere; }
-      .hero-stats { overflow: hidden; }
-      .hero-stat { min-width: 0; }
-      .hero-stat span { line-height: 1.35; }
-      .profile-info strong { overflow-wrap: anywhere; }
-      .section-head h2, .statement-copy, .principle h3, .job-title h3, .project-content h3, .contact-main h2 { overflow-wrap: anywhere; }
-      .job-title .current { display: inline-flex; margin-top: 7px; margin-left: 0; }
-      .job .tags { gap: 5px; }
-      .job .tags span, .tags span { line-height: 1.25; }
-      .tool-group .tags span { max-width: 100%; overflow-wrap: anywhere; }
-      .project-actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
-      .project-actions .button { width: 100%; padding-right: 10px; padding-left: 10px; }
-      .contact-side a { min-height: 48px; }
-      footer { padding-bottom: calc(34px + env(safe-area-inset-bottom)); }
+    @media (max-width: 359px) {
+      .shell { width: calc(100% - 32px); }
+      .brand > span:last-child { font-size: 13px; }
+      .nav { gap: 4px; }
+      .nav-actions .control { padding-inline: 5px; }
+      .hero-topline { gap: 8px; }
+      .hero-topline .eyebrow { font-size: 9px; }
+      .availability { font-size: 10px; }
+      .name-alt { font-size: 21px; }
+      .project-visual { padding-inline: 14px; }
+      .project-body { padding-inline: 16px; }
+      .project h3 { font-size: 23px; }
+      .contact-email { flex-wrap: wrap; }
     }
-
-    @media (max-width: 370px) {
-      .shell { width: min(calc(100% - 24px), var(--max)); }
-      .brand { gap: 7px; font-size: 12px; }
-      .brand small { display: none; }
-      .nav-actions { gap: 5px; }
-      .language-toggle { min-width: 48px; padding: 0 6px; }
-      .theme-toggle, .menu-toggle { width: 36px; height: 36px; }
-      .hero h1 { font-size: 51px; }
-      .hero-lede { font-size: 13px; }
-      .hero-stat { padding-right: 7px; }
-      .hero-stat + .hero-stat { padding-left: 7px; }
-      .hero-stat strong { font-size: 21px; }
-      .profile-card { min-height: 450px; }
-      .monogram-wrap { min-height: 205px; }
-      .job { grid-template-columns: 56px 1fr; gap: 14px; }
-      .job-title h3 { font-size: 20px; }
-      .project-content { min-height: 445px; padding-right: 18px; padding-left: 18px; }
-      .project-actions { grid-template-columns: 1fr; }
-      .contact-main { padding-right: 17px; padding-left: 17px; }
-    }
-
-    @media (hover: none) {
-      .button:hover, .project:hover { transform: none; }
-    }
-
-    @media print {
-      @page { size: A4; margin: 13mm; }
-      :root, :root[data-theme="dark"] { --bg: #fff; --surface: #fff; --surface-2: #f4f4f4; --ink: #111; --ink-soft: #333; --muted: #666; --line: #ddd; --inverse-bg: #111; --inverse-ink: #fff; color-scheme: light; }
-      .site-header, .scroll-line, .hero-actions, .contact-section, footer, .theme-toggle, .menu-toggle { display: none !important; }
-      .shell { width: 100%; }
-      .hero { padding: 10px 0 25px; }
-      .hero-grid { display: block; }
-      .hero h1 { font-size: 55px; }
-      .profile-card { display: none; }
-      .hero-stats { margin-top: 22px; }
-      .section { padding: 24px 0; break-inside: avoid; }
-      .section-head { margin-bottom: 18px; }
-      .section-head h2 { font-size: 36px; }
-      .statement { padding-bottom: 24px; }
-      .statement-panel { padding: 24px; }
-      .principle { min-height: 190px; }
-      .job { padding: 16px 0; }
-      .project { min-height: 370px; }
-      .project-visual { min-height: 260px; }
-      .project-content { min-height: 310px; }
-      .reveal { opacity: 1 !important; transform: none !important; }
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+    @page { size: A4; margin: 13mm 15mm; }
+    @media print {
+      :root, :root[data-theme="dark"] { --bg: #fff; --paper: #fff; --subtle: #f1f1ed; --ink: #111; --secondary: #333; --muted: #555; --line: #ccc; --heavy-line: #aaa; color-scheme: light; }
+      * { animation: none !important; transition: none !important; box-shadow: none !important; }
+      body { background: #fff; font-size: 10pt; overflow: visible !important; }
+      .shell { width: 100%; }
+      .site-header, .skip-link, .hero-topline, .hero-actions, .hero-contact, .now-card, .hero-foot, .project-visual, .project-actions, .work-note, .contact, footer, .toast, .menu-backdrop, .earlier-experience > summary, .interactive { display: none !important; }
+      .print-only { display: block; }
+      .print-contact { margin-top: 12px; font-size: 10pt; line-height: 1.6; }
+      .print-contact a + a { margin-left: 18px; }
+      .hero { padding: 0 0 18px; }
+      .hero-grid, [data-lang="en"] .hero-grid { display: block; }
+      .hero h1 { margin-bottom: 10px; gap: 18px; }
+      .name-main, [data-lang="en"] .name-main { font-size: 30pt; }
+      .name-alt, [data-lang="en"] .name-alt { font-size: 17pt; }
+      .role-line { font-size: 13pt; margin-bottom: 5px; }
+      .hero-intro { font-size: 10pt; max-width: none; line-height: 1.7; }
+      .section { padding: 17px 0; }
+      .section-heading { display: block; margin-bottom: 13px; }
+      .section-heading .eyebrow { display: none; }
+      .section-heading h2 { font-size: 15pt; }
+      .section-heading > p { display: none; }
+      .project-grid { display: block; }
+      .project { background: none; border: none; margin-bottom: 14px; break-inside: avoid; }
+      .project-body { padding: 0; }
+      .project-top { display: none; }
+      .project h3 { font-size: 12pt; margin-bottom: 3px; }
+      .project-tagline { font-size: 10pt; margin-bottom: 6px; }
+      .project-case { font-size: 9.5pt; line-height: 1.6; }
+      .project-case > div { grid-template-columns: 40px 1fr; margin-top: 4px; }
+      .tags { gap: 5px; }
+      .tags span { font-size: 8pt; padding: 1px 5px; }
+      .project .tags { margin-top: 7px; }
+      .print-project-url { font: 8.5pt/1.6 var(--mono); margin-top: 7px; color: #555; }
+      .job, .earlier-experience .job { display: grid; grid-template-columns: 115px 1fr; gap: 20px; padding: 12px 0; break-inside: avoid; }
+      .job-time { font-size: 9pt; }
+      .job h3 { font-size: 11pt; }
+      .company { font-size: 9pt; }
+      .current { font-size: 8pt; padding: 1px 5px; }
+      .job-points { margin-top: 6px; }
+      .job-points li { font-size: 9.5pt; line-height: 1.65; margin-top: 3px; }
+      .job-points li::before { top: 9px; }
+      .earlier-experience { border: 0; }
+      .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+      .about-grid > div { break-inside: avoid; }
+      .subheading { font-size: 10pt; margin-bottom: 10px; }
+      .degree { grid-template-columns: 30px 1fr; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; }
+      .degree-mark { width: 28px; height: 28px; font-size: 9pt; }
+      .degree h3 { font-size: 10pt; }
+      .degree p, .degree time { font-size: 9pt; }
+      .skill-row { margin-bottom: 10px; padding-bottom: 10px; }
+      .skill-row h3, .skill-row p { font-size: 9pt; }
+      h2, h3 { break-after: avoid; }
+      p, li { orphans: 2; widows: 2; }
     }
   </style>
-  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳到主要内容</a>
-  <div class="scroll-line" aria-hidden="true"><span id="scrollProgress"></span></div>
-
-  <header class="site-header" id="siteHeader">
+  <a class="skip-link" href="#main" data-en="Skip to content">跳到主要内容</a>
+  <header class="site-header">
     <div class="shell nav">
-      <a class="brand" href="#top" aria-label="Ming Chen 首页">
-        <span class="brand-mark">MC</span>
-        <span>Ming Chen<small>MARKET / PRODUCT / STORY</small></span>
-      </a>
+      <a class="brand" href="#top" aria-label="Ming Chen 首页"><span class="brand-mark" aria-hidden="true">MC</span><span>Ming Chen</span></a>
       <nav class="nav-links" id="navLinks" aria-label="页面导航">
-        <a href="#about">About</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#education">Education</a>
+        <a href="#projects" data-en="Work">作品</a>
+        <a href="#experience" data-en="Experience">经历</a>
+        <a href="#about" data-en="About">关于</a>
+        <a href="#contact" data-en="Contact">联系</a>
       </nav>
-      <div class="nav-actions">
-        <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch to English" title="切换中英文" aria-pressed="false"><span class="zh">中</span><i>/</i><span class="en">EN</span></button>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换为深色模式" title="切换黑白主题">
-          <svg class="theme-icon" viewBox="0 0 20 20" aria-hidden="true">
-            <path class="moon" d="M15.7 12.4A6.3 6.3 0 0 1 7.6 4.3a6.3 6.3 0 1 0 8.1 8.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
-            <g class="sun" fill="none" stroke="currentColor" stroke-width="1.4">
-              <circle cx="10" cy="10" r="3.2" />
-              <path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M15.7 4.3l-1.4 1.4M5.7 14.3l-1.4 1.4" />
-            </g>
-          </svg>
+      <div class="nav-actions interactive">
+        <button class="control language-toggle" id="languageToggle" type="button" aria-label="Switch to English" aria-pressed="false"><span class="zh">中</span><i aria-hidden="true">/</i><span class="en">EN</span></button>
+        <button class="control theme-toggle" id="themeToggle" type="button" aria-label="切换为深色模式" aria-pressed="false">
+          <svg class="moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16 12.2A6.4 6.4 0 0 1 7.8 4a6.4 6.4 0 1 0 8.2 8.2Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /></svg>
+          <svg class="sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" stroke-width="1.4" /><path d="M10 1v2M10 17v2M1 10h2M17 10h2M3.6 3.6 5 5M15 15l1.4 1.4M3.6 16.4 5 15M15 5l1.4-1.4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
         </button>
-        <button class="button button-small button-primary" id="downloadVCard" type="button">下载名片 ↓</button>
-        <button class="menu-toggle" id="menuToggle" type="button" aria-label="打开菜单" aria-expanded="false"><i></i></button>
+        <button class="control menu-toggle" id="menuToggle" type="button" aria-label="打开菜单" aria-controls="navLinks" aria-expanded="false"><span aria-hidden="true"></span></button>
       </div>
     </div>
   </header>
+  <div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
 
   <main id="main">
-    <section class="hero shell" id="top">
-      <div class="hero-topline">
-        <span>Personal resume / 2026</span>
-        <span>PX markets · Digital products · Communication</span>
-      </div>
+    <section class="hero shell" id="top" aria-labelledby="nameTitle">
+      <div class="hero-topline"><span class="eyebrow">INDEPENDENT MIND. PRACTICAL WORK.</span><span class="availability" data-en="Open to connect">开放交流</span></div>
       <div class="hero-grid">
-        <div class="hero-copy reveal">
-          <span class="eyebrow">Ming Chen / Profile</span>
-          <h1>读懂市场，<br />做出<span class="quiet">产品。</span></h1>
-          <p class="hero-lede">我在<strong>商品市场与数字产品之间工作</strong>：研究 PX 供需、库存和价格，也把自己的 Yudan 系列作为个人项目，把家庭生活中的真实问题做成好用的 Web 工具。管理、金融与传播背景，让我既能看数据，也能讲清故事。</p>
+        <div class="hero-copy">
+          <h1 id="nameTitle"><span class="name-main" data-en="Ming Chen">陈铭</span><span class="name-alt" data-en="陈铭">Ming Chen</span></h1>
+          <p class="role-line" data-en="Market researcher. Product builder.">PX 市场研究 · 产品构建</p>
+          <p class="hero-intro" data-en="I research PX supply, demand and market structure. Outside work, I build web tools for everyday needs — with a background in management and strategic communication.">研究 PX 供需与期现结构，也把真实生活需求做成 Web 工具。管理与战略传播背景，让我既关注数据，也关注它如何被理解和使用。</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="#projects">查看项目 ↓</a>
-            <a class="button" href="mailto:mingchen@88.com">联系我 ↗</a>
+            <a class="button button-primary" href="#projects"><span data-en="Explore my work">查看作品</span><span aria-hidden="true">↘</span></a>
+            <button class="button interactive" type="button" id="printResume"><span data-en="Print / Save PDF">打印简历 / 存 PDF</span><span aria-hidden="true">↓</span></button>
           </div>
+          <div class="hero-contact"><a href="mailto:mingchen@88.com">mingchen@88.com</a><span aria-hidden="true">↗</span></div>
+          <div class="print-only print-contact"><a href="mailto:mingchen@88.com">mingchen@88.com</a><a href="https://ming.fi">ming.fi</a><br /><a href="https://github.com/chenming00">github.com/chenming00</a></div>
         </div>
-
-        <aside class="profile-card reveal" aria-label="个人资料卡">
-          <div class="profile-head">
-            <span>PROFILE / 01</span>
-            <span class="status"><i></i> OPEN TO CONNECT</span>
+        <aside class="now-card" aria-label="当前工作与项目">
+          <div class="now-heading"><span class="eyebrow" data-en="CURRENTLY / NOW">当前 / NOW</span><span class="cross" aria-hidden="true">+</span></div>
+          <div class="now-rows">
+            <div class="now-row"><span class="now-icon" aria-hidden="true">PX</span><div><strong data-en="PX Market Research">PX 市场研究</strong><p>Zhejiang Yisheng Petrochemical</p></div></div>
+            <div class="now-row"><span class="now-icon" aria-hidden="true">&lt;/&gt;</span><div><strong data-en="Co-founder & personal projects">联合创办与个人项目</strong><p>OwO Network / Yudan</p></div></div>
           </div>
-          <div class="monogram-wrap">
-            <div class="monogram">M<span>C</span></div>
-          </div>
-          <div class="profile-info">
-            <div><span>Current role</span><strong>PX Research Analyst</strong></div>
-            <div><span>Company</span><strong>Zhejiang Yisheng</strong></div>
-            <div><span>Also co-founded</span><strong>OwO Network</strong></div>
-            <div><span>Focus</span><strong>Market × Product</strong></div>
-          </div>
-          <div class="profile-foot"><span>SELECTED WORK / 2019—NOW</span><span class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+          <p class="now-note" data-en="Two disciplines. One habit: making things useful.">从市场到产品，关注具体问题与实际交付。</p>
         </aside>
       </div>
-      <div class="hero-stats reveal">
-        <div class="hero-stat"><strong>03</strong><span>Working lenses</span></div>
-        <div class="hero-stat"><strong>05</strong><span>Career chapters</span></div>
-        <div class="hero-stat"><strong>02</strong><span>Products shipped</span></div>
-      </div>
+      <div class="hero-foot"><span>RESEARCH × BUILD × COMMUNICATE</span><a href="#projects" data-en="SELECTED WORK BELOW ↓">向下看作品 ↓</a></div>
     </section>
 
-    <section class="statement shell" id="about">
-      <div class="statement-panel reveal">
-        <span class="eyebrow">Working thesis</span>
-        <p class="statement-copy">把结构做进去，<br />把故事讲出来，<br /><span class="muted">再把它做成产品。</span></p>
+    <section class="section projects shell" id="projects" aria-labelledby="projectsTitle">
+      <div class="section-heading"><div><span class="eyebrow">01 / SELECTED WORK</span><h2 id="projectsTitle" data-en="Tools for real life.">把日常问题，做成工具。</h2></div><p data-en="Two personal Yudan projects, built around family records and household inventory.">两个 Yudan 个人项目，分别解决家庭记录与用品管理中的具体问题。</p></div>
+      <div class="project-grid">
+        <article class="project">
+          <figure class="project-visual" aria-label="Yudan Log 界面概念示意，不含真实记录">
+            <div class="demo-window" aria-hidden="true">
+              <div class="demo-toolbar"><span class="demo-dots"><i></i><i></i><i></i></span><span>YUDAN / LOG</span><span>↗</span></div>
+              <div class="demo-layout"><div class="demo-sidebar"><b>Y.</b><span></span><span></span><span></span></div><div class="demo-main"><h4 data-en="Everyday, in one place.">日常的每一笔，都有迹可循。</h4><div class="demo-tabs"><span data-en="Overview">概览</span><span data-en="Growth">成长记录</span><span data-en="Journal">生活账本</span></div><div class="demo-chart"><div class="demo-chart-header"><span data-en="A view over time">趋势一目了然</span><span>↗</span></div><svg viewBox="0 0 240 65" preserveAspectRatio="none"><path d="M0 14H240M0 36H240M0 58H240" fill="none" stroke="var(--line)" stroke-width=".7" stroke-dasharray="3 4"/><path d="M2 51 32 43 61 47 91 32 120 36 151 20 182 25 211 11 238 5" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linejoin="round"/><circle cx="238" cy="5" r="3" fill="var(--ink)"/></svg></div><div class="demo-cells"><span></span><span></span><span></span></div></div></div>
+            </div>
+            <figcaption class="demo-label" data-en="CONCEPT UI · NOT REAL RECORDS">界面示意 · 非真实记录</figcaption>
+          </figure>
+          <div class="project-body">
+            <div class="project-top"><span class="project-type">01 / PERSONAL PROJECT</span><span class="project-type" data-en="Family records">家庭记录</span></div>
+            <h3>Yudan Log</h3><p class="project-tagline" data-en="A shared place for the things worth remembering.">把值得记住的事，放在同一个地方。</p>
+            <dl class="project-case"><div><dt data-en="Need">问题</dt><dd data-en="Growth records, vaccination schedules and household spending are easy to scatter.">成长、接种与家庭收支分散记录，回查和跟踪不方便。</dd></div><div><dt data-en="Build">实现</dt><dd data-en="Unified records, spending summaries, trend charts and cross-device sync.">集中记录，提供支出汇总、趋势图表与跨设备同步。</dd></div></dl>
+            <div class="tags" aria-label="技术栈"><span>React</span><span>Tailwind CSS</span><span>Supabase</span></div>
+            <div class="project-actions"><a class="text-link" href="https://cost.ykn.cm" target="_blank" rel="noopener noreferrer"><span data-en="Visit project">访问项目</span><span aria-hidden="true">↗</span></a><a class="text-link" href="https://github.com/Chenming00/Yudan-log" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></div>
+            <p class="print-only print-project-url">cost.ykn.cm · github.com/Chenming00/Yudan-log</p>
+          </div>
+        </article>
+        <article class="project">
+          <figure class="project-visual" aria-label="Yudan Baby Pantry 界面概念示意，不含真实记录">
+            <div class="demo-window" aria-hidden="true">
+              <div class="demo-toolbar"><span class="demo-dots"><i></i><i></i><i></i></span><span>YUDAN / PANTRY</span><span>↗</span></div>
+              <div class="inventory-demo"><div class="inventory-head"><h4 data-en="A place for every item.">让家里的物品，心中有数。</h4><span>+</span></div><div class="inventory-summary"><span data-en="All items">全部物品</span><span data-en="Low stock">待补货</span><span data-en="Expiry dates">有效期</span></div><div class="inventory-item"><span class="item-box"></span><span data-en="Daily supplies">日常用品</span><small data-en="IN STOCK">库存充足</small></div><div class="inventory-item"><span class="item-box"></span><span data-en="Baby care">婴儿护理</span><small data-en="RESTOCK">待补货</small></div><div class="inventory-item"><span class="item-box"></span><span data-en="Household care">居家清洁</span><small data-en="USE FIRST">优先使用</small></div></div>
+            </div>
+            <figcaption class="demo-label" data-en="CONCEPT UI · NOT REAL RECORDS">界面示意 · 非真实记录</figcaption>
+          </figure>
+          <div class="project-body">
+            <div class="project-top"><span class="project-type">02 / PERSONAL PROJECT</span><span class="project-type" data-en="Home inventory">用品管理</span></div>
+            <h3>Yudan Baby Pantry</h3><p class="project-tagline" data-en="Know what is left, and what to use next.">还有多少、先用哪批，一眼清楚。</p>
+            <dl class="project-case"><div><dt data-en="Need">问题</dt><dd data-en="Household stock, batches and expiry dates are hard to track from memory.">用品库存、不同批次与到期时间，靠记忆很难管理。</dd></div><div><dt data-en="Build">实现</dt><dd data-en="Batch and expiry tracking, use-first guidance, low-stock alerts and replenishment lists.">追踪库存和批次，提示临期优先消耗、低库存与补货清单。</dd></div></dl>
+            <div class="tags" aria-label="技术栈"><span>Next.js</span><span>TypeScript</span><span>Prisma</span><span>Supabase</span></div>
+            <div class="project-actions"><a class="text-link" href="https://wupin.ykn.cm" target="_blank" rel="noopener noreferrer"><span data-en="Visit project">访问项目</span><span aria-hidden="true">↗</span></a><span class="private-label" data-en="Private repository">私有仓库</span></div>
+            <p class="print-only print-project-url">wupin.ykn.cm</p>
+          </div>
+        </article>
       </div>
-      <div class="principles">
-        <article class="principle reveal">
-          <span class="principle-no">01 / Research</span>
-          <h3>市场研究</h3>
-          <p>从供需、库存、基差与价格中识别变化，把复杂信息整理成可以支持判断的结论。</p>
-          <span class="keyword">SIGNAL → DECISION</span>
-        </article>
-        <article class="principle reveal">
-          <span class="principle-no">02 / Product</span>
-          <h3>产品构建</h3>
-          <p>从真实生活问题出发，用现代 Web 技术做出可持续使用、可以不断迭代的工具。</p>
-          <span class="keyword">NEED → PRODUCT</span>
-        </article>
-        <article class="principle reveal">
-          <span class="principle-no">03 / Communication</span>
-          <h3>策略传播</h3>
-          <p>理解不同受众需要什么，把复杂结论讲清楚，推动团队和利益相关方走向下一步。</p>
-          <span class="keyword">COMPLEX → CLARITY</span>
-        </article>
-      </div>
+      <p class="work-note" data-en="Previews are concept illustrations, not product screenshots or real family data. Project access may require sign-in.">上方为界面概念示意，并非产品截图，不展示真实家庭数据。访问项目可能需要登录。</p>
     </section>
 
-    <section class="section shell" id="experience">
-      <div class="section-head reveal">
-        <div>
-          <span class="eyebrow">01 / Experience</span>
-          <h2>从研究到产品，<br /><span>我的工作轨迹。</span></h2>
-        </div>
-        <p>商品市场、企业创业、财务与供应链、传播与媒体实践。不同场景共同训练出同一种能力：把复杂问题拆开，再做成可执行的答案。</p>
-      </div>
+    <section class="section shell" id="experience" aria-labelledby="experienceTitle">
+      <div class="section-heading"><div><span class="eyebrow">02 / EXPERIENCE</span><h2 id="experienceTitle" data-en="Experience, in practice.">工作经历</h2></div><p data-en="Market research, product exploration and hands-on business experience.">从市场研究、产品探索，到财务与运营实践。</p></div>
       <div class="experience-list">
-        <article class="job reveal">
-          <time class="job-time" datetime="2026-02">FEB 2026<br>— PRESENT</time>
-          <div class="job-title"><h3>PX Futures &amp; Physical Markets <span class="current">CURRENT</span></h3><span class="company">Zhejiang Yisheng Petrochemical<br>Research Analyst</span></div>
-          <div class="job-detail"><p>分析 PX 期货与现货市场的供需基本面、库存趋势和价格变化；持续跟踪期货、现货与基差动态，并形成市场研究报告，支持交易和采购决策。</p><div class="tags"><span>PX RESEARCH</span><span>SUPPLY / DEMAND</span><span>INVENTORY</span><span>PRICING</span></div></div>
-        </article>
-        <article class="job reveal">
-          <time class="job-time" datetime="2024-09">SEP 2024<br>— PRESENT</time>
-          <div class="job-title"><h3>Co-Founder <span class="current">CURRENT</span></h3><span class="company">OwO Network, LLC</span></div>
-          <div class="job-detail"><p>参与创办 OwO Network，持续参与产品方向与业务探索，将想法转化为可讨论、可推进的产品方案。</p><div class="tags"><span>CO-FOUNDER</span><span>PRODUCT</span><span>BUSINESS</span></div></div>
-        </article>
-        <article class="job reveal">
-          <time class="job-time" datetime="2024-05">MAY — AUG<br>2024</time>
-          <div class="job-title"><h3>Finance Intern</h3><span class="company">Zhejiang Hengyi Petrochemicals</span></div>
-          <div class="job-detail"><p>参与项目财务规划、成本效益分析与能源管理相关工作；使用 SAP 进行财务数据管理与流程优化。</p><div class="tags"><span>FINANCE</span><span>COST ANALYSIS</span><span>SAP</span><span>ENERGY</span></div></div>
-        </article>
-        <article class="job reveal">
-          <time class="job-time" datetime="2024-05">MAY — AUG<br>2024</time>
-          <div class="job-title"><h3>Product Development &amp; Media Operations Intern</h3><span class="company">Universal Kiteboarding Travel Group</span></div>
-          <div class="job-detail"><p>执行社交媒体策略与营销活动，提高品牌市场曝光；参与内部流程优化，提升市场运营效率。</p><div class="tags"><span>MARKETING</span><span>SOCIAL MEDIA</span><span>PROCESS</span></div></div>
-        </article>
-        <article class="job reveal">
-          <time class="job-time" datetime="2019-06">JUN — AUG<br>2019</time>
-          <div class="job-title"><h3>Manager Assistant</h3><span class="company">Nanwang Trading Co., Ltd.</span></div>
-          <div class="job-detail"><p>制定供应商评价标准并设计质量控制体系；优化文档处理效率，策划并组织总经理会议。</p><div class="tags"><span>SUPPLIER</span><span>QUALITY CONTROL</span><span>OPERATIONS</span></div></div>
-        </article>
+        <article class="job"><time class="job-time" datetime="2026-02" data-en="2026.02 — Present">2026.02 — 至今</time><div><div class="job-heading"><div><h3 data-en="PX Market Research Analyst">PX 市场研究分析师</h3><p class="company">Zhejiang Yisheng Petrochemical</p></div><span class="current" data-en="Current">当前</span></div><ul class="job-points"><li data-en="Analyze PX supply and demand, inventory trends and price movements across futures and physical markets.">分析 PX 期货与现货市场的供需基本面、库存趋势和价格变化。</li><li data-en="Track futures, spot and basis dynamics; prepare market reports to support trading and procurement decisions.">持续跟踪期货、现货与基差动态，形成市场研究报告，支持交易和采购决策。</li></ul></div></article>
+        <article class="job"><time class="job-time" datetime="2024-09" data-en="2024.09 — Present">2024.09 — 至今</time><div><div class="job-heading"><div><h3 data-en="Co-founder">联合创始人</h3><p class="company">OwO Network, LLC</p></div><span class="current" data-en="Current">当前</span></div><ul class="job-points"><li data-en="Co-founded OwO Network; continue to explore product direction and business opportunities, turning ideas into actionable product plans.">参与创办 OwO Network，探索产品方向与业务机会，将想法转化为可推进的产品方案。</li></ul></div></article>
+        <article class="job"><time class="job-time" datetime="2024-05">2024.05 — 2024.08</time><div><div class="job-heading"><div><h3 data-en="Finance Intern">财务实习生</h3><p class="company">Zhejiang Hengyi Petrochemicals</p></div></div><ul class="job-points"><li data-en="Supported project financial planning, cost-benefit analysis and energy management; used SAP for financial data management and process improvement.">参与项目财务规划、成本效益分析与能源管理，使用 SAP 进行财务数据管理与流程优化。</li></ul></div></article>
+      </div>
+      <details class="earlier-experience" id="earlierExperience"><summary><span data-en="More experience · Media operations & supply chain">更多经历 · 媒体运营与供应链</span></summary>
+        <article class="job"><time class="job-time" datetime="2024-05">2024.05 — 2024.08</time><div><h3 data-en="Product Development & Media Operations Intern">产品开发与媒体运营实习生</h3><p class="company">Universal Kiteboarding Travel Group</p><ul class="job-points"><li data-en="Executed social media strategies and marketing campaigns; helped optimize internal marketing processes.">执行社交媒体策略与营销活动，参与内部流程优化，支持品牌曝光与市场运营。</li></ul></div></article>
+        <article class="job"><time class="job-time" datetime="2019-06">2019.06 — 2019.08</time><div><h3 data-en="Manager Assistant">经理助理</h3><p class="company">Nanwang Trading Co., Ltd.</p><ul class="job-points"><li data-en="Developed supplier evaluation criteria and quality-control systems; improved document processing and organized general manager meetings.">制定供应商评价标准与质量控制体系，优化文档处理，策划并组织总经理会议。</li></ul></div></article>
+      </details>
+    </section>
+
+    <section class="section shell" id="about" aria-labelledby="aboutTitle">
+      <div class="section-heading"><div><span class="eyebrow">03 / BACKGROUND</span><h2 id="aboutTitle" data-en="Education & toolkit.">教育与核心能力</h2></div></div>
+      <div class="about-grid">
+        <div><h3 class="subheading" data-en="Education">教育背景</h3><article class="degree"><span class="degree-mark" aria-hidden="true">UF</span><div><h3>University of Florida</h3><p data-en="Master of Science in Management">管理学硕士</p><time datetime="2023">2023 — 2024</time></div></article><article class="degree"><span class="degree-mark" aria-hidden="true">UU</span><div><h3>University of Utah</h3><p data-en="Bachelor of Science in Strategic Communication">战略传播理学学士</p><time datetime="2019">2019 — 2023</time></div></article></div>
+        <div><h3 class="subheading" data-en="Working toolkit">工作工具箱</h3><div class="skill-row"><h3 data-en="Research & analysis">研究分析</h3><p data-en="PX markets · Supply & demand · Futures, spot & basis · Inventory trends">PX 市场 · 供需分析 · 期现与基差 · 库存趋势</p></div><div class="skill-row"><h3 data-en="Product & delivery">产品交付</h3><p>React · Next.js · TypeScript · Tailwind CSS · Supabase · Prisma</p></div><div class="skill-row"><h3 data-en="Business & communication">业务与沟通</h3><p data-en="SAP · MS Office · Strategic communication · Project coordination · Supply chain">SAP · MS Office · 战略传播 · 项目协同 · 供应链</p></div></div>
       </div>
     </section>
 
-    <section class="section shell" aria-labelledby="toolkitTitle">
-      <div class="section-head reveal">
-        <div>
-          <span class="eyebrow">02 / Capabilities</span>
-          <h2 id="toolkitTitle">数据、系统与表达，<br /><span>都是工具。</span></h2>
-        </div>
-        <p>工具不是身份本身。核心能力是把合适的工具组合起来，回答问题、做出判断，并把结果交给别人使用。</p>
-      </div>
-      <div class="toolkit reveal">
-        <div class="toolkit-intro">
-          <span class="eyebrow">Toolbelt / 04</span>
-          <h3>一套跨领域的<br />工作台。</h3>
-          <p>研究与工程不是两套割裂的语言。好的产品，需要数据、结构和表达同时成立。</p>
-        </div>
-        <div class="tool-groups">
-          <div class="tool-group"><div class="tool-head"><span>01 / RESEARCH</span><span>ANALYZE</span></div><div class="tags"><span>PX Market Research</span><span>Supply &amp; Demand</span><span>Futures &amp; Spot</span><span>Data Analysis</span><span>Inventory Trends</span><span>Basis Dynamics</span></div></div>
-          <div class="tool-group"><div class="tool-head"><span>02 / BUILD</span><span>SHIP</span></div><div class="tags"><span>React</span><span>Next.js</span><span>TypeScript</span><span>Tailwind CSS</span><span>Supabase</span><span>Prisma</span><span>SAP</span></div></div>
-          <div class="tool-group"><div class="tool-head"><span>03 / OPERATE</span><span>SCALE</span></div><div class="tags"><span>Project Management</span><span>Marketing Strategy</span><span>Social Media</span><span>Supply Chain</span><span>Quality Control</span><span>MS Office</span></div></div>
-          <div class="tool-group"><div class="tool-head"><span>04 / COMMUNICATE</span><span>CONNECT</span></div><div class="tags"><span>Strategic Communication</span><span>Event Planning</span><span>Stakeholder Alignment</span><span>Storytelling</span><span>Team Coordination</span></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section shell" id="projects">
-      <div class="section-head reveal">
-        <div>
-          <span class="eyebrow">03 / Selected projects</span>
-          <h2>不只分析问题，<br /><span>也把答案做出来。</span></h2>
-        </div>
-        <p>Yudan 是我的个人项目，起点是家庭日常场景：成长记录、接种管理、家庭账本和用品库存。技术不是目的，让日常少一点记忆负担才是。</p>
-      </div>
-      <div class="project-list">
-        <article class="project reveal">
-          <div class="project-visual" aria-hidden="true">
-            <div class="mock-browser">
-              <div class="mock-bar"><i></i><i></i><i></i></div>
-              <div class="mock-body">
-                <div class="mock-side"><b>鱼蛋</b><span></span><span></span><span></span><span></span></div>
-                <div class="mock-main"><small>TODAY / 成长看板</small><h4>又长大了一点点。</h4><div class="mock-stats"><div><span>体重</span><b>3.56kg</b></div><div><span>接种</span><b>02/46</b></div><div><span>提醒</span><b>12d</b></div></div></div>
-              </div>
-            </div>
-          </div>
-          <div class="project-content">
-            <span class="project-index">PERSONAL PROJECT / 01</span>
-            <h3>Yudan Log</h3>
-            <p>把成长记录、疫苗接种、家庭账本和成长日志放到同一个地方；提供支出汇总、趋势图表与跨设备同步，让重要的家庭信息持续可见。</p>
-            <div class="tags"><span>REACT</span><span>TAILWIND CSS</span><span>SUPABASE</span></div>
-            <div class="project-actions"><a class="button button-primary" href="https://cost.ykn.cm" target="_blank" rel="noreferrer">打开网站 ↗</a><a class="button" href="https://github.com/Chenming00/Yudan-log" target="_blank" rel="noreferrer">GitHub ↗</a></div>
-          </div>
-        </article>
-
-        <article class="project reveal">
-          <div class="project-visual" aria-hidden="true">
-            <div class="mock-inventory">
-              <div class="inventory-head"><strong>鱼蛋宝贝 / 用品管家</strong><span>68%</span></div>
-              <div class="stock-line"><i></i></div>
-              <div class="inventory-list">
-                <div class="inventory-item"><span>纸尿裤 / L 码 / 第 2 批</span><b>8 LEFT</b></div>
-                <div class="inventory-item"><span>米粉 / 铁强化 / 批次 2408</span><b>SOON</b></div>
-                <div class="inventory-item"><span>维生素 D / 滴剂</span><b>21 DAYS</b></div>
-              </div>
-            </div>
-          </div>
-          <div class="project-content">
-            <span class="project-index">PERSONAL PROJECT / 02</span>
-            <h3>Yudan Baby Pantry</h3>
-            <p>追踪家庭用品的库存、批次与到期日，优先消耗临期物品，并给出低库存提醒和补货清单，让“物尽其用，生活有序”真正落地。</p>
-            <div class="tags"><span>NEXT.JS</span><span>TYPESCRIPT</span><span>PRISMA</span><span>SUPABASE</span></div>
-            <div class="project-actions"><a class="button button-primary" href="https://wupin.ykn.cm" target="_blank" rel="noreferrer">打开网站 ↗</a><span class="button" style="cursor:default">PRIVATE REPO</span></div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section shell" id="education">
-      <div class="section-head reveal">
-        <div>
-          <span class="eyebrow">04 / Education</span>
-          <h2>管理搭框架，<br /><span>传播讲清故事。</span></h2>
-        </div>
-        <p>管理训练组织与决策，战略传播训练受众意识。一个解决“怎么做”，一个解决“怎么说服人做”。</p>
-      </div>
-      <div class="education-list">
-        <article class="degree reveal"><time datetime="2023">2023—2024</time><div><h3>University of Florida</h3><p>Master of Science in Management / 管理学硕士</p></div><span class="degree-code">UF / MS</span></article>
-        <article class="degree reveal"><time datetime="2019">2019—2023</time><div><h3>University of Utah</h3><p>Bachelor of Science in Strategic Communication / 战略传播理学学士</p></div><span class="degree-code">UU / BS</span></article>
-      </div>
-    </section>
-
-    <section class="contact-section shell" id="contact">
-      <div class="contact-main reveal">
-        <div>
-          <span class="eyebrow">Open channel / 保持连接</span>
-          <h2>有市场问题？<br />也有好点子。</h2>
-          <p>无论是 PX 研究、供需分析、供应链与财务话题，还是一个值得被做出来的 Web 产品，都可以聊聊。给我一个上下文，我们从具体问题开始。</p>
-          <div class="contact-actions"><a class="button" href="mailto:mingchen@88.com">发邮件给我 ↗</a><button class="button" id="copyEmail" type="button">复制邮箱</button><button class="button" id="printResume" type="button">打印 / 存 PDF</button></div>
-        </div>
-        <div class="contact-side">
-          <a href="https://ming.fi" target="_blank" rel="noreferrer"><span>PERSONAL SITE</span>ming.fi ↗</a>
-          <a href="https://blog.ming.fi" target="_blank" rel="noreferrer"><span>WRITING</span>Blog ↗</a>
-          <a href="https://github.com/chenming00" target="_blank" rel="noreferrer"><span>GITHUB</span>@chenming00 ↗</a>
-          <a href="https://www.linkedin.com/in/mingchenisme" target="_blank" rel="noreferrer"><span>LINKEDIN</span>Connect ↗</a>
-          <a href="https://x.com/will_mingming" target="_blank" rel="noreferrer"><span>X / TWITTER</span>@will_mingming ↗</a>
-        </div>
-      </div>
+    <section class="section contact shell" id="contact" aria-labelledby="contactTitle">
+      <div class="contact-grid"><div><span class="eyebrow">04 / GET IN TOUCH</span><h2 id="contactTitle" data-en="Start with a conversation.">从一个具体问题，开始聊。</h2><p data-en="PX markets, a product idea, or something we could build together.">关于 PX 市场、产品想法，或者一次有意思的合作。</p><div class="contact-email"><a href="mailto:mingchen@88.com">mingchen@88.com</a><button class="copy-button interactive" type="button" id="copyEmail" data-en="Copy email">复制邮箱</button></div></div><div class="social-links"><a href="https://github.com/chenming00" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.linkedin.com/in/mingchenisme" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://blog.ming.fi" target="_blank" rel="noopener noreferrer">Blog ↗</a><a href="https://x.com/will_mingming" target="_blank" rel="noopener noreferrer">X ↗</a><a href="https://ming.fi" target="_blank" rel="noopener noreferrer">ming.fi ↗</a><button class="interactive" type="button" id="downloadVCard" data-en="Save contact ↓">保存名片 ↓</button></div></div>
     </section>
   </main>
-
-  <footer class="shell">
-    <div class="footer-top">
-      <a class="brand" href="#top"><span class="brand-mark">MC</span><span>Ming Chen<small>MARKET / PRODUCT / STORY</small></span></a>
-      <span class="footer-note">© <span id="year">2026</span> MING CHEN · INTERACTIVE RESUME</span>
-      <div class="footer-links"><a href="#about">About</a><a href="#experience">Experience</a><a href="#projects">Projects</a><a href="#top">Top ↑</a></div>
-    </div>
-  </footer>
-
-  <div class="toast" id="toast" role="status" aria-live="polite">已完成</div>
+  <footer class="shell"><span>© <span id="year">2026</span> MING CHEN</span><a href="#top" data-en="BACK TO TOP ↑">回到顶部 ↑</a></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
     (() => {
-      const $ = id => document.getElementById(id);
+      'use strict';
       const root = document.documentElement;
-      const themeToggle = $('themeToggle');
-      const siteHeader = $('siteHeader');
-      const navLinks = $('navLinks');
-      const menuToggle = $('menuToggle');
-      const toast = $('toast');
-      const themeColor = document.querySelector('meta[name="theme-color"]');
+      const $ = id => document.getElementById(id);
       const languageToggle = $('languageToggle');
-      const metaDescription = document.querySelector('meta[name="description"]');
-      const ogTitle = document.querySelector('meta[property="og:title"]');
-      const ogDescription = document.querySelector('meta[property="og:description"]');
-
-      const textCopy = {
-        '跳到主要内容': ['跳到主要内容', 'Skip to content'],
-        'MARKET / PRODUCT / STORY': ['市场 / 产品 / 叙事', 'MARKET / PRODUCT / STORY'],
-        'About': ['关于', 'About'],
-        'Experience': ['经历', 'Experience'],
-        'Projects': ['项目', 'Projects'],
-        'Education': ['学历', 'Education'],
-        '下载名片 ↓': ['下载名片 ↓', 'Download vCard ↓'],
-        'Personal resume / 2026': ['个人简历 / 2026', 'Personal resume / 2026'],
-        'PX markets · Digital products · Communication': ['PX 市场 · 数字产品 · 策略传播', 'PX markets · Digital products · Communication'],
-        'Ming Chen / Profile': ['Ming Chen / 个人简介', 'Ming Chen / Profile'],
-        '读懂市场，': ['读懂市场，', 'Read markets,'],
-        '做出': ['做出', 'build'],
-        '产品。': ['产品。', 'products.'],
-        '我在': ['我在', 'I work across'],
-        '商品市场与数字产品之间工作': ['商品市场与数字产品之间工作', 'commodity markets and digital products'],
-        '：研究 PX 供需、库存和价格，也把自己的 Yudan 系列作为个人项目，把家庭生活中的真实问题做成好用的 Web 工具。管理、金融与传播背景，让我既能看数据，也能讲清故事。': ['：研究 PX 供需、库存和价格，也把自己的 Yudan 系列作为个人项目，把家庭生活中的真实问题做成好用的 Web 工具。管理、金融与传播背景，让我既能看数据，也能讲清故事。', ', researching PX supply and demand, inventory and pricing. I also build Yudan as a personal project, turning real family needs into useful web tools. My background in management, finance and communication helps me read data and explain it clearly.'],
-        '查看项目 ↓': ['查看项目 ↓', 'View projects ↓'],
-        '联系我 ↗': ['联系我 ↗', 'Contact me ↗'],
-        'OPEN TO CONNECT': ['开放交流', 'OPEN TO CONNECT'],
-        'Current role': ['当前职位', 'Current role'],
-        'PX Research Analyst': ['PX 市场研究分析师', 'PX Research Analyst'],
-        'Company': ['公司', 'Company'],
-        'Also co-founded': ['联合创办', 'Also co-founded'],
-        'Focus': ['关注方向', 'Focus'],
-        'Market × Product': ['市场 × 产品', 'Market × Product'],
-        'SELECTED WORK / 2019—NOW': ['经历概览 / 2019—至今', 'SELECTED WORK / 2019—NOW'],
-        'Working lenses': ['工作视角', 'Working lenses'],
-        'Career chapters': ['职业阶段', 'Career chapters'],
-        'Products shipped': ['已上线产品', 'Products shipped'],
-        'Working thesis': ['工作方法', 'Working thesis'],
-        '把结构做进去，': ['把结构做进去，', 'Build structure into it,'],
-        '把故事讲出来，': ['把故事讲出来，', 'tell the story,'],
-        '再把它做成产品。': ['再把它做成产品。', 'then turn it into a product.'],
-        '01 / Research': ['01 / 研究', '01 / Research'],
-        '市场研究': ['市场研究', 'Market Research'],
-        '从供需、库存、基差与价格中识别变化，把复杂信息整理成可以支持判断的结论。': ['从供需、库存、基差与价格中识别变化，把复杂信息整理成可以支持判断的结论。', 'Identify change across supply, demand, inventory and pricing, then turn complex information into decisions people can use.'],
-        'SIGNAL → DECISION': ['信号 → 判断', 'SIGNAL → DECISION'],
-        '02 / Product': ['02 / 产品', '02 / Product'],
-        '产品构建': ['产品构建', 'Product Building'],
-        '从真实生活问题出发，用现代 Web 技术做出可持续使用、可以不断迭代的工具。': ['从真实生活问题出发，用现代 Web 技术做出可持续使用、可以不断迭代的工具。', 'Start with real-life needs and use modern web technology to build tools that remain useful and easy to improve.'],
-        'NEED → PRODUCT': ['需求 → 产品', 'NEED → PRODUCT'],
-        '03 / Communication': ['03 / 传播', '03 / Communication'],
-        '策略传播': ['策略传播', 'Strategic Communication'],
-        '理解不同受众需要什么，把复杂结论讲清楚，推动团队和利益相关方走向下一步。': ['理解不同受众需要什么，把复杂结论讲清楚，推动团队和利益相关方走向下一步。', 'Understand what different audiences need, explain complex conclusions clearly and move teams and stakeholders forward.'],
-        'COMPLEX → CLARITY': ['复杂 → 清晰', 'COMPLEX → CLARITY'],
-        '01 / Experience': ['01 / 工作经历', '01 / Experience'],
-        '从研究到产品，': ['从研究到产品，', 'From research to product,'],
-        '我的工作轨迹。': ['我的工作轨迹。', 'this is my path.'],
-        '商品市场、企业创业、财务与供应链、传播与媒体实践。不同场景共同训练出同一种能力：把复杂问题拆开，再做成可执行的答案。': ['商品市场、企业创业、财务与供应链、传播与媒体实践。不同场景共同训练出同一种能力：把复杂问题拆开，再做成可执行的答案。', 'Commodity markets, entrepreneurship, finance and supply chain, plus communication and media. Different settings built one shared ability: break down complexity and turn it into action.'],
-        '— PRESENT': ['— 至今', '— PRESENT'],
-        'CURRENT': ['当前', 'CURRENT'],
-        'PX Futures & Physical Markets': ['PX 期货与现货市场', 'PX Futures & Physical Markets'],
-        'Research Analyst': ['研究分析师', 'Research Analyst'],
-        '分析 PX 期货与现货市场的供需基本面、库存趋势和价格变化；持续跟踪期货、现货与基差动态，并形成市场研究报告，支持交易和采购决策。': ['分析 PX 期货与现货市场的供需基本面、库存趋势和价格变化；持续跟踪期货、现货与基差动态，并形成市场研究报告，支持交易和采购决策。', 'Analyze PX futures and physical markets across supply and demand, inventory and price movements. Track futures, spot and basis dynamics, and prepare reports that support trading and procurement decisions.'],
-        'PX RESEARCH': ['PX 研究', 'PX RESEARCH'],
-        'SUPPLY / DEMAND': ['供需分析', 'SUPPLY / DEMAND'],
-        'INVENTORY': ['库存', 'INVENTORY'],
-        'PRICING': ['价格', 'PRICING'],
-        'Co-Founder': ['联合创始人', 'Co-Founder'],
-        '参与创办 OwO Network，持续参与产品方向与业务探索，将想法转化为可讨论、可推进的产品方案。': ['参与创办 OwO Network，持续参与产品方向与业务探索，将想法转化为可讨论、可推进的产品方案。', 'Co-founded OwO Network and continue to explore product direction and business opportunities, turning ideas into clear and actionable plans.'],
-        'CO-FOUNDER': ['联合创办', 'CO-FOUNDER'],
-        'PRODUCT': ['产品', 'PRODUCT'],
-        'BUSINESS': ['业务', 'BUSINESS'],
-        'Finance Intern': ['财务实习生', 'Finance Intern'],
-        '参与项目财务规划、成本效益分析与能源管理相关工作；使用 SAP 进行财务数据管理与流程优化。': ['参与项目财务规划、成本效益分析与能源管理相关工作；使用 SAP 进行财务数据管理与流程优化。', 'Supported project financial planning, cost-benefit analysis and energy management, using SAP for financial data management and process improvement.'],
-        'FINANCE': ['财务', 'FINANCE'],
-        'COST ANALYSIS': ['成本分析', 'COST ANALYSIS'],
-        'ENERGY': ['能源管理', 'ENERGY'],
-        'Product Development & Media Operations Intern': ['产品开发与媒体运营实习生', 'Product Development & Media Operations Intern'],
-        '执行社交媒体策略与营销活动，提高品牌市场曝光；参与内部流程优化，提升市场运营效率。': ['执行社交媒体策略与营销活动，提高品牌市场曝光；参与内部流程优化，提升市场运营效率。', 'Executed social media strategies and marketing campaigns to improve brand visibility, and helped optimize internal processes for greater marketing efficiency.'],
-        'MARKETING': ['市场营销', 'MARKETING'],
-        'SOCIAL MEDIA': ['社交媒体', 'SOCIAL MEDIA'],
-        'PROCESS': ['流程', 'PROCESS'],
-        'Manager Assistant': ['经理助理', 'Manager Assistant'],
-        '制定供应商评价标准并设计质量控制体系；优化文档处理效率，策划并组织总经理会议。': ['制定供应商评价标准并设计质量控制体系；优化文档处理效率，策划并组织总经理会议。', 'Developed supplier evaluation criteria and quality-control systems, improved document processing, and organized general manager meetings.'],
-        'SUPPLIER': ['供应商', 'SUPPLIER'],
-        'QUALITY CONTROL': ['质量控制', 'QUALITY CONTROL'],
-        'OPERATIONS': ['运营', 'OPERATIONS'],
-        '02 / Capabilities': ['02 / 能力工具', '02 / Capabilities'],
-        '数据、系统与表达，': ['数据、系统与表达，', 'Data, systems and communication —'],
-        '都是工具。': ['都是工具。', 'they are all tools.'],
-        '工具不是身份本身。核心能力是把合适的工具组合起来，回答问题、做出判断，并把结果交给别人使用。': ['工具不是身份本身。核心能力是把合适的工具组合起来，回答问题、做出判断，并把结果交给别人使用。', 'Tools are not the identity. The core ability is combining the right ones to answer questions, make judgments and deliver useful results.'],
-        'Toolbelt / 04': ['工具箱 / 04', 'Toolbelt / 04'],
-        '一套跨领域的': ['一套跨领域的', 'A cross-disciplinary'],
-        '工作台。': ['工作台。', 'workbench.'],
-        '研究与工程不是两套割裂的语言。好的产品，需要数据、结构和表达同时成立。': ['研究与工程不是两套割裂的语言。好的产品，需要数据、结构和表达同时成立。', 'Research and engineering do not need to be separate languages. A good product needs data, structure and communication to work together.'],
-        '01 / RESEARCH': ['01 / 研究', '01 / RESEARCH'],
-        'ANALYZE': ['分析', 'ANALYZE'],
-        'PX Market Research': ['PX 市场研究', 'PX Market Research'],
-        'Supply & Demand': ['供需分析', 'Supply & Demand'],
-        'Futures & Spot': ['期货与现货', 'Futures & Spot'],
-        'Data Analysis': ['数据分析', 'Data Analysis'],
-        'Inventory Trends': ['库存趋势', 'Inventory Trends'],
-        'Basis Dynamics': ['基差动态', 'Basis Dynamics'],
-        '02 / BUILD': ['02 / 构建', '02 / BUILD'],
-        'SHIP': ['交付', 'SHIP'],
-        '03 / OPERATE': ['03 / 运营', '03 / OPERATE'],
-        'SCALE': ['规模化', 'SCALE'],
-        'Project Management': ['项目管理', 'Project Management'],
-        'Marketing Strategy': ['营销策略', 'Marketing Strategy'],
-        'Social Media': ['社交媒体', 'Social Media'],
-        'Supply Chain': ['供应链', 'Supply Chain'],
-        'Quality Control': ['质量控制', 'Quality Control'],
-        '04 / COMMUNICATE': ['04 / 沟通', '04 / COMMUNICATE'],
-        'CONNECT': ['连接', 'CONNECT'],
-        'Strategic Communication': ['战略传播', 'Strategic Communication'],
-        'Event Planning': ['活动策划', 'Event Planning'],
-        'Stakeholder Alignment': ['利益相关方协同', 'Stakeholder Alignment'],
-        'Storytelling': ['叙事表达', 'Storytelling'],
-        'Team Coordination': ['团队协作', 'Team Coordination'],
-        '03 / Selected projects': ['03 / 个人项目', '03 / Selected projects'],
-        '不只分析问题，': ['不只分析问题，', 'I do more than analyze problems —'],
-        '也把答案做出来。': ['也把答案做出来。', 'I build the answer too.'],
-        'Yudan 是我的个人项目，起点是家庭日常场景：成长记录、接种管理、家庭账本和用品库存。技术不是目的，让日常少一点记忆负担才是。': ['Yudan 是我的个人项目，起点是家庭日常场景：成长记录、接种管理、家庭账本和用品库存。技术不是目的，让日常少一点记忆负担才是。', 'Yudan is my personal project series, rooted in everyday family needs: growth records, vaccination tracking, household finances and inventory. Technology is the tool; reducing mental load is the goal.'],
-        'TODAY / 成长看板': ['今日 / 成长看板', 'TODAY / GROWTH DASHBOARD'],
-        '鱼蛋': ['鱼蛋', 'Yudan'],
-        '鱼蛋宝贝 / 用品管家': ['鱼蛋宝贝 / 用品管家', 'Yudan Baby / Household Manager'],
-        '又长大了一点点。': ['又长大了一点点。', 'A little bigger today.'],
-        '体重': ['体重', 'Weight'],
-        '接种': ['接种', 'Vaccines'],
-        '提醒': ['提醒', 'Reminder'],
-        'PERSONAL PROJECT / 01': ['个人项目 / 01', 'PERSONAL PROJECT / 01'],
-        '把成长记录、疫苗接种、家庭账本和成长日志放到同一个地方；提供支出汇总、趋势图表与跨设备同步，让重要的家庭信息持续可见。': ['把成长记录、疫苗接种、家庭账本和成长日志放到同一个地方；提供支出汇总、趋势图表与跨设备同步，让重要的家庭信息持续可见。', 'A single place for growth records, vaccinations, household finances and a family journal, with spending summaries, trend charts and cross-device sync.'],
-        '打开网站 ↗': ['打开网站 ↗', 'Open website ↗'],
-        '纸尿裤 / L 码 / 第 2 批': ['纸尿裤 / L 码 / 第 2 批', 'Diapers / Size L / Batch 2'],
-        '米粉 / 铁强化 / 批次 2408': ['米粉 / 铁强化 / 批次 2408', 'Formula / Iron / Batch 2408'],
-        '维生素 D / 滴剂': ['维生素 D / 滴剂', 'Vitamin D / Drops'],
-        'PERSONAL PROJECT / 02': ['个人项目 / 02', 'PERSONAL PROJECT / 02'],
-        '追踪家庭用品的库存、批次与到期日，优先消耗临期物品，并给出低库存提醒和补货清单，让“物尽其用，生活有序”真正落地。': ['追踪家庭用品的库存、批次与到期日，优先消耗临期物品，并给出低库存提醒和补货清单，让“物尽其用，生活有序”真正落地。', 'Tracks household inventory, batches and expiry dates, prioritizes items that expire soon, and provides low-stock alerts and replenishment lists.'],
-        'PRIVATE REPO': ['私有仓库', 'PRIVATE REPO'],
-        '04 / Education': ['04 / 教育背景', '04 / Education'],
-        '管理搭框架，': ['管理搭框架，', 'Management provides structure,'],
-        '传播讲清故事。': ['传播讲清故事。', 'communication tells the story.'],
-        '管理训练组织与决策，战略传播训练受众意识。一个解决“怎么做”，一个解决“怎么说服人做”。': ['管理训练组织与决策，战略传播训练受众意识。一个解决“怎么做”，一个解决“怎么说服人做”。', 'Management develops organization and decision-making; strategic communication develops audience awareness. One answers how to act, the other how to move people to act.'],
-        'Master of Science in Management / 管理学硕士': ['管理学硕士', 'Master of Science in Management'],
-        'Bachelor of Science in Strategic Communication / 战略传播理学学士': ['战略传播理学学士', 'Bachelor of Science in Strategic Communication'],
-        'Open channel / 保持连接': ['保持联系 / Open channel', 'Open channel'],
-        '有市场问题？': ['有市场问题？', 'Have a market question?'],
-        '也有好点子。': ['也有好点子。', 'Or a good idea?'],
-        '无论是 PX 研究、供需分析、供应链与财务话题，还是一个值得被做出来的 Web 产品，都可以聊聊。给我一个上下文，我们从具体问题开始。': ['无论是 PX 研究、供需分析、供应链与财务话题，还是一个值得被做出来的 Web 产品，都可以聊聊。给我一个上下文，我们从具体问题开始。', 'Let us talk about PX research, supply and demand, supply chain and finance — or a web product worth building. Give me some context and we can start with the specific problem.'],
-        '发邮件给我 ↗': ['发邮件给我 ↗', 'Email me ↗'],
-        '复制邮箱': ['复制邮箱', 'Copy email'],
-        '打印 / 存 PDF': ['打印 / 存 PDF', 'Print / Save PDF'],
-        'PERSONAL SITE': ['个人网站', 'PERSONAL SITE'],
-        'WRITING': ['文章', 'WRITING'],
-        'Connect ↗': ['LinkedIn ↗', 'Connect ↗'],
-        'MING CHEN · INTERACTIVE RESUME': ['MING CHEN · 交互式简历', 'MING CHEN · INTERACTIVE RESUME'],
-        'Top ↑': ['顶部 ↑', 'Top ↑'],
-        '已完成': ['已完成', 'Done']
-      };
-
-      const translatedNodes = [];
-      const textWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-      while (textWalker.nextNode()) {
-        const node = textWalker.currentNode;
-        const source = node.nodeValue.trim();
-        if (!Object.prototype.hasOwnProperty.call(textCopy, source)) continue;
-        const leading = node.nodeValue.match(/^\s*/)[0];
-        const trailing = node.nodeValue.match(/\s*$/)[0];
-        translatedNodes.push({ node, leading, trailing, zh: textCopy[source][0], en: textCopy[source][1] });
-      }
-      let currentLanguage = root.dataset.lang === 'en' ? 'en' : 'zh';
-      const localText = (zh, en) => currentLanguage === 'en' ? en : zh;
-
-      const applyTheme = theme => {
-        const isEnglish = currentLanguage === 'en';
-        root.dataset.theme = theme;
-        themeToggle.setAttribute('aria-label', isEnglish
-          ? (theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode')
-          : (theme === 'dark' ? '切换为浅色模式' : '切换为深色模式'));
-        themeToggle.setAttribute('title', isEnglish ? 'Switch light / dark theme' : '切换黑白主题');
-        themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
-        themeColor.setAttribute('content', theme === 'dark' ? '#0e0e0e' : '#f4f4f1');
-        try { localStorage.setItem('ming-resume-theme', theme); } catch (_) {}
-      };
-
-      const applyLanguage = language => {
-        currentLanguage = language === 'en' ? 'en' : 'zh';
-        const isEnglish = currentLanguage === 'en';
-        root.dataset.lang = currentLanguage;
-        root.lang = isEnglish ? 'en' : 'zh-CN';
-        translatedNodes.forEach(item => {
-          item.node.nodeValue = item.leading + (isEnglish ? item.en : item.zh) + item.trailing;
-        });
-        languageToggle.setAttribute('aria-label', isEnglish ? 'Switch to Chinese' : '切换为英文');
-        languageToggle.setAttribute('title', isEnglish ? 'Switch to Chinese' : '切换为英文');
-        languageToggle.setAttribute('aria-pressed', String(isEnglish));
-        const menuIsOpen = navLinks.classList.contains('open');
-        menuToggle.setAttribute('aria-label', menuIsOpen ? localText('关闭菜单', 'Close menu') : localText('打开菜单', 'Open menu'));
-        document.querySelectorAll('.brand').forEach(link => link.setAttribute('aria-label', isEnglish ? 'Ming Chen home' : 'Ming Chen 首页'));
-        document.title = isEnglish ? 'Ming Chen — Market Researcher × Product Builder' : 'Ming Chen — PX 市场研究 × 产品构建';
-        const description = isEnglish
-          ? 'Ming Chen’s interactive resume: PX market research, OwO Network co-founder, and personal Yudan projects.'
-          : 'Ming Chen 的交互式个人简历：PX 市场研究、OwO Network 联合创始人，以及 Yudan 个人项目构建。';
-        metaDescription.setAttribute('content', description);
-        ogTitle.setAttribute('content', document.title);
-        ogDescription.setAttribute('content', description);
-        try { localStorage.setItem('ming-resume-language', currentLanguage); } catch (_) {}
-        applyTheme(root.dataset.theme || 'light');
-      };
-
-      applyLanguage(currentLanguage);
-      languageToggle.addEventListener('click', () => {
-        applyLanguage(currentLanguage === 'en' ? 'zh' : 'en');
-      });
-      themeToggle.addEventListener('click', () => {
-        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-        applyTheme(next);
-      });
-
-      const setMenu = open => {
-        navLinks.classList.toggle('open', open);
-        menuToggle.classList.toggle('active', open);
-        menuToggle.setAttribute('aria-expanded', String(open));
-        menuToggle.setAttribute('aria-label', open ? localText('关闭菜单', 'Close menu') : localText('打开菜单', 'Open menu'));
-        document.body.classList.toggle('menu-open', open);
-      };
-      menuToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('open')));
-      navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
-      document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenu(false); });
-
-      const syncScroll = () => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = max > 0 ? (window.scrollY / max) * 100 : 0;
-        $('scrollProgress').style.width = Math.min(100, Math.max(0, progress)) + '%';
-        siteHeader.classList.toggle('scrolled', window.scrollY > 20);
-      };
-      syncScroll();
-      window.addEventListener('scroll', syncScroll, { passive: true });
-
-      const revealItems = document.querySelectorAll('.reveal');
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, { threshold: .1, rootMargin: '0px 0px -28px' });
-        revealItems.forEach(item => observer.observe(item));
-      } else {
-        revealItems.forEach(item => item.classList.add('visible'));
-      }
-
+      const themeToggle = $('themeToggle');
+      const menuToggle = $('menuToggle');
+      const navLinks = $('navLinks');
+      const backdrop = $('menuBackdrop');
+      const mobile = window.matchMedia('(max-width: 760px)');
+      const translated = [...document.querySelectorAll('[data-en]')].map(el => ({ el, zh: el.textContent, en: el.dataset.en }));
+      let language = 'zh';
+      let toastTimer;
+      let menuInert = [];
+      const text = (zh, en) => language === 'en' ? en : zh;
+      const store = (key, value) => { try { localStorage.setItem(key, value); } catch (_) {} };
       const showToast = message => {
+        const toast = $('toast');
         toast.textContent = message;
         toast.classList.add('show');
-        window.clearTimeout(showToast.timer);
-        showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 2200);
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
       };
-
-      $('downloadVCard').addEventListener('click', () => {
-        const card = [
-          'BEGIN:VCARD', 'VERSION:3.0', 'N:Chen;Ming;;;', 'FN:Ming Chen', 'ORG:OwO Network',
-          'TITLE:' + localText('PX 市场研究员 / 联合创始人', 'PX Market Researcher & Co-Founder'), 'URL:https://ming.fi',
-          'EMAIL;TYPE=INTERNET:mingchen@88.com', 'X-TWITTER:https://x.com/will_mingming', 'END:VCARD'
-        ].join('\r\n');
-        const blob = new Blob([card], { type: 'text/vcard;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'Ming-Chen.vcf';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(url);
-        showToast(localText('名片已下载 · Ming-Chen.vcf', 'vCard downloaded · Ming-Chen.vcf'));
-      });
-
-      $('copyEmail').addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText('mingchen@88.com');
-          showToast(localText('邮箱已复制 · mingchen@88.com', 'Email copied · mingchen@88.com'));
-        } catch (_) {
-          const temp = document.createElement('textarea');
-          temp.value = 'mingchen@88.com';
-          document.body.appendChild(temp);
-          temp.select();
-          document.execCommand('copy');
-          temp.remove();
-          showToast(localText('邮箱已复制 · mingchen@88.com', 'Email copied · mingchen@88.com'));
+      const applyTheme = theme => {
+        theme = theme === 'dark' ? 'dark' : 'light';
+        root.dataset.theme = theme;
+        const label = theme === 'dark' ? text('切换为浅色模式', 'Switch to light mode') : text('切换为深色模式', 'Switch to dark mode');
+        themeToggle.setAttribute('aria-label', label);
+        themeToggle.title = label;
+        themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#191b18' : '#f6f6f2';
+        store('ming-resume-theme', theme);
+      };
+      const applyLanguage = value => {
+        language = value === 'en' ? 'en' : 'zh';
+        root.lang = language === 'en' ? 'en' : 'zh-CN';
+        root.dataset.lang = language;
+        translated.forEach(({el, zh, en}) => { el.textContent = language === 'en' ? en : zh; });
+        languageToggle.setAttribute('aria-label', text('Switch to English', '切换为中文'));
+        languageToggle.title = text('Switch to English', '切换为中文');
+        languageToggle.setAttribute('aria-pressed', String(language === 'en'));
+        navLinks.setAttribute('aria-label', text('页面导航', 'Page navigation'));
+        document.querySelector('.brand').setAttribute('aria-label', text('Ming Chen 首页', 'Ming Chen home'));
+        document.querySelector('.now-card').setAttribute('aria-label', text('当前工作与项目', 'Current work and projects'));
+        document.querySelectorAll('.project-visual').forEach((el, i) => el.setAttribute('aria-label', (i === 0 ? 'Yudan Log' : 'Yudan Baby Pantry') + text(' 界面概念示意，不含真实记录', ' concept interface, not real records')));
+        document.querySelectorAll('.tags').forEach(el => el.setAttribute('aria-label', text('技术栈', 'Technology stack')));
+        menuToggle.setAttribute('aria-label', navLinks.classList.contains('open') ? text('关闭菜单', 'Close menu') : text('打开菜单', 'Open menu'));
+        document.title = text('陈铭 Ming Chen — 市场研究与产品构建', 'Ming Chen — Market Researcher & Product Builder');
+        const description = text('陈铭 Ming Chen 的个人主页与作品集。PX 市场研究、OwO Network 联合创办与 Yudan 系列个人项目。', 'Ming Chen: PX market research, OwO Network co-founder and builder of personal Yudan projects.');
+        document.querySelector('meta[name="description"]').content = description;
+        document.querySelector('meta[property="og:title"]').content = document.title;
+        document.querySelector('meta[property="og:description"]').content = description;
+        store('ming-resume-language', language);
+        applyTheme(root.dataset.theme);
+      };
+      const setMenu = (open, returnFocus = false) => {
+        open = Boolean(open && mobile.matches);
+        navLinks.classList.toggle('open', open);
+        backdrop.classList.toggle('show', open);
+        document.body.classList.toggle('menu-open', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+        menuToggle.setAttribute('aria-label', open ? text('关闭菜单', 'Close menu') : text('打开菜单', 'Open menu'));
+        if (open && !menuInert.length) {
+          menuInert = [...document.querySelectorAll('main, footer')].map(el => ({el, inert: el.inert}));
+          menuInert.forEach(({el}) => { el.inert = true; });
+        } else if (!open) {
+          menuInert.forEach(({el, inert}) => { el.inert = inert; });
+          menuInert = [];
+        }
+        if (!open && returnFocus && mobile.matches) menuToggle.focus();
+      };
+      try { language = localStorage.getItem('ming-resume-language') === 'en' ? 'en' : 'zh'; } catch (_) {}
+      applyLanguage(language);
+      languageToggle.addEventListener('click', () => applyLanguage(language === 'en' ? 'zh' : 'en'));
+      themeToggle.addEventListener('click', () => applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+      menuToggle.addEventListener('click', () => setMenu(menuToggle.getAttribute('aria-expanded') !== 'true'));
+      backdrop.addEventListener('click', () => setMenu(false, true));
+      const closeOnWidth = () => {
+        if (!mobile.matches) {
+          const moveFocus = document.activeElement === menuToggle;
+          setMenu(false);
+          if (moveFocus) navLinks.querySelector('a').focus({preventScroll: true});
+        }
+      };
+      if (mobile.addEventListener) mobile.addEventListener('change', closeOnWidth); else mobile.addListener(closeOnWidth);
+      document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', () => {
+        setMenu(false);
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.setAttribute('tabindex', '-1');
+          target.focus({preventScroll: true});
+          target.addEventListener('blur', () => target.removeAttribute('tabindex'), {once: true});
+        }
+      }));
+      document.addEventListener('keydown', event => {
+        if (menuToggle.getAttribute('aria-expanded') !== 'true') return;
+        if (event.key === 'Escape') { setMenu(false, true); return; }
+        if (event.key === 'Tab') {
+          const items = [...document.querySelectorAll('.site-header a, .site-header button')].filter(el => el.getClientRects().length);
+          const first = items[0], last = items[items.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
         }
       });
-      $('printResume').addEventListener('click', () => window.print());
+      const sections = [...document.querySelectorAll('main > section[id]')];
+      let scheduled = false;
+      const markSection = () => {
+        const threshold = mobile.matches ? 145 : 180;
+        let active = '';
+        sections.forEach(section => { if (section.getBoundingClientRect().top <= threshold) active = section.id; });
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4) active = 'contact';
+        navLinks.querySelectorAll('a').forEach(link => {
+          if (link.hash === '#' + active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+        scheduled = false;
+      };
+      const requestSection = () => { if (!scheduled) { scheduled = true; requestAnimationFrame(markSection); } };
+      window.addEventListener('scroll', requestSection, {passive: true});
+      window.addEventListener('resize', requestSection);
+      markSection();
+      $('copyEmail').addEventListener('click', async () => {
+        let copied = false;
+        try { await navigator.clipboard.writeText('mingchen@88.com'); copied = true; } catch (_) {
+          const area = document.createElement('textarea');
+          area.value = 'mingchen@88.com';
+          area.style.cssText = 'position:fixed;left:-9999px;top:0;';
+          const previouslyFocused = document.activeElement;
+          document.body.appendChild(area);
+          area.select();
+          try { copied = document.execCommand('copy'); } catch (_) {}
+          area.remove();
+          if (previouslyFocused) previouslyFocused.focus({preventScroll: true});
+        }
+        showToast(copied ? text('已复制邮箱 · mingchen@88.com', 'Email copied · mingchen@88.com') : text('未能自动复制，请手动选择邮箱：mingchen@88.com', 'Please copy the email manually: mingchen@88.com'));
+      });
+      $('downloadVCard').addEventListener('click', () => {
+        const escapeVCard = value => value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
+        const content = ['BEGIN:VCARD', 'VERSION:3.0', 'N:Chen;Ming;;;', 'FN:Ming Chen', 'ORG:OwO Network', 'TITLE:' + escapeVCard(text('PX 市场研究 / 联合创始人', 'PX Market Researcher / Co-founder')), 'EMAIL;TYPE=INTERNET:mingchen@88.com', 'URL:https://ming.fi', 'END:VCARD', ''].join('\r\n');
+        const url = URL.createObjectURL(new Blob([content], {type: 'text/vcard;charset=utf-8'}));
+        const link = document.createElement('a');
+        link.href = url; link.download = 'Ming-Chen.vcf'; document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        showToast(text('名片已生成 · Ming-Chen.vcf', 'Contact card ready · Ming-Chen.vcf'));
+      });
+      let printState = null;
+      const preparePrint = () => {
+        if (printState) return;
+        setMenu(false);
+        const earlier = $('earlierExperience');
+        printState = {open: earlier.open};
+        earlier.open = true;
+      };
+      const finishPrint = () => {
+        if (!printState) return;
+        $('earlierExperience').open = printState.open;
+        printState = null;
+      };
+      window.addEventListener('beforeprint', preparePrint);
+      window.addEventListener('afterprint', finishPrint);
+      $('printResume').addEventListener('click', () => { preparePrint(); window.print(); });
       $('year').textContent = String(new Date().getFullYear());
     })();
   </script>
