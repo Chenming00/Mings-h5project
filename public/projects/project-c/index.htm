@@ -12,7 +12,7 @@
       --canvas: #f3f3ee;
       --paper: #fffefa;
       --ink: #252f2b;
-      --muted: #626d65;
+      --muted: #5a655d;
       --green: #315747;
       --green-soft: #edf2eb;
       --line: #e3e5dc;
@@ -41,8 +41,10 @@
     .monogram { width: 38px; height: 38px; border: 1px solid #b9c5b6; border-radius: 50%; display: grid; place-items: center; font: italic 20px var(--serif); color: var(--green); }
     .wordmark-text { font-size: 10px; font-weight: 600; letter-spacing: 2.2px; color: var(--muted); }
     .utility-actions { display: flex; align-items: center; gap: 18px; }
-    .language-button { border: 0; background: transparent; color: var(--muted); padding: 10px 3px; display: flex; align-items: center; gap: 9px; font-size: 12px; }
-    .language-button span { min-width: 28px; }
+    .language-switch { display: inline-flex; align-items: center; padding: 3px; border: 1px solid #cbd4c6; border-radius: 5px; background: var(--paper); }
+    .language-switch button { min-width: 46px; min-height: 34px; padding: 6px 9px; border: 0; border-radius: 3px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 600; }
+    .language-switch button:hover { color: var(--green); background: #e5ebe0; }
+    .language-switch button[aria-pressed="true"] { color: var(--paper); background: var(--green); }
     .button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 42px; padding: 9px 17px; border: 1px solid #cbd4c6; border-radius: 5px; color: var(--green); background: transparent; font-size: 12px; font-weight: 600; transition: background .18s, border-color .18s; }
     .button:hover { background: #e5ebe0; border-color: #a5b99b; }
     .button-primary { background: var(--green-soft); border-color: #d6e0d1; }
@@ -52,10 +54,13 @@
     .eyebrow { display: flex; align-items: center; gap: 9px; color: var(--green); font: 10px/1.5 var(--mono); letter-spacing: 1.8px; text-transform: uppercase; }
     .eyebrow::before { content: ""; width: 5px; height: 5px; background: #638367; border-radius: 50%; }
     .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; align-items: center; gap: 44px; padding: 24px 0 30px; }
+    html[lang="en"] .hero-grid { grid-template-columns: minmax(0, 1fr) 280px; gap: 34px; }
     .name { font-size: clamp(40px, 5vw, 60px); font-weight: 650; line-height: 1.2; letter-spacing: .08em; }
     .name-en { display: block; margin-top: 6px; font: italic 34px/1.3 var(--serif); letter-spacing: -.7px; color: var(--green); }
     .position { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 23px; color: #535f55; font-size: 13px; }
     .position .divider { width: 3px; height: 3px; background: #a7b39f; border-radius: 50%; }
+    .availability { display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; padding: 7px 11px; border: 1px solid #d6e0d1; border-radius: 999px; background: var(--green-soft); color: var(--green); font-size: 11px; font-weight: 600; }
+    .availability::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #4f7a45; box-shadow: 0 0 0 3px #dce7d6; }
     .hero-note { border-left: 1px solid var(--line); padding: 4px 0 4px 30px; }
     .small-label { color: var(--muted); font: 9px/1.6 var(--mono); letter-spacing: 1.8px; text-transform: uppercase; }
     .hero-note .degree { margin-top: 10px; font: 25px/1.25 var(--serif); color: var(--green); }
@@ -160,11 +165,12 @@
     }
     @media (max-width: 800px) {
       html { scroll-padding-top: 0; }
-      .utility { min-height: 82px; }
+      .utility { min-height: 88px; }
       .utility, .resume, .footer { width: calc(100% - 40px); }
       .hero { padding: 30px 30px 0; }
       .hero::before { left: 30px; }
       .hero-grid { grid-template-columns: minmax(0, 1fr) 185px; gap: 24px; }
+      html[lang="en"] .hero-grid { grid-template-columns: minmax(0, 1fr) 210px; gap: 22px; }
       .hero-note { padding-left: 22px; }
       .name { font-size: 44px; }
       .name-en { font-size: 29px; }
@@ -172,28 +178,28 @@
       .sidebar { position: sticky; top: 0; z-index: 5; background: var(--paper); padding: 0; border: 0; border-bottom: 1px solid var(--line); margin: 0 -30px; }
       .sidebar-inner { position: static; }
       .nav-heading, .side-block, .sidebar .button, .side-footnote { display: none; }
-      .section-nav { flex-direction: row; gap: 0; overflow-x: auto; padding: 9px 20px; scrollbar-width: none; }
+      .section-nav { position: relative; flex-direction: row; gap: 0; overflow-x: auto; padding: 9px 20px; scrollbar-width: none; }
       .section-nav::-webkit-scrollbar { display: none; }
-      .section-nav a { flex: 0 0 auto; margin: 0; padding: 9px 10px; font-size: 11px; gap: 6px; }
+      .section-nav.has-overflow { mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent); }
+      .section-nav a { flex: 0 0 auto; margin: 0; padding: 9px 10px; font-size: 11px; gap: 6px; min-height: 42px; }
       .section-nav a[aria-current="location"]::after { display: none; }
       .nav-number { font-size: 9px !important; }
-      .cv-section { scroll-margin-top: 74px; }
+      .cv-section { scroll-margin-top: 68px; }
       .closing { margin: 0 30px; }
       .contact-strip .contact-caption { display: none; }
       html[lang="en"] .name { font-size: 46px; }
     }
     @media (max-width: 540px) {
       .utility, .resume, .footer { width: calc(100% - 28px); }
-      .utility { min-height: 76px; gap: 8px; }
+      .utility { min-height: 84px; gap: 8px; }
       .wordmark { gap: 9px; }
       .monogram { width: 33px; height: 33px; font-size: 17px; }
-      .wordmark-text { font-size: 8px; letter-spacing: 1.1px; }
-      .utility-actions { gap: 11px; }
-      .utility .button { padding: 8px 10px; font-size: 10px; gap: 6px; min-height: 37px; }
+      .wordmark-text { font-size: 9px; letter-spacing: 1.1px; }
+      .utility-actions { gap: 10px; }
+      .utility .button { padding: 9px 11px; font-size: 10px; gap: 6px; min-height: 44px; }
       .utility .button svg { width: 14px; height: 14px; }
-      .language-button { gap: 5px; font-size: 11px; }
-      .language-button svg { width: 14px; height: 14px; }
-      .language-button span { min-width: 18px; }
+      .language-switch { gap: 2px; padding: 2px; }
+      .language-switch button { min-width: 42px; min-height: 40px; padding: 6px 7px; font-size: 10px; }
       .hero { padding: 25px 23px 0; }
       .hero::before { left: 23px; width: 45px; }
       .eyebrow { font-size: 8px; letter-spacing: 1.2px; }
@@ -201,53 +207,55 @@
       .name { font-size: 44px; }
       .name-en { font-size: 29px; }
       .position { margin-top: 17px; font-size: 11px; gap: 7px; }
+      .availability { margin-top: 14px; font-size: 10px; }
       .hero-note { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 10px; border-left: 0; padding: 0; margin-top: 21px; }
       .hero-note .small-label { display: none; }
       .hero-note .degree { margin: 0; font-size: 16px; }
       .hero-note .school { margin: 0; font-size: 10px; }
       .hero-note p:last-child { display: none; }
-      .contact-strip { gap: 8px; flex-direction: column; padding: 14px 0; font-size: 11px; }
-      .contact-strip svg { width: 14px; height: 14px; }
+      .contact-strip { gap: 10px; flex-direction: column; padding: 15px 0; font-size: 12.5px; }
+      .contact-strip svg { width: 15px; height: 15px; }
       .body-grid { padding: 0 23px; }
       .sidebar { margin: 0 -23px; }
       .section-nav { padding-left: 11px; padding-right: 11px; }
-      .section-nav a { font-size: 10px; padding: 8px 9px; gap: 5px; min-height: 37px; }
+      .section-nav a { font-size: 10px; padding: 8px 9px; gap: 5px; min-height: 44px; }
       .section-nav .nav-number { display: none; }
       .cv-section { padding: 27px 0; }
       .section-heading { margin-bottom: 18px; gap: 8px; }
       .section-heading h2 { font-size: 17px; }
       .section-heading .section-en { font-size: 8px; letter-spacing: 1.1px; }
-      .summary { font-size: 13px; }
+      .summary { font-size: 14px; }
       .highlights { margin-top: 20px; padding-top: 18px; }
       .highlight { padding: 0 12px; }
       .highlight .value { font-size: 28px; }
-      .highlight .value small { font-size: 8px; margin-left: 2px; }
-      .highlight .caption { font-size: 9px; margin-top: 7px; }
+      .highlight .value small { font-size: 9px; margin-left: 2px; }
+      .highlight .caption { font-size: 10px; margin-top: 7px; }
       .entry-heading { display: block; }
-      .entry-heading h3 { font-size: 13px; }
-      .entry-date { display: block; margin-top: 3px; font-size: 9px; }
-      .institution-en { font-size: 9px; }
-      .degree-row { font-size: 11px; gap: 7px; }
-      .edu-detail, .honor { font-size: 10px; }
-      .bullets { font-size: 12px; }
-      .role-line { font-size: 10px; }
+      .entry-heading h3 { font-size: 13.5px; }
+      .entry-date { display: block; margin-top: 3px; font-size: 11px; }
+      .institution-en { font-size: 10.5px; }
+      .degree-row { font-size: 12px; gap: 7px; }
+      .edu-detail, .honor { font-size: 11px; }
+      .bullets { font-size: 13px; }
+      .role-line { font-size: 11.5px; }
       .timeline { padding-left: 19px; }
       .experience::before { left: -19px; }
       .experience { padding-bottom: 26px; }
       .skill-grid { gap: 20px 20px; }
-      .skill-item h3 { font-size: 11px; gap: 6px; }
-      .skill-item p { font-size: 11px; }
+      .skill-item h3 { font-size: 12px; gap: 6px; }
+      .skill-item p { font-size: 12px; }
       .closing { margin: 0 23px; align-items: flex-start; flex-direction: column; gap: 16px; }
       .closing h2 { font-size: 17px; }
-      .closing p { font-size: 10px; }
+      .closing p { font-size: 11px; }
       .closing-actions { width: 100%; }
-      .closing-actions > a { flex: 1; }
-      .footer { font-size: 8px; letter-spacing: .4px; padding-bottom: 28px; }
+      .closing-actions > a { flex: 1; min-height: 44px; }
+      .closing-actions .icon-button { min-height: 44px; }
+      .footer { font-size: 9.5px; letter-spacing: .4px; padding-bottom: 28px; }
       .footer .footer-detail { display: none; }
       html[lang="en"] .name { font-size: 46px; }
       html[lang="en"] .name-en { font-size: 19px; }
       html[lang="en"] .position { gap: 5px; font-size: 10px; }
-      html[lang="en"] .highlight .caption { font-size: 8px; }
+      html[lang="en"] .highlight .caption { font-size: 9px; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -257,7 +265,7 @@
     @media print {
       html { scroll-behavior: auto; }
       body { background: #fff; font-size: 9pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .utility, .sidebar, .closing, .footer, .toast, .skip-link, .svg-defs { display: none !important; }
+      .utility, .sidebar, .closing, .footer, .toast, .skip-link, .svg-defs, .availability { display: none !important; }
       .resume { border: 0; box-shadow: none; border-radius: 0; margin: 0; max-width: none; width: 100%; overflow: visible; }
       .hero { padding: 0; }
       .hero::before { display: none; }
@@ -315,21 +323,21 @@
       .name, html[lang="en"] .name { font-size: 25pt; }
       .name-en { font-size: 15pt; margin-left: 0; }
       .hero-note p:last-child { display: none; }
-      .cv-section { padding: 9px 0; }
+      .cv-section { padding: 7px 0; }
       .section-heading { margin-bottom: 6px; }
-      .summary { font-size: 8pt; line-height: 1.5; }
+      .summary { font-size: 8.1pt; line-height: 1.45; }
       #education { display: grid; grid-template-columns: 1fr 1fr; column-gap: 15px; }
       #education .section-heading { grid-column: 1 / -1; }
       #education .entry-heading { display: block; }
       #education .entry-date { font-size: 6.5pt; }
       .education + .education { margin-top: 0; padding: 0 0 0 15px; border-top: 0; border-left: 1px solid var(--line); }
-      .edu-detail, .honor { font-size: 7pt; line-height: 1.5; }
-      .experience { padding-bottom: 9px; }
-      .bullets { font-size: 8pt; line-height: 1.5; }
+      .edu-detail, .honor { font-size: 7.1pt; line-height: 1.4; }
+      .experience { padding-bottom: 6px; }
+      .bullets { font-size: 8.1pt; line-height: 1.4; }
       .project + .project { margin-top: 8px; padding-top: 7px; }
       .skill-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
       .skill-item h3 { font-size: 7.5pt; }
-      .skill-item p { font-size: 7pt; }
+      .skill-item p { font-size: 7.1pt; }
       html[lang="en"] #projects { break-before: page; }
       html[lang="en"] .skill-grid { grid-template-columns: 1fr 1fr; }
       html[lang="zh-CN"] .eyebrow, html[lang="zh-CN"] .hero-note { display: none; }
@@ -342,7 +350,7 @@
       html[lang="zh-CN"] .bullets { line-height: 1.4; }
       html[lang="zh-CN"] .summary { line-height: 1.4; }
       html[lang="zh-CN"] .experience { padding-bottom: 6px; }
-      html[lang="zh-CN"] .institution-en { line-height: 1.4; }
+      html[lang="zh-CN"] .institution-en { line-height: 1.45; }
       html[lang="zh-CN"] .project + .project { margin-top: 6px; padding-top: 5px; }
     }
   </style>
@@ -371,9 +379,10 @@
       <span class="wordmark-text">CURRICULUM VITAE</span>
     </a>
     <div class="utility-actions">
-      <button class="language-button" id="language-toggle" type="button" aria-label="Switch to English" hidden>
-        <svg aria-hidden="true"><use href="#icon-globe"/></svg><span>EN</span>
-      </button>
+      <div class="language-switch" id="language-switch" role="group" aria-label="语言 / Language" hidden>
+        <button type="button" data-language="zh" aria-pressed="true">中文</button>
+        <button type="button" data-language="en" aria-pressed="false">EN</button>
+      </div>
       <button class="button" id="print-button" type="button" hidden>
         <svg aria-hidden="true"><use href="#icon-print"/></svg><span data-i18n="print">打印 / PDF</span>
       </button>
@@ -392,6 +401,7 @@
             <span data-i18n="target2">行业研究员</span><span class="divider" aria-hidden="true"></span>
             <span data-i18n="target3">财务分析师</span>
           </div>
+          <div class="availability"><span data-i18n="availability">正在寻找全职机会</span></div>
         </div>
         <div class="hero-note">
           <div class="small-label">Academic foundation</div>
@@ -410,7 +420,7 @@
     <div class="body-grid">
       <aside class="sidebar">
         <div class="sidebar-inner">
-          <p class="small-label nav-heading">Contents / 目录</p>
+          <p class="small-label nav-heading" data-i18n="contentsLabel">CONTENTS / 目录</p>
           <nav class="section-nav" aria-label="简历章节" data-aria-zh="简历章节" data-aria-en="Resume sections">
             <a href="#overview" aria-current="location"><span class="nav-number">01</span><span data-i18n="navOverview">个人概览</span></a>
             <a href="#education"><span class="nav-number">02</span><span data-i18n="navEducation">教育背景</span></a>
@@ -558,7 +568,9 @@
         target1: "Investment Analysis",
         target2: "Industry Research",
         target3: "Financial Analysis",
+        availability: "Open to full-time opportunities",
         heroSchool: "Johns Hopkins · Carey Business School",
+        contentsLabel: "CONTENTS",
         navOverview: "Profile", navEducation: "Education", navExperience: "Experience", navProjects: "Projects", navSkills: "Skills",
         focusTitle: "Areas of focus",
         focus1: "Valuation & financial modeling",
@@ -588,7 +600,7 @@
         exp1Bullet1: "Independently managed <strong>two procurement packages</strong> through the OA workflow, from release and bidding to contract finalization; contributed to bidding-process improvements.",
         exp1Bullet2: "Joined site visits to Jinko Solar and Wolong Electric, producing <strong>two reports on intelligent manufacturing and automation</strong>.",
         exp1Bullet3: "Examined links between manufacturing procurement and financial tools, supporting procurement cost-optimization work.",
-        exp2Company: "CETHIK (中电海康)",
+        exp2Company: "CETC Hikvision",
         exp2Role: "Post-investment Management Intern", exp2Field: "Private-market investment",
         exp2Bullet1: "Independently researched <strong>12 target companies</strong> in technology manufacturing, healthcare, and new energy, and produced <strong>12 due diligence reports</strong>.",
         exp2Bullet2: "Combined Bloomberg, Wind, sector reports, and <strong>10+ client interviews</strong> to identify <strong>three key investment risks</strong>; reports were adopted by the investment committee.",
@@ -625,7 +637,8 @@
       };
       const translatedNodes = [...document.querySelectorAll("[data-i18n]")];
       const chinese = new Map(translatedNodes.map(node => [node, node.innerHTML]));
-      const languageButton = document.getElementById("language-toggle");
+      const languageSwitch = document.getElementById("language-switch");
+      const languageButtons = [...languageSwitch.querySelectorAll("[data-language]")];
       const printButton = document.getElementById("print-button");
       const copyButton = document.getElementById("copy-email");
       let language = "zh";
@@ -637,9 +650,10 @@
         toast.classList.add("visible");
         toastTimer = setTimeout(() => toast.classList.remove("visible"), 3500);
       };
-      languageButton.hidden = printButton.hidden = copyButton.hidden = false;
-      languageButton.addEventListener("click", () => {
-        language = language === "zh" ? "en" : "zh";
+      languageSwitch.hidden = printButton.hidden = copyButton.hidden = false;
+      function setLanguage(nextLanguage) {
+        if (nextLanguage !== "zh" && nextLanguage !== "en") return;
+        language = nextLanguage;
         document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
         for (const node of translatedNodes) {
           node.innerHTML = language === "en" ? (english[node.dataset.i18n] ?? chinese.get(node)) : chinese.get(node);
@@ -647,12 +661,17 @@
         for (const node of document.querySelectorAll("[data-aria-zh]")) {
           node.setAttribute("aria-label", language === "en" ? node.dataset.ariaEn : node.dataset.ariaZh);
         }
-        languageButton.querySelector("span").textContent = language === "zh" ? "EN" : "中文";
-        languageButton.setAttribute("aria-label", language === "zh" ? "Switch to English" : "切换为中文");
+        for (const button of languageButtons) {
+          button.setAttribute("aria-pressed", String(button.dataset.language === language));
+        }
+        languageSwitch.setAttribute("aria-label", language === "zh" ? "语言 / Language" : "Language / 语言");
         copyButton.title = copyButton.getAttribute("aria-label");
         document.title = language === "zh" ? "俞可宁 - 求职简历" : "Kening Yu - Curriculum Vitae";
         updateNavigation();
-      });
+      }
+      for (const button of languageButtons) {
+        button.addEventListener("click", () => setLanguage(button.dataset.language));
+      }
       printButton.addEventListener("click", () => window.print());
       copyButton.addEventListener("click", async () => {
         const email = "keningyu420@gmail.com";
@@ -673,16 +692,28 @@
         notify(success ? (language === "zh" ? "邮箱地址已复制" : "Email address copied") : (language === "zh" ? "请手动复制：" : "Please copy: ") + email);
       });
       const sections = [...document.querySelectorAll(".cv-section")];
-      const navLinks = [...document.querySelectorAll(".section-nav a")];
+      const sectionNav = document.querySelector(".section-nav");
+      const navLinks = [...sectionNav.querySelectorAll("a")];
       let scrollQueued = false;
       function updateNavigation() {
         const threshold = window.innerWidth <= 800 ? 115 : 110;
         let active = sections[0];
         for (const section of sections) if (section.getBoundingClientRect().top <= threshold) active = section;
         if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8) active = sections.at(-1);
+        let activeLink = null;
         for (const link of navLinks) {
-          if (link.hash === "#" + active.id) link.setAttribute("aria-current", "location");
-          else link.removeAttribute("aria-current");
+          if (link.hash === "#" + active.id) {
+            link.setAttribute("aria-current", "location");
+            activeLink = link;
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        }
+        const navOverflows = sectionNav.scrollWidth > sectionNav.clientWidth + 1;
+        sectionNav.classList.toggle("has-overflow", window.innerWidth <= 800 && navOverflows);
+        if (window.innerWidth <= 800 && navOverflows && activeLink) {
+          const centeredLeft = activeLink.offsetLeft - (sectionNav.clientWidth - activeLink.offsetWidth) / 2;
+          sectionNav.scrollTo({ left: Math.max(0, centeredLeft), behavior: "auto" });
         }
         scrollQueued = false;
       }
