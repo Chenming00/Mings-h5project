@@ -5,783 +5,468 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>[SBTI] 电子下水道与赛博便秘的深层对视</title>
   <style>
-    :root {
-      --bg: #f6faf6;
-      --panel: #ffffff;
-      --text: #1e2a22;
-      --muted: #6a786f;
-      --line: #dbe8dd;
-      --soft: #edf6ef;
-      --accent: #6c8d71;
-      --accent-strong: #4d6a53;
-      --shadow: 0 16px 40px rgba(47, 73, 55, 0.08);
-      --radius: 22px;
-    }
 
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      background:
-        radial-gradient(circle at top left, #f8fff8 0, #f6faf6 36%, #f2f7f3 100%);
-      color: var(--text);
-      min-height: 100vh;
-    }
+:root {
+  color-scheme: dark;
+  --bg: #05070a;
+  --bg-soft: #080c12;
+  --panel: rgba(10, 16, 23, 0.94);
+  --panel-strong: #0d151e;
+  --panel-soft: #0a1017;
+  --text: #e8f0f7;
+  --muted: #8493a2;
+  --faint: #566473;
+  --line: rgba(148, 163, 184, 0.16);
+  --line-strong: rgba(103, 232, 249, 0.42);
+  --cyan: #67e8f9;
+  --cyan-strong: #22d3ee;
+  --lime: #a3e635;
+  --violet: #c084fc;
+  --pink: #f472b6;
+  --danger: #fb7185;
+  --mono: "SFMono-Regular", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
 
-    .shell {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 24px 16px 56px;
-    }
+* { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; background: var(--bg); }
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 75% 0%, rgba(34, 211, 238, 0.09), transparent 32rem),
+    radial-gradient(circle at 0% 65%, rgba(168, 85, 247, 0.07), transparent 30rem),
+    var(--bg);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(103, 232, 249, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(103, 232, 249, 0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 92%);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(255,255,255,0.012) 4px);
+  mix-blend-mode: screen;
+}
 
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
+h1, h2, h3, p { margin: 0; }
+a { color: var(--cyan); text-decoration: none; }
+a:hover { color: #a5f3fc; text-decoration: underline; text-underline-offset: 4px; }
+button { font: inherit; }
+button:not(:disabled) { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
-    .hero {
-      padding: 28px;
-      margin-top: 20px;
-      overflow: hidden;
-      position: relative;
-    }
+.shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 0 0 40px; }
+.screen { display: none; }
+.screen.active { display: block; animation: screen-in 380ms cubic-bezier(.2,.8,.2,1) both; }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      right: -60px;
-      top: -60px;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, rgba(127, 165, 134, 0.18), rgba(127, 165, 134, 0.02));
-      pointer-events: none;
-    }
+.site-bar {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  color: var(--faint);
+  font: 600 10px/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.brand { display: flex; align-items: center; gap: 11px; color: var(--text); }
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--cyan);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  clip-path: polygon(0 0, 78% 0, 100% 22%, 100% 100%, 22% 100%, 0 78%);
+}
+.brand-name { font-size: 12px; letter-spacing: 0.18em; }
+.brand-sub { margin-top: 4px; color: var(--faint); font-size: 8px; letter-spacing: 0.16em; }
+.system-status { display: flex; align-items: center; gap: 9px; }
+.system-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px var(--lime); animation: status-pulse 1.8s ease-in-out infinite; }
+.site-code { color: var(--faint); }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--accent-strong);
-      border: 1px solid var(--line);
-      background: var(--soft);
-      border-radius: 999px;
-      padding: 8px 12px;
-      margin-bottom: 16px;
-    }
+.terminal-hero,
+.test-wrap,
+.result-wrap {
+  position: relative;
+  overflow: hidden;
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(145deg, rgba(13, 21, 30, 0.97), rgba(6, 10, 15, 0.98));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.36);
+}
+.terminal-hero::before,
+.test-wrap::before,
+.result-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 0 42%, rgba(103,232,249,0.045) 50%, transparent 58%);
+  transform: translateX(-100%);
+  animation: sweep 7s linear infinite;
+}
 
-    h1, h2, h3, p { margin: 0; }
-    .hero h1 {
-      font-size: clamp(28px, 5vw, 52px);
-      line-height: 1.08;
-      letter-spacing: -0.03em;
-      max-width: 680px;
-    }
-    .hero .sub {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.75;
-      max-width: 720px;
-    }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--cyan);
+  font: 700 10px/1.4 var(--mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 7px; height: 7px; background: var(--cyan); box-shadow: 0 0 12px rgba(103,232,249,0.75); }
 
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.3fr 0.9fr;
-      gap: 18px;
-      align-items: stretch;
-      margin-top: 24px;
-    }
+.intro-layout { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 60px; align-items: center; min-height: 550px; padding: 58px 62px 40px; }
+.hero-grid-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0.6; background-image: linear-gradient(90deg, transparent 49.8%, rgba(103,232,249,0.08) 50%, transparent 50.2%); background-size: 72px 100%; }
+.hero-title { margin-top: 22px; font-size: clamp(42px, 7vw, 82px); line-height: 1.02; letter-spacing: -0.065em; font-weight: 800; }
+.hero-title span { display: block; color: transparent; -webkit-text-stroke: 1px rgba(103,232,249,0.85); text-shadow: 0 0 28px rgba(34,211,238,0.12); }
+.hero-subtitle { max-width: 610px; margin-top: 24px; color: var(--muted); font-size: 15px; line-height: 1.9; }
+.hero-stats { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 30px; }
+.hero-stat { display: flex; flex-direction: column; gap: 5px; }
+.hero-stat strong { color: var(--text); font: 700 22px/1 var(--mono); }
+.hero-stat span { color: var(--faint); font: 600 9px/1 var(--mono); letter-spacing: 0.13em; }
+.cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 36px; }
+.shortcut-hint { color: var(--faint); font: 500 10px/1.5 var(--mono); }
+kbd { display: inline-flex; min-width: 20px; height: 20px; align-items: center; justify-content: center; padding: 0 5px; border: 1px solid var(--line); border-bottom-color: rgba(148,163,184,0.3); background: rgba(255,255,255,0.04); color: var(--muted); font: 600 10px/1 var(--mono); }
 
-    .mini-panel {
-      padding: 18px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, #fbfefb, #f3f8f4);
-    }
+.btn-primary, .btn-secondary, .btn-ghost {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+.btn-primary { border-color: var(--cyan-strong); background: var(--cyan-strong); color: #041015; box-shadow: 0 0 26px rgba(34,211,238,0.16); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); background: #67e8f9; box-shadow: 0 8px 28px rgba(34,211,238,0.24); }
+.btn-secondary { border-color: var(--line-strong); background: rgba(103,232,249,0.05); color: var(--cyan); }
+.btn-secondary:hover:not(:disabled) { transform: translateY(-2px); background: rgba(103,232,249,0.12); }
+.btn-ghost { min-height: 38px; padding: 0 10px; border-color: var(--line); background: transparent; color: var(--muted); }
+.btn-ghost:hover { border-color: var(--line-strong); color: var(--cyan); }
+.btn-primary:disabled, .btn-secondary:disabled { opacity: 0.34; transform: none; }
 
-    .mini-panel h3 {
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
+.core-visual { position: relative; width: 280px; height: 280px; margin: 0 auto; display: grid; place-items: center; }
+.core-ring, .core-ring::before, .core-ring::after { position: absolute; inset: 0; border: 1px solid rgba(103,232,249,0.25); border-radius: 50%; }
+.core-ring { animation: spin 16s linear infinite; border-style: dashed; }
+.core-ring::before { content: ""; inset: 22px; border-color: rgba(192,132,252,0.35); animation: spin 9s linear infinite reverse; }
+.core-ring::after { content: ""; inset: 52px; border-color: rgba(163,230,53,0.28); }
+.core-core { position: relative; z-index: 1; width: 106px; height: 106px; display: grid; place-items: center; border: 1px solid var(--cyan); background: rgba(34,211,238,0.08); color: var(--cyan); font: 800 56px/1 var(--mono); box-shadow: 0 0 40px rgba(34,211,238,0.2), inset 0 0 28px rgba(34,211,238,0.12); }
+.core-label { position: absolute; bottom: 22px; color: var(--faint); font: 600 9px/1 var(--mono); letter-spacing: 0.18em; }
+.credits-row { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 18px 32px; padding: 18px 62px; border-top: 1px solid var(--line); color: var(--faint); font-size: 11px; }
+.credits-row a { color: var(--cyan); }
 
-    .mini-panel ul {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      line-height: 1.8;
-      font-size: 14px;
-    }
+.test-wrap { padding: 0; }
+.quiz-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 24px 30px 20px; }
+.quiz-header h2 { margin-top: 8px; font-size: 24px; letter-spacing: -0.03em; }
+.progress-text { color: var(--cyan); font: 700 13px/1 var(--mono); white-space: nowrap; }
+.progress-track { height: 3px; margin: 0 30px; overflow: hidden; background: rgba(148,163,184,0.12); }
+.progress-track > span { display: block; width: 0; height: 100%; background: linear-gradient(90deg, var(--violet), var(--cyan)); box-shadow: 0 0 14px rgba(103,232,249,0.6); transition: width 260ms ease; }
+.quiz-body { display: grid; grid-template-columns: 188px minmax(0, 1fr); min-width: 0; min-height: 590px; }
+.quiz-rail { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding: 24px 18px; border-right: 1px solid var(--line); background: rgba(3,7,11,0.4); }
+.rail-label, .dimension-tag, .question-number, .result-code { color: var(--faint); font: 600 9px/1.4 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; }
+.question-rail { display: flex; flex-direction: column; gap: 5px; min-width: 0; max-width: 100%; max-height: 470px; overflow-y: auto; padding-right: 3px; }
+.rail-node { display: flex; align-items: center; justify-content: space-between; min-height: 27px; padding: 0 8px; border: 1px solid transparent; background: transparent; color: var(--faint); font: 600 10px/1 var(--mono); transition: 160ms ease; }
+.rail-node:hover { border-color: var(--line); color: var(--text); }
+.rail-node.done { color: var(--lime); }
+.rail-node.active { border-color: var(--line-strong); background: rgba(103,232,249,0.09); color: var(--cyan); box-shadow: inset 2px 0 var(--cyan); }
+.rail-node span { font-size: 8px; opacity: 0.65; }
+.question-stage { position: relative; display: flex; flex-direction: column; min-width: 0; padding: 32px 34px 24px; }
+.question-card { display: flex; flex-direction: column; flex: 1; animation: question-in 320ms cubic-bezier(.2,.8,.2,1) both; }
+.question-meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.question-number { color: var(--cyan); }
+.question-title { width: 100%; max-width: 760px; margin-top: 24px; color: var(--text); font-size: clamp(22px, 3vw, 31px); line-height: 1.45; letter-spacing: -0.035em; white-space: pre-wrap; overflow-wrap: anywhere; }
+.options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin-top: 30px; }
+.options .option:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.option { position: relative; display: flex; align-items: flex-start; gap: 12px; min-height: 78px; padding: 15px 16px; border: 1px solid var(--line); background: rgba(255,255,255,0.025); color: var(--muted); cursor: pointer; transition: 180ms ease; }
+.option::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 2px; background: var(--cyan); opacity: 0; transition: opacity 180ms ease; }
+.option:hover { transform: translateY(-2px); border-color: rgba(103,232,249,0.45); background: rgba(103,232,249,0.06); color: var(--text); }
+.option.selected { border-color: var(--cyan-strong); background: rgba(34,211,238,0.11); color: var(--text); box-shadow: 0 0 24px rgba(34,211,238,0.08); }
+.option.selected::before { opacity: 1; }
+.option input { position: absolute; opacity: 0; pointer-events: none; }
+.option-code { flex: 0 0 26px; width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid var(--line); color: var(--cyan); font: 800 11px/1 var(--mono); }
+.option-label { padding-top: 3px; font-size: 13px; line-height: 1.7; }
+.quiz-actions { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; margin-top: auto; padding-top: 28px; }
+.answer-status { color: var(--faint); font: 600 10px/1.4 var(--mono); text-align: center; }
+.answer-status.ready { color: var(--lime); }
+.keyboard-hint { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin-top: 18px; color: var(--faint); font: 500 9px/1.5 var(--mono); }
+.test-hint { margin-top: 16px; color: var(--faint); font-size: 11px; line-height: 1.6; text-align: center; }
+.submit-dock { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 30px; border-top: 1px solid var(--line); background: rgba(3,7,11,0.4); }
+.submit-hint { color: var(--muted); font-size: 11px; line-height: 1.6; }
 
-        .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 22px;
-    }
-    .hero-minimal {
-      min-height: 48vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 42px 20px;
-    }
-    .hero-minimal::after { display: none; }
-    .hero-minimal h1 {
-      max-width: none;
-      margin: 0;
-    }
-    .hero-actions-single {
-      justify-content: center;
-      margin-top: 28px;
-    }
+.result-wrap { padding: 0 0 26px; }
+.result-banner { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 30px; border-bottom: 1px solid var(--line); color: var(--cyan); font: 700 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; }
+.result-banner::after { content: "SIGNAL LOCKED"; color: var(--lime); }
+.result-top { display: grid; grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr); gap: 18px; padding: 26px 30px 0; }
+.poster-box, .type-box, .analysis-box, .dim-box, .note-box, .author-box { position: relative; overflow: hidden; border: 1px solid var(--line); background: rgba(255,255,255,0.025); }
+.poster-box { display: grid; grid-template-rows: 1fr auto; min-height: 360px; padding: 16px; background: radial-gradient(circle at 50% 0%, rgba(34,211,238,0.1), transparent 60%), rgba(3,7,11,0.44); }
+.poster-image { width: 100%; height: 100%; min-height: 270px; max-height: 480px; object-fit: contain; }
+.poster-box.no-image .poster-image { display: none; }
+.poster-caption { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.type-box { display: flex; flex-direction: column; justify-content: center; min-height: 360px; padding: 30px; }
+.type-kicker { color: var(--cyan); font: 700 10px/1.4 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; }
+.type-name { margin-top: 14px; color: var(--text); font-size: clamp(38px, 6vw, 68px); line-height: 1; letter-spacing: -0.07em; }
+.type-subname { max-width: 480px; margin-top: 14px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.match { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; margin-top: 22px; padding: 8px 11px; border: 1px solid rgba(163,230,53,0.35); background: rgba(163,230,53,0.08); color: var(--lime); font: 700 11px/1.4 var(--mono); }
+.result-code { margin-top: 24px; color: var(--faint); }
+.result-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 18px; padding: 18px 30px 0; }
+.analysis-box, .dim-box, .note-box { padding: 22px; }
+.analysis-box h3, .dim-box h3, .note-box h3, .author-box summary { color: var(--text); font-size: 14px; font-weight: 800; letter-spacing: 0.01em; }
+.analysis-box h3::before, .dim-box h3::before, .note-box h3::before { content: "// "; color: var(--cyan); font: 700 11px/1 var(--mono); }
+.analysis-box p { margin-top: 16px; color: var(--muted); font-size: 13px; line-height: 2; white-space: pre-wrap; }
+.note-box { grid-column: 1 / -1; }
+.note-box p { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.dim-list { display: grid; gap: 12px; margin-top: 16px; }
+.dim-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.dim-item:last-child { border-bottom: 0; }
+.dim-item-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.dim-item-name { color: var(--text); font-size: 12px; font-weight: 700; }
+.dim-item-score { color: var(--cyan); font: 700 10px/1 var(--mono); white-space: nowrap; }
+.dim-track { height: 4px; margin-top: 9px; overflow: hidden; background: rgba(148,163,184,0.13); }
+.dim-track > span { display: block; width: var(--bar, 0%); height: 100%; background: linear-gradient(90deg, var(--violet), var(--cyan)); box-shadow: 0 0 12px rgba(103,232,249,0.4); animation: bar-in 700ms cubic-bezier(.2,.8,.2,1) both; }
+.dim-item p { margin-top: 8px; color: var(--faint); font-size: 11px; line-height: 1.7; }
+.author-box { margin: 18px 30px 0; }
+.author-box summary { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 20px; list-style: none; cursor: pointer; }
+.author-box summary::-webkit-details-marker { display: none; }
+.author-box summary::after { content: "EXPAND"; color: var(--cyan); font: 700 9px/1 var(--mono); letter-spacing: 0.12em; }
+.author-box[open] summary::after { content: "COLLAPSE"; }
+.author-content { padding: 0 20px 20px; border-top: 1px solid var(--line); }
+.author-content p { margin-top: 14px; color: var(--muted); font-size: 12px; line-height: 1.9; }
+.result-actions { display: flex; justify-content: space-between; gap: 14px; padding: 22px 30px 0; }
 
-    button {
-      border: 0;
-      cursor: pointer;
-      transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease;
-      font: inherit;
-    }
+.site-footer { display: flex; justify-content: space-between; gap: 16px; padding: 20px 2px 0; color: var(--faint); font: 500 9px/1.6 var(--mono); letter-spacing: 0.08em; }
 
-    button:hover { transform: translateY(-1px); }
-    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+@keyframes screen-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes question-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes status-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes sweep { 0%, 65% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes bar-in { from { width: 0; } }
 
-    .btn-primary {
-      background: var(--accent-strong);
-      color: #fff;
-      padding: 14px 20px;
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(77, 106, 83, 0.18);
-      font-weight: 700;
-    }
-
-    .btn-secondary {
-      background: #fff;
-      color: var(--accent-strong);
-      padding: 14px 20px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      font-weight: 700;
-    }
-
-    .screen { display: none; }
-    .screen.active { display: block; }
-
-    .test-wrap,
-    .result-wrap {
-      margin-top: 22px;
-      padding: 22px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    .progress {
-      flex: 1;
-      min-width: 240px;
-      height: 10px;
-      background: #edf3ee;
-      border-radius: 999px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .progress > span {
-      display: block;
-      width: 0;
-      height: 100%;
-      background: linear-gradient(90deg, #97b59c, #5b7a62);
-      border-radius: inherit;
-      transition: width .22s ease;
-    }
-
-    .progress-text {
-      color: var(--muted);
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    .question-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .question {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      background: linear-gradient(180deg, #ffffff, #fbfdfb);
-    }
-
-    .question-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      padding: 6px 10px;
-      background: var(--soft);
-      border: 1px solid var(--line);
-    }
-
-    .question-title {
-      font-size: 16px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
-
-    .options {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .option {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 14px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: #fff;
-      transition: border-color .16s ease, background .16s ease, transform .16s ease;
-    }
-
-    .option:hover {
-      border-color: #bcd0c1;
-      background: #f8fcf9;
-    }
-
-    .option input {
-      margin-top: 3px;
-      accent-color: var(--accent-strong);
-      transform: scale(1.1);
-      flex-shrink: 0;
-    }
-
-    .option-code {
-      font-weight: 800;
-      color: var(--accent-strong);
-      min-width: 22px;
-    }
-
-    .actions-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-      padding-top: 6px;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .result-hero {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-      align-items: stretch;
-    }
-
-    .type-box,
-    .score-box,
-    .dim-box,
-    .top3-box,
-    .about-box {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      background: linear-gradient(180deg, #ffffff, #fbfdfb);
-    }
-
-    .type-kicker {
-      font-size: 12px;
-      color: var(--accent-strong);
-      margin-bottom: 8px;
-      letter-spacing: .05em;
-    }
-
-    .type-name {
-      font-size: clamp(30px, 5vw, 48px);
-      line-height: 1.08;
-      letter-spacing: -0.03em;
-    }
-
-    .type-subname {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .match {
-      margin-top: 18px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      padding: 10px 14px;
-      background: var(--soft);
-      border: 1px solid var(--line);
-      color: var(--accent-strong);
-      font-weight: 700;
-    }
-
-    .type-desc {
-      margin-top: 18px;
-      line-height: 1.85;
-      font-size: 15px;
-      color: #304034;
-    }
-
-    .score-box h3,
-    .dim-box h3,
-    .top3-box h3,
-    .about-box h3 {
-      font-size: 16px;
-      margin-bottom: 12px;
-    }
-
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .score-item {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      background: #fff;
-    }
-
-    .score-item .k {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .score-item .v {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--accent-strong);
-    }
-
-    .dim-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .dim-pill {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      background: #fff;
-    }
-
-    .dim-pill .label {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 6px;
-    }
-
-    .dim-pill .value {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--accent-strong);
-    }
-
-    .top3-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .top3-item {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      background: #fff;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .top3-item strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .top3-item span {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .top3-score {
-      color: var(--accent-strong);
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .about-box p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .footer-note {
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    
-    .result-layout {
-      display: grid;
-      gap: 18px;
-    }
-    .result-top {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 18px;
-      align-items: stretch;
-    }
-    .poster-box, .type-box, .analysis-box, .dim-box, .note-box {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      background: linear-gradient(180deg, #ffffff, #fbfdfb);
-    }
-        .poster-box {
-      display: grid;
-      grid-template-rows: 1fr auto;
-      min-height: 280px;
-      overflow: hidden;
-      position: relative;
-      background:
-        radial-gradient(circle at top right, rgba(127,165,134,0.16), rgba(127,165,134,0) 40%),
-        linear-gradient(180deg, #ffffff, #f7fbf8);
-    }
-    .poster-box::after {
-      content: "";
-      position: absolute;
-      right: -46px;
-      bottom: -46px;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, rgba(127,165,134,0.12), rgba(127,165,134,0.01));
-      pointer-events: none;
-    }
-    .poster-image {
-      width: 100%;
-      min-height: 220px;
-      max-height: 460px;
-      object-fit: contain;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.75);
-      position: relative;
-      z-index: 1;
-    }
-    .poster-box.no-image .poster-image {
-      display: none;
-    }
-    .poster-caption {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.8;
-      position: relative;
-      z-index: 1;
-    }
-    .type-kicker {
-      font-size: 12px;
-      color: var(--accent-strong);
-      margin-bottom: 8px;
-      letter-spacing: .06em;
-    }
-    .type-name {
-      font-size: clamp(30px, 5vw, 48px);
-      line-height: 1.08;
-      letter-spacing: -0.03em;
-    }
-    .type-subname {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.8;
-    }
-    .match {
-      margin-top: 18px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      padding: 10px 14px;
-      background: var(--soft);
-      border: 1px solid var(--line);
-      color: var(--accent-strong);
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-    .analysis-box h3, .dim-box h3, .note-box h3 {
-      font-size: 16px;
-      margin-bottom: 12px;
-    }
-    .result-actions {
-      margin-top: 22px;
-      display: flex;
-      justify-content: flex-end;
-    }
-    .analysis-box p {
-      margin: 0;
-      color: #304034;
-      font-size: 15px;
-      line-height: 1.9;
-      white-space: pre-wrap;
-    }
-    .dim-list {
-      display: grid;
-      gap: 12px;
-    }
-    .dim-item {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-      background: #fff;
-    }
-    .dim-item-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-    .dim-item-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .dim-item-score {
-      color: var(--accent-strong);
-      font-weight: 800;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-    .dim-item p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.8;
-    }
-    .note-box p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.8;
-    }
-
-    .author-box {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: linear-gradient(180deg, #ffffff, #fbfdfb);
-      overflow: hidden;
-    }
-    .author-box summary {
-      list-style: none;
-      cursor: pointer;
-      padding: 18px;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .author-box summary::-webkit-details-marker { display: none; }
-    .author-box summary::after {
-      content: '展开';
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent-strong);
-      border: 1px solid var(--line);
-      background: var(--soft);
-      padding: 6px 10px;
-      border-radius: 999px;
-      flex-shrink: 0;
-    }
-    .author-box[open] summary::after {
-      content: '收起';
-    }
-    .author-content {
-      border-top: 1px solid var(--line);
-      padding: 0 18px 18px;
-    }
-    .author-content p {
-      margin: 14px 0 0;
-      color: #304034;
-      font-size: 14px;
-      line-height: 1.9;
-    }
-
-    .result-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 22px;
-    }
-    @media (max-width: 860px) {
-      .result-top { grid-template-columns: 1fr; }
-    }
-
-@media (max-width: 860px) {
-      .hero-grid,
-      .result-hero {
-        grid-template-columns: 1fr;
-      }
-      .dim-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media (max-width: 600px) {
-      .shell { padding: 14px 12px 42px; }
-      .hero, .test-wrap, .result-wrap { padding: 16px; }
-      .hero h1 { font-size: 32px; }
-      .question-title { font-size: 15px; }
-      .dim-grid,
-      .score-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+@media (max-width: 900px) {
+  .intro-layout { grid-template-columns: 1fr; gap: 26px; padding: 44px 30px 34px; }
+  .core-visual { width: 210px; height: 210px; }
+  .core-core { width: 82px; height: 82px; font-size: 44px; }
+  .quiz-body { grid-template-columns: minmax(0, 1fr); }
+  .quiz-rail { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px 18px; }
+  .question-rail { flex-direction: row; max-height: none; overflow-x: auto; padding-bottom: 2px; }
+  .rail-node { min-width: 34px; justify-content: center; padding: 0 8px; }
+  .rail-node span { display: none; }
+  .result-top, .result-grid { grid-template-columns: 1fr; }
+  .note-box { grid-column: auto; }
+}
+@media (max-width: 600px) {
+  .shell { width: calc(100% - 20px); padding-bottom: 24px; }
+  .site-bar { height: 62px; }
+  .system-status, .site-code { font-size: 8px; }
+  .system-status { font-size: 0; }
+  .site-code { display: none; }
+  .intro-layout { min-height: 0; padding: 34px 20px 28px; }
+  .hero-title { font-size: 38px; }
+  .hero-subtitle { font-size: 13px; }
+  .hero-stats { gap: 18px; }
+  .hero-stat strong { font-size: 19px; }
+  .core-visual { width: 170px; height: 170px; }
+  .core-label { bottom: 4px; }
+  .credits-row { padding: 16px 20px; font-size: 10px; }
+  .quiz-header { align-items: start; padding: 20px 18px 16px; }
+  .quiz-header h2 { font-size: 20px; }
+  .progress-track { margin: 0 18px; }
+  .question-stage { padding: 24px 18px 20px; min-height: 560px; }
+  .question-title { margin-top: 20px; font-size: 23px; line-height: 1.5; }
+  .options { grid-template-columns: 1fr; margin-top: 24px; }
+  .option { min-height: 64px; padding: 13px 12px; }
+  .option-label { font-size: 12px; }
+  .quiz-actions { gap: 8px; }
+  .quiz-actions .btn-primary, .quiz-actions .btn-secondary { padding: 0 11px; font-size: 10px; }
+  .answer-status { font-size: 9px; }
+  .keyboard-hint { display: none; }
+  .submit-dock { align-items: stretch; flex-direction: column; padding: 16px 18px; }
+  .submit-dock .btn-primary { width: 100%; }
+  .result-banner, .result-top, .result-grid, .result-actions { padding-left: 18px; padding-right: 18px; }
+  .type-box { min-height: 0; padding: 24px 20px; }
+  .type-name { font-size: 34px; }
+  .analysis-box, .dim-box, .note-box { padding: 18px; }
+  .author-box { margin-left: 18px; margin-right: 18px; }
+  .result-actions { flex-direction: column; }
+  .result-actions .btn-primary, .result-actions .btn-secondary { width: 100%; }
+  .site-footer { flex-direction: column; gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+</style>
 </head>
+
 <body>
   <div class="shell">
-    <section id="intro" class="screen active">
-      <div class="hero card hero-minimal">
-        <h1>MBTI 已进入回收站，欢迎来到二进制灵位审判：SBTI</h1>
-        <div class="hero-actions hero-actions-single">
-          <button id="startBtn" class="btn-primary">开始测试</button>
+    <header class="site-bar">
+      <div class="brand">
+        <span class="brand-mark">SB</span>
+        <div>
+          <div class="brand-name">SBTI // PERSONALITY PROTOCOL</div>
+          <div class="brand-sub">BINARY SOUL DIAGNOSTIC INTERFACE</div>
         </div>
-        <div style="padding-top: 2rem; display: flex; flex-direction: column;">
-          <span>
-            原作者：
-            <a href="https://space.bilibili.com/417038183">B站@蛆肉儿串儿</a>
-          </span>
-          <span>
-            托管：Cloudflare (免费)
-          </span>
-          <span>
-            域名：Spaceship (自费)
-          </span>
+      </div>
+      <div class="system-status">NEURAL LINK STABLE</div>
+      <div class="site-code">BUILD 2.0.31 · CN</div>
+    </header>
+
+    <section id="intro" class="screen active">
+      <div class="terminal-hero">
+        <div class="hero-grid-overlay" aria-hidden="true"></div>
+        <div class="intro-layout">
+          <div>
+            <div class="eyebrow">Personality Diagnostic Protocol</div>
+            <h1 class="hero-title">MBTI 已进入回收站<br><span>欢迎来到 SBTI</span></h1>
+            <p class="hero-subtitle">这不是一场普通测试。系统将通过 31 道题读取你的 15 个灵魂维度，在赛博下水道里寻找那个最像你的二进制人格。</p>
+            <div class="hero-stats" aria-label="测试信息">
+              <div class="hero-stat"><strong>31</strong><span>QUESTIONS</span></div>
+              <div class="hero-stat"><strong>15</strong><span>DIMENSIONS</span></div>
+              <div class="hero-stat"><strong>27</strong><span>PERSONALITIES</span></div>
+            </div>
+            <div class="cta-row">
+              <button id="startBtn" class="btn-primary">初始化人格扫描 <span aria-hidden="true">↗</span></button>
+              <span class="shortcut-hint">按 <kbd>Enter</kbd> 也可启动</span>
+            </div>
+          </div>
+          <div class="core-visual" aria-hidden="true">
+            <div class="core-ring"></div>
+            <div class="core-core">S</div>
+            <div class="core-label">SOUL CORE // UNSYNCED</div>
+          </div>
+        </div>
+        <div class="credits-row">
+          <span>原作者：<a href="https://space.bilibili.com/417038183" target="_blank" rel="noreferrer">B站 @蛆肉儿串儿</a></span>
+          <span>托管：Cloudflare</span>
+          <span>仅供娱乐，请勿当作诊断结果</span>
         </div>
       </div>
     </section>
 
     <section id="test" class="screen">
-      <div class="test-wrap card">
-        <div class="topbar">
-          <div class="progress"><span id="progressBar"></span></div>
+      <div class="test-wrap">
+        <div class="quiz-header">
+          <div>
+            <div class="eyebrow">Neural Interrogation</div>
+            <h2>人格扫描进行中</h2>
+          </div>
           <div class="progress-text" id="progressText">0 / 31</div>
         </div>
+        <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
 
-        <div id="questionList" class="question-list"></div>
+        <div class="quiz-body">
+          <aside class="quiz-rail">
+            <div class="rail-label">NEURAL MAP // 31 NODES</div>
+            <div class="question-rail" id="questionRail" aria-label="题目导航"></div>
+            <button id="backIntroBtn" class="btn-ghost" type="button">← 终止扫描</button>
+          </aside>
 
-        <div class="actions-bottom">
-          <div class="hint" id="testHint">众生皆苦，唯有填完这 31 根赛博肋骨才能通往彼岸。</div>
-          <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button id="backIntroBtn" class="btn-secondary">返回首页</button>
-            <button id="submitBtn" class="btn-primary" disabled>提交并查看结果</button>
+          <div class="question-stage">
+            <div id="questionList" class="question-card" aria-live="polite"></div>
+            <div class="quiz-actions">
+              <button id="prevQuestionBtn" class="btn-secondary" type="button">← 上一题 <kbd>←</kbd></button>
+              <div class="answer-status" id="answerStatus">等待输入</div>
+              <button id="nextQuestionBtn" class="btn-secondary" type="button">下一题 <kbd>→</kbd></button>
+            </div>
+            <div class="keyboard-hint"><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> 选择答案 · <kbd>←</kbd> <kbd>→</kbd> 切换题目</div>
+            <p class="test-hint" id="testHint">众生皆苦，唯有填完这 31 根赛博肋骨才能通往彼岸。</p>
           </div>
+        </div>
+
+        <div class="submit-dock">
+          <div class="submit-hint" id="submitHint">完成全部题目后解锁人格报告。</div>
+          <button id="submitBtn" class="btn-primary" type="button" disabled>生成人格报告 <span aria-hidden="true">→</span></button>
         </div>
       </div>
     </section>
 
-    
     <section id="result" class="screen">
-      <div class="result-wrap card">
-        <div class="result-layout">
-          <div class="result-top">
-            <div class="poster-box" id="posterBox">
-              <img id="posterImage" class="poster-image" alt="人格结果图" />
-              <div id="posterCaption" class="poster-caption">你的灵魂已在 15 个维度里完成了华丽的故障。</div>
-            </div>
-
-            <div class="type-box">
-              <div class="type-kicker" id="resultModeKicker">你的主类型</div>
-              <div class="type-name" id="resultTypeName">CTRL（拿捏者）</div>
-              <div class="match" id="matchBadge">匹配度 92%</div>
-              <div class="type-subname" id="resultTypeSub">系统备注会显示在这里。</div>
-            </div>
+      <div class="result-wrap">
+        <div class="result-banner">SCAN COMPLETE // PERSONALITY SIGNAL DECODED</div>
+        <div class="result-top">
+          <div class="poster-box" id="posterBox">
+            <img id="posterImage" class="poster-image" alt="人格结果图" />
+            <div id="posterCaption" class="poster-caption">你的灵魂已在 15 个维度里完成了华丽的故障。</div>
           </div>
+          <div class="type-box">
+            <div class="type-kicker" id="resultModeKicker">你的主类型</div>
+            <div class="type-name" id="resultTypeName">CTRL（拿捏者）</div>
+            <div class="match" id="matchBadge">匹配度 92%</div>
+            <div class="type-subname" id="resultTypeSub">系统备注会显示在这里。</div>
+            <div class="result-code" id="resultCode">CASE ID // —</div>
+          </div>
+        </div>
 
+        <div class="result-grid">
           <div class="analysis-box">
             <h3>该人格的简单解读</h3>
             <p id="resultDesc"></p>
           </div>
-
           <div class="dim-box">
-            <h3>十五维度评分</h3>
+            <h3>十五维度能量条</h3>
             <div id="dimList" class="dim-list"></div>
           </div>
-
           <div class="note-box">
             <h3>友情提示</h3>
             <p id="funNote">本测试仅供娱乐，别拿它当诊断、面试、相亲、分手、招魂、算命或人生判决书。</p>
           </div>
-
-                    <details class="author-box">
-            <summary>作者的话</summary>
-            <div class="author-content">
-              <p>本测试首发于b站up主蛆肉儿串儿（UID417038183），初衷是劝诫一位爱喝酒的朋友戒酒。</p>
-              <p>由于作者的人格是SHIT愤世者，所以平等的攻击了各位，在此抱歉！！不过我是一个绝世大美女，你们一定会原谅我，有B站的朋友们也可以关注我。</p>
-              <p>关于这个测试，我没法很好的平衡娱乐和专业性，因此对于一些人格的阐释较为模糊或完全不准（如屌丝可能并非真的屌丝），如有冒犯非常抱歉！！</p>
-              <p>再鉴于时间精力有限，就随便搞了一个先这样玩玩，后续会慢慢完善修改的，总之好玩为主，还请不要用于盈利呀。</p>
-            </div>
-          </details>
         </div>
 
-        <div class="result-actions">
-          <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button id="restartBtn" class="btn-secondary">重新测试</button>
-            <button id="toTopBtn" class="btn-primary">回到首页</button>
+        <details class="author-box">
+          <summary>作者的话</summary>
+          <div class="author-content">
+            <p>本测试首发于b站up主蛆肉儿串儿（UID417038183），初衷是劝诫一位爱喝酒的朋友戒酒。</p>
+            <p>由于作者的人格是SHIT愤世者，所以平等的攻击了各位，在此抱歉！！不过我是一个绝世大美女，你们一定会原谅我，有B站的朋友们也可以关注我。</p>
+            <p>关于这个测试，我没法很好的平衡娱乐和专业性，因此对于一些人格的阐释较为模糊或完全不准（如屌丝可能并非真的屌丝），如有冒犯非常抱歉！！</p>
+            <p>再鉴于时间精力有限，就随便搞了一个先这样玩玩，后续会慢慢完善修改的，总之好玩为主，还请不要用于盈利呀。</p>
           </div>
+        </details>
+
+        <div class="result-actions">
+          <button id="restartBtn" class="btn-secondary" type="button">重新扫描</button>
+          <button id="toTopBtn" class="btn-primary" type="button">返回终端首页</button>
         </div>
       </div>
     </section>
 
+    <footer class="site-footer">
+      <span>SBTI // PERSONALITY DIAGNOSTIC PROTOCOL</span>
+      <span>ENTERTAINMENT ONLY · NO PSYCHOLOGICAL DIAGNOSIS</span>
+    </footer>
   </div>
 
-  
-  <script>
+<script>
     const dimensionMeta = {
       S1: { name: 'S1 自尊自信', model: '自我模型' },
       S2: { name: 'S2 自我清晰度', model: '自我模型' },
@@ -1473,116 +1158,172 @@
 
     const DRUNK_TRIGGER_QUESTION_ID = 'drink_gate_q2';
 
-    const app = {
-      shuffledQuestions: [],
-      answers: {},
-      previewMode: false
-    };
 
-    const screens = {
-      intro: document.getElementById('intro'),
-      test: document.getElementById('test'),
-      result: document.getElementById('result')
-    };
+const app = {
+  shuffledQuestions: [],
+  answers: {},
+  previewMode: false,
+  currentIndex: 0
+};
 
-    const questionList = document.getElementById('questionList');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-    const submitBtn = document.getElementById('submitBtn');
-    const testHint = document.getElementById('testHint');
+const screens = {
+  intro: document.getElementById('intro'),
+  test: document.getElementById('test'),
+  result: document.getElementById('result')
+};
 
-    function showScreen(name) {
-      Object.entries(screens).forEach(([key, el]) => {
-        el.classList.toggle('active', key === name);
-      });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+const questionList = document.getElementById('questionList');
+const questionRail = document.getElementById('questionRail');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+const submitBtn = document.getElementById('submitBtn');
+const submitHint = document.getElementById('submitHint');
+const testHint = document.getElementById('testHint');
+const answerStatus = document.getElementById('answerStatus');
+const prevQuestionBtn = document.getElementById('prevQuestionBtn');
+const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+const OPTION_KEYS = ['a', 'b', 'c', 'd'];
+
+function showScreen(name) {
+  Object.entries(screens).forEach(([key, element]) => {
+    element.classList.toggle('active', key === name);
+  });
+  document.body.dataset.screen = name;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shuffle(array) {
+  const result = [...array];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+  return result;
+}
+
+function getVisibleQuestions() {
+  const visible = [...app.shuffledQuestions];
+  const gateIndex = visible.findIndex(question => question.id === 'drink_gate_q1');
+  if (gateIndex !== -1 && app.answers['drink_gate_q1'] === 3) {
+    visible.splice(gateIndex + 1, 0, specialQuestions[1]);
+  }
+  return visible;
+}
+
+function getQuestionMetaLabel(question) {
+  if (question.special) return 'SUPPLEMENTARY SIGNAL';
+  return app.previewMode ? dimensionMeta[question.dim].name : `DIMENSION // ${question.dim}`;
+}
+
+function clampQuestionIndex(index, total) {
+  return Math.max(0, Math.min(index, Math.max(0, total - 1)));
+}
+
+function renderQuestionRail(visibleQuestions) {
+  questionRail.innerHTML = visibleQuestions.map((question, index) => {
+    const isAnswered = app.answers[question.id] !== undefined;
+    const isActive = index === app.currentIndex;
+    return `
+      <button type="button" class="rail-node${isAnswered ? ' done' : ''}${isActive ? ' active' : ''}"
+        data-index="${index}" aria-label="第 ${index + 1} 题${isAnswered ? '，已回答' : '，未回答'}"
+        ${isActive ? 'aria-current="step"' : ''}>
+        ${String(index + 1).padStart(2, '0')}<span>${isAnswered ? 'OK' : '··'}</span>
+      </button>
+    `;
+  }).join('');
+
+  questionRail.querySelectorAll('[data-index]').forEach(button => {
+    button.addEventListener('click', () => {
+      app.currentIndex = Number(button.dataset.index);
+      renderQuestions();
+    });
+  });
+}
+
+function updateProgress() {
+  const visibleQuestions = getVisibleQuestions();
+  const total = visibleQuestions.length;
+  const done = visibleQuestions.filter(question => app.answers[question.id] !== undefined).length;
+  const percent = total ? (done / total) * 100 : 0;
+  const complete = done === total && total > 0;
+  const currentQuestion = visibleQuestions[app.currentIndex];
+  const currentAnswered = currentQuestion && app.answers[currentQuestion.id] !== undefined;
+
+  progressBar.style.width = `${percent}%`;
+  progressText.textContent = `${String(done).padStart(2, '0')} / ${total}`;
+  submitBtn.disabled = !complete;
+  submitHint.textContent = complete
+    ? '神经信号完整，可以生成最终人格报告。'
+    : `还有 ${total - done} 道题未注入 · 完成全部题目后解锁报告。`;
+  testHint.textContent = complete
+    ? '扫描完成。你的电子魂魄正在等待最终编译。'
+    : '众生皆苦，唯有填完这 31 根赛博肋骨才能通往彼岸。';
+  answerStatus.textContent = currentAnswered ? 'SIGNAL RECORDED // 已记录' : 'WAITING INPUT // 等待输入';
+  answerStatus.classList.toggle('ready', Boolean(currentAnswered));
+  prevQuestionBtn.disabled = app.currentIndex === 0;
+  nextQuestionBtn.disabled = app.currentIndex >= total - 1;
+}
+
+function renderQuestions() {
+  const visibleQuestions = getVisibleQuestions();
+  app.currentIndex = clampQuestionIndex(app.currentIndex, visibleQuestions.length);
+  const question = visibleQuestions[app.currentIndex];
+  if (!question) return;
+
+  const isAnswered = app.answers[question.id] !== undefined;
+  questionList.innerHTML = `
+    <article class="question-panel" tabindex="-1">
+      <div class="question-meta">
+        <span class="question-number">QUESTION ${String(app.currentIndex + 1).padStart(2, '0')} / ${visibleQuestions.length}</span>
+        <span class="dimension-tag">${getQuestionMetaLabel(question)}</span>
+      </div>
+      <h3 class="question-title">${question.text}</h3>
+      <div class="options" role="radiogroup" aria-label="选择答案">
+        ${question.options.map((option, index) => {
+          const code = OPTION_KEYS[index] || String(index + 1);
+          const selected = isAnswered && app.answers[question.id] === option.value;
+          return `
+            <label class="option${selected ? ' selected' : ''}">
+              <input type="radio" name="${question.id}" value="${option.value}" ${selected ? 'checked' : ''} />
+              <span class="option-code">${code.toUpperCase()}</span>
+              <span class="option-label">${option.label}</span>
+            </label>
+          `;
+        }).join('')}
+      </div>
+    </article>
+  `;
+
+  questionList.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', event => {
+      selectAnswer(question, Number(event.target.value));
+    });
+  });
+
+  renderQuestionRail(visibleQuestions);
+  updateProgress();
+}
+
+function selectAnswer(question, value) {
+  app.answers[question.id] = value;
+  if (question.id === 'drink_gate_q1' && value !== 3) {
+    delete app.answers['drink_gate_q2'];
+  }
+  renderQuestions();
+  window.setTimeout(() => {
+    const visibleQuestions = getVisibleQuestions();
+    if (app.currentIndex < visibleQuestions.length - 1) {
+      app.currentIndex += 1;
+      renderQuestions();
     }
+  }, 190);
+}
 
-    function shuffle(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function getVisibleQuestions() {
-      const visible = [...app.shuffledQuestions];
-      const gateIndex = visible.findIndex(q => q.id === 'drink_gate_q1');
-      if (gateIndex !== -1 && app.answers['drink_gate_q1'] === 3) {
-        visible.splice(gateIndex + 1, 0, specialQuestions[1]);
-      }
-      return visible;
-    }
-
-    function getQuestionMetaLabel(q) {
-      if (q.special) return '补充题';
-      return app.previewMode ? dimensionMeta[q.dim].name : '维度已隐藏';
-    }
-
-    function renderQuestions() {
-      const visibleQuestions = getVisibleQuestions();
-      questionList.innerHTML = '';
-      visibleQuestions.forEach((q, index) => {
-        const card = document.createElement('article');
-        card.className = 'question';
-        card.innerHTML = `
-          <div class="question-meta">
-            <div class="badge">第 ${index + 1} 题</div>
-            <div>${getQuestionMetaLabel(q)}</div>
-          </div>
-          <div class="question-title">${q.text}</div>
-          <div class="options">
-            ${q.options.map((opt, i) => {
-              const code = ['A', 'B', 'C', 'D'][i] || String(i + 1);
-              const checked = app.answers[q.id] === opt.value ? 'checked' : '';
-              return `
-                <label class="option">
-                  <input type="radio" name="${q.id}" value="${opt.value}" ${checked} />
-                  <div class="option-code">${code}</div>
-                  <div>${opt.label}</div>
-                </label>
-              `;
-            }).join('')}
-          </div>
-        `;
-        questionList.appendChild(card);
-      });
-
-      questionList.querySelectorAll('input[type="radio"]').forEach(input => {
-        input.addEventListener('change', (e) => {
-          const { name, value } = e.target;
-          app.answers[name] = Number(value);
-
-          if (name === 'drink_gate_q1') {
-            if (Number(value) !== 3) {
-              delete app.answers['drink_gate_q2'];
-            }
-            renderQuestions();
-            return;
-          }
-
-          updateProgress();
-        });
-      });
-
-      updateProgress();
-    }
-
-    function updateProgress() {
-      const visibleQuestions = getVisibleQuestions();
-      const total = visibleQuestions.length;
-      const done = visibleQuestions.filter(q => app.answers[q.id] !== undefined).length;
-      const percent = total ? (done / total) * 100 : 0;
-      progressBar.style.width = `${percent}%`;
-      progressText.textContent = `${done} / ${total}`;
-      const complete = done === total && total > 0;
-      submitBtn.disabled = !complete;
-      testHint.textContent = complete
-        ? '都做完了。现在可以把你的电子魂魄交给结果页审判。'
-        : '全选完才会放行。世界已经够乱了，起码把题做完整。';
-    }
+function moveQuestion(offset) {
+  const visibleQuestions = getVisibleQuestions();
+  app.currentIndex = clampQuestionIndex(app.currentIndex + offset, visibleQuestions.length);
+  renderQuestions();
+}
 
     function sumToLevel(score) {
       if (score <= 3) return 'L';
@@ -1674,22 +1415,28 @@
       };
     }
 
-    function renderDimList(result) {
-      const dimList = document.getElementById('dimList');
-      dimList.innerHTML = dimensionOrder.map(dim => {
-        const level = result.levels[dim];
-        const explanation = DIM_EXPLANATIONS[dim][level];
-        return `
-          <div class="dim-item">
-            <div class="dim-item-top">
-              <div class="dim-item-name">${dimensionMeta[dim].name}</div>
-              <div class="dim-item-score">${level} / ${result.rawScores[dim]}分</div>
-            </div>
-            <p>${explanation}</p>
-          </div>
-        `;
-      }).join('');
-    }
+
+function renderDimList(result) {
+  const dimList = document.getElementById('dimList');
+  dimList.innerHTML = dimensionOrder.map((dimension, index) => {
+    const level = result.levels[dimension];
+    const explanation = DIM_EXPLANATIONS[dimension][level];
+    const score = result.rawScores[dimension];
+    const percent = Math.max(0, Math.min(100, Math.round((score / 6) * 100)));
+    return `
+      <div class="dim-item">
+        <div class="dim-item-top">
+          <div class="dim-item-name">${dimensionMeta[dimension].name}</div>
+          <div class="dim-item-score">${level} // ${score} 分</div>
+        </div>
+        <div class="dim-track" aria-label="${dimensionMeta[dimension].name} 能量 ${percent}%">
+          <span style="--bar:${percent}%; animation-delay:${index * 45}ms"></span>
+        </div>
+        <p>${explanation}</p>
+      </div>
+    `;
+  }).join('');
+}
 
     function renderResult() {
       const result = computeResult();
@@ -1700,6 +1447,7 @@
       document.getElementById('matchBadge').textContent = result.badge;
       document.getElementById('resultTypeSub').textContent = result.sub;
       document.getElementById('resultDesc').textContent = type.desc;
+      document.getElementById('resultCode').textContent = `CASE ID // ${type.code}-${Date.now().toString(36).toUpperCase().slice(-5)}`;
       document.getElementById('posterCaption').textContent = type.intro;
       document.getElementById('funNote').textContent = result.special
         ? '本测试仅供娱乐。隐藏人格和傻乐兜底都属于作者故意埋的损招，请勿把它当成医学、心理学、相学、命理学或灵异学依据。'
@@ -1722,26 +1470,65 @@
       showScreen('result');
     }
 
-    function startTest(preview = false) {
-      app.previewMode = preview;
-      app.answers = {};
-      const shuffledRegular = shuffle(questions);
-      const insertIndex = Math.floor(Math.random() * shuffledRegular.length) + 1;
-      app.shuffledQuestions = [
-        ...shuffledRegular.slice(0, insertIndex),
-        specialQuestions[0],
-        ...shuffledRegular.slice(insertIndex)
-      ];
-      renderQuestions();
-      showScreen('test');
+
+  function startTest(preview = false) {
+    app.previewMode = preview;
+    app.answers = {};
+    app.currentIndex = 0;
+    const shuffledRegular = shuffle(questions);
+    const insertIndex = Math.floor(Math.random() * shuffledRegular.length) + 1;
+    app.shuffledQuestions = [
+      ...shuffledRegular.slice(0, insertIndex),
+      specialQuestions[0],
+      ...shuffledRegular.slice(insertIndex)
+    ];
+    renderQuestions();
+    showScreen('test');
+  }
+
+  document.getElementById('startBtn').addEventListener('click', () => startTest(false));
+  document.getElementById('backIntroBtn').addEventListener('click', () => showScreen('intro'));
+  submitBtn.addEventListener('click', renderResult);
+  document.getElementById('restartBtn').addEventListener('click', () => startTest(false));
+  document.getElementById('toTopBtn').addEventListener('click', () => showScreen('intro'));
+  prevQuestionBtn.addEventListener('click', () => moveQuestion(-1));
+  nextQuestionBtn.addEventListener('click', () => moveQuestion(1));
+
+  document.addEventListener('keydown', event => {
+    const target = event.target;
+    const isTyping = target instanceof HTMLElement &&
+      (target.matches('input, textarea, select') || target.isContentEditable);
+    if (isTyping) return;
+
+    if (screens.intro.classList.contains('active') && event.key === 'Enter' && target.tagName !== 'BUTTON') {
+      event.preventDefault();
+      startTest(false);
+      return;
     }
 
-    document.getElementById('startBtn').addEventListener('click', () => startTest(false));
-    document.getElementById('backIntroBtn').addEventListener('click', () => showScreen('intro'));
-    document.getElementById('submitBtn').addEventListener('click', renderResult);
-    document.getElementById('restartBtn').addEventListener('click', () => startTest(false));
-    document.getElementById('toTopBtn').addEventListener('click', () => showScreen('intro'));
-  </script>
+    if (!screens.test.classList.contains('active')) return;
+    const visibleQuestions = getVisibleQuestions();
+    const currentQuestion = visibleQuestions[app.currentIndex];
+    if (!currentQuestion) return;
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      moveQuestion(1);
+      return;
+    }
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      moveQuestion(-1);
+      return;
+    }
+
+    const optionIndex = OPTION_KEYS.indexOf(event.key.toLowerCase());
+    if (optionIndex !== -1 && currentQuestion.options[optionIndex]) {
+      event.preventDefault();
+      selectAnswer(currentQuestion, currentQuestion.options[optionIndex].value);
+    }
+  });
+</script>
 
 </body>
 </html>
