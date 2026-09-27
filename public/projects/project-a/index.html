@@ -1,439 +1,888 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>装柜计算器（单用户版）</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PET 树脂装柜计算器：按柜型、限重、包数与单包重量计算所需柜数、装载率与货量差。" />
+  <title>装柜计算器 | PET Resin Load Planner</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f6f5;
+      --surface: #ffffff;
+      --surface-soft: #f7faf9;
+      --surface-strong: #e9f0ed;
+      --text: #15231e;
+      --muted: #64736c;
+      --faint: #8b9892;
+      --line: #dfe7e3;
+      --line-strong: #c9d5d0;
+      --brand: #0f8a5f;
+      --brand-dark: #0b6d4b;
+      --brand-soft: #e7f5ef;
+      --navy: #0d2b22;
+      --warning: #b45309;
+      --warning-soft: #fff7e6;
+      --danger: #c2413b;
+      --danger-soft: #fdf0ef;
+      --mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
 
-  :root {
-    --bg: #ffffff;
-    --surface: #f8f9fa;
-    --surface2: #e9ecef;
-    --border: rgba(0,0,0,0.08);
-    --border2: rgba(0,0,0,0.15);
-    --accent: #20c997;
-    --accent2: #495057;
-    --text: #212529;
-    --muted: #6c757d;
-    --mono: 'DM Mono', monospace;
-    --sans: 'Noto Sans SC', sans-serif;
-  }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { min-width: 320px; min-height: 100%; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 88% 0%, rgba(15, 138, 95, 0.09), transparent 28rem),
+        var(--bg);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(21, 35, 30, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(21, 35, 30, 0.028) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
+    }
+    h1, h2, h3, p { margin: 0; }
+    button, input, select { font: inherit; }
+    button:not(:disabled) { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: 0.42; }
+    :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
+    .page { width: min(1200px, calc(100% - 40px)); margin: 0 auto; padding-bottom: 42px; }
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 26px 0 24px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 13px;
+      background: var(--navy);
+      color: #d8f7e9;
+      box-shadow: 0 10px 24px rgba(13, 43, 34, 0.16);
+    }
+    .brand-mark svg { width: 22px; height: 22px; }
+    .eyebrow { color: var(--brand); font: 700 10px/1.3 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; }
+    .brand h1 { margin-top: 5px; font-size: clamp(23px, 3vw, 31px); font-weight: 650; letter-spacing: -0.035em; }
+    .brand h1 span { color: var(--brand); }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .save-state { display: flex; align-items: center; gap: 7px; color: var(--faint); font-size: 11px; white-space: nowrap; }
+    .save-state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
 
-  /* 网格背景（浅色版） */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,0,0,0.01) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,0.01) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 18px; align-items: start; padding-top: 22px; }
+    .input-column { display: grid; gap: 16px; min-width: 0; }
+    .result-column { position: sticky; top: 18px; display: grid; gap: 14px; min-width: 0; }
+    .panel { min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: 0 10px 32px rgba(21, 35, 30, 0.045); }
+    .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px 16px; border-bottom: 1px solid var(--line); }
+    .panel-title { display: flex; align-items: center; gap: 11px; }
+    .section-index { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: var(--brand-soft); color: var(--brand-dark); font: 800 10px/1 var(--mono); }
+    .panel-head h2 { font-size: 15px; font-weight: 650; }
+    .panel-head p { margin-top: 3px; color: var(--faint); font-size: 11px; }
+    .panel-body { padding: 22px; }
 
-  .page {
-    max-width: 860px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
+    .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+    .field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { color: var(--muted); font: 700 10px/1.4 var(--mono); letter-spacing: 0.09em; text-transform: uppercase; }
+    .input, .select {
+      width: 100%;
+      height: 48px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      color: var(--text);
+      font-size: 15px;
+      transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    }
+    .input::placeholder { color: var(--faint); }
+    .input:hover, .select:hover { border-color: var(--line-strong); }
+    .input:focus, .select:focus { outline: none; border-color: var(--brand); background: var(--surface); box-shadow: 0 0 0 3px rgba(15, 138, 95, 0.1); }
+    .input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(194, 65, 59, 0.08); }
+    .select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 17px) 21px, calc(100% - 12px) 21px; background-size: 5px 5px; background-repeat: no-repeat; }
+    .field-hint, .field-error { min-height: 16px; font-size: 10.5px; line-height: 1.5; }
+    .field-hint { color: var(--faint); }
+    .field-error { display: none; color: var(--danger); }
+    .field.has-error .field-error { display: block; }
+    .derived-box { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .derived-item { padding: 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-soft); }
+    .derived-item span { display: block; color: var(--faint); font: 700 9px/1.4 var(--mono); letter-spacing: 0.11em; text-transform: uppercase; }
+    .derived-item output { display: block; margin-top: 7px; color: var(--brand-dark); font: 700 21px/1.2 var(--mono); }
+    .derived-item small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
 
-  /* 头部样式 */
-  header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
+    .result-card { overflow: hidden; border-radius: 18px; background: var(--navy); color: #f1fbf6; box-shadow: 0 20px 50px rgba(13, 43, 34, 0.18); }
+    .result-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.09); }
+    .result-head span:first-child { color: #9fe3c5; font: 700 10px/1 var(--mono); letter-spacing: 0.14em; }
+    .result-status { display: flex; align-items: center; gap: 7px; color: #b6d9c9; font-size: 10px; }
+    .result-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #5ee39c; }
+    .result-body { padding: 22px 20px 20px; }
+    .result-customer { color: #9eb8ac; font-size: 11px; }
+    .result-primary { margin-top: 8px; color: #8ee7ba; font: 700 10px/1.3 var(--mono); letter-spacing: 0.13em; text-transform: uppercase; }
+    .result-count { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; }
+    .result-count strong { font: 700 clamp(54px, 8vw, 76px)/0.95 var(--mono); letter-spacing: -0.08em; }
+    .result-count span { color: #b9d1c6; font-size: 15px; }
+    .result-sub { margin-top: 10px; color: #a9c1b6; font-size: 11px; line-height: 1.6; }
+    .utilization { margin-top: 22px; }
+    .utilization-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #b7cfc4; font-size: 10px; }
+    .utilization-head output { color: #8ee7ba; font: 700 11px/1 var(--mono); }
+    .utilization-track { height: 7px; margin-top: 9px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,0.1); }
+    .utilization-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4fd69a, #a7f3d0); transition: width 300ms ease; }
+    .result-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 18px; }
+    .result-stat { padding: 12px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(255,255,255,0.035); }
+    .result-stat span { display: block; color: #91aca0; font: 600 8.5px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+    .result-stat strong { display: block; margin-top: 6px; color: #f0fbf5; font: 700 16px/1.2 var(--mono); }
+    .result-stat small { color: #9fb8ad; font-size: 9px; font-weight: 400; }
+    .result-notice { display: none; margin-top: 15px; padding: 11px 12px; border: 1px solid rgba(255,196,84,0.3); border-radius: 9px; background: rgba(255,196,84,0.09); color: #ffe0a3; font-size: 10.5px; line-height: 1.6; }
+    .result-notice.visible { display: block; }
+    .result-empty { display: none; padding: 32px 20px; color: #a9c1b6; text-align: center; font-size: 12px; }
 
-  .logo-block { display: flex; flex-direction: column; gap: 4px; }
+    .action-panel { padding: 16px; }
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 650;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--line-strong); background: var(--surface-strong); }
+    .btn svg { width: 15px; height: 15px; }
+    .btn.primary { border-color: var(--brand); background: var(--brand); color: white; }
+    .btn.primary:hover:not(:disabled) { border-color: var(--brand-dark); background: var(--brand-dark); }
+    .btn.danger { color: var(--danger); }
+    .btn.danger:hover:not(:disabled) { border-color: #e2b4b1; background: var(--danger-soft); }
+    .btn.full { grid-column: 1 / -1; }
 
-  .logo-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
+    .plan-actions { display: flex; align-items: center; gap: 8px; }
+    .plan-actions .btn { min-height: 40px; padding: 0 11px; font-size: 10px; }
+    .comparison-wrap { max-width: 100%; overflow-x: auto; }
+    .comparison { width: 100%; border-collapse: collapse; min-width: 500px; }
+    .comparison th, .comparison td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; font-size: 11px; }
+    .comparison th { color: var(--faint); font: 700 9px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+    .comparison td:first-child { color: var(--muted); }
+    .comparison td:not(:first-child) { font-family: var(--mono); }
+    .comparison .empty { color: var(--faint); font-family: var(--sans); text-align: center; }
 
-  h1 {
-    font-size: clamp(24px, 4vw, 36px);
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
+    .page-footer { display: flex; justify-content: space-between; gap: 18px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--faint); font: 600 9px/1.6 var(--mono); letter-spacing: 0.08em; }
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      max-width: min(360px, calc(100% - 28px));
+      padding: 12px 15px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: var(--navy);
+      color: #e7f7ef;
+      box-shadow: 0 14px 40px rgba(13,43,34,0.24);
+      font-size: 12px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: 180ms ease;
+    }
+    .toast.visible { opacity: 1; visibility: visible; transform: translateY(0); }
 
-  h1 em {
-    font-style: normal;
-    color: var(--accent);
-  }
+    .print-report { display: none; }
 
-  .header-meta {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    text-align: right;
-    line-height: 1.8;
-  }
+    @media (max-width: 940px) {
+      .workspace { grid-template-columns: 1fr; }
+      .result-column { position: static; grid-row: 1; }
+      .result-stats { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .page { width: calc(100% - 24px); padding-bottom: 26px; }
+      .app-header { align-items: flex-start; flex-direction: column; gap: 16px; padding: 18px 0; }
+      .header-actions { width: 100%; justify-content: space-between; }
+      .workspace { padding-top: 14px; }
+      .panel-head, .panel-body { padding-left: 16px; padding-right: 16px; }
+      .field-grid, .derived-box { grid-template-columns: 1fr; }
+      .result-stats { grid-template-columns: 1fr 1fr; }
+      .action-grid { grid-template-columns: 1fr 1fr; }
+      .page-footer { flex-direction: column; gap: 4px; }
+    }
+    @media (max-width: 380px) {
+      .result-stats, .action-grid { grid-template-columns: 1fr; }
+      .btn.full { grid-column: auto; }
+    }
 
-  /* 区块样式 */
-  .section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  }
+    @media print {
+      @page { size: A4; margin: 12mm; }
+      body { background: #fff; color: #111; }
+      body::before, .app-header, .workspace, .page-footer, .toast { display: none !important; }
+      .page { width: 100%; padding: 0; }
+      .print-report { display: block; }
+      .print-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding-bottom: 14px; border-bottom: 2px solid #173d2f; }
+      .print-header h1 { font-size: 22pt; }
+      .print-header p { margin-top: 5px; color: #555; font-size: 9pt; }
+      .print-meta { text-align: right; color: #555; font-size: 8.5pt; line-height: 1.7; }
+      .print-section { margin-top: 18px; }
+      .print-section h2 { margin-bottom: 9px; color: #173d2f; font-size: 11pt; }
+      .print-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .print-item { padding: 10px; border: 1px solid #ccd8d2; border-radius: 6px; }
+      .print-item span { display: block; color: #666; font-size: 7.5pt; }
+      .print-item strong { display: block; margin-top: 4px; font-size: 12pt; }
+      .print-note { margin-top: 16px; padding: 10px; border: 1px solid #d6e6dd; background: #f3f8f5; color: #444; font-size: 8.5pt; line-height: 1.6; }
+      .print-footer { margin-top: 22px; padding-top: 10px; border-top: 1px solid #ddd; color: #777; font-size: 7.5pt; }
+    }
 
-  .section-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 1.25rem;
-  }
-
-  .section-badge {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: rgba(32,201,151,0.1);
-    color: var(--accent);
-    border: 1px solid rgba(32,201,151,0.2);
-    text-transform: uppercase;
-  }
-
-  .section-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  /* 表单字段 */
-  .field-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-  }
-
-  .field { display: flex; flex-direction: column; gap: 6px; }
-
-  .field label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-
-  .field input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0 12px;
-    height: 42px;
-    font-family: var(--mono);
-    font-size: 15px;
-    color: var(--text);
-    transition: border-color 0.15s;
-    width: 100%;
-  }
-
-  .field input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(32,201,151,0.1);
-  }
-
-  .field input[readonly] {
-    color: var(--accent);
-    cursor: default;
-    opacity: 0.9;
-    background: rgba(32,201,151,0.05);
-  }
-
-  /* 分隔线 */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 1.25rem 0;
-  }
-
-  /* 结果展示 */
-  .result-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-
-  .metric {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-  }
-
-  .metric-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .metric-value {
-    font-family: var(--mono);
-    font-size: 26px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .metric-unit {
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--muted);
-    margin-left: 3px;
-  }
-
-  .metric-note {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--accent);
-    margin-top: 4px;
-  }
-
-  /* 按钮样式 */
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  button {
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s;
-    border: 1px solid var(--border2);
-    background: var(--surface2);
-    color: var(--text);
-  }
-
-  button:hover { border-color: var(--accent); color: var(--accent); }
-  button.primary { background: var(--accent); color: white; border-color: var(--accent); font-weight: 600; }
-  button.primary:hover { background: #19a780; color: white; }
-
-  /* 页脚 */
-  footer {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-text {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-  }
-
-  /* 打印样式 */
-  @media print {
-    body { background: #fff; color: #111; padding: 1rem; }
-    body::before { display: none; }
-    .btn-row, footer { display: none; }
-    .section { border: 1px solid #ddd; background: #fafafa; }
-    .metric { background: #f5f5f5; border: 1px solid #ddd; }
-    .metric-value { color: #111; }
-    .section-badge { background: #e8f9f1; color: #1a7a50; border-color: #b0e8d0; }
-    .field input { background: #f0f0f0; color: #111; border-color: #ccc; }
-    h1 em { color: #1a7a50; }
-    .logo-label { color: #1a7a50; }
-    .metric-note { color: #1a7a50; }
-  }
-
-  /* 移动端适配 */
-  @media (max-width: 540px) {
-    .result-grid { grid-template-columns: 1fr 1fr; }
-    header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .header-meta { text-align: left; }
-  }
-</style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
 </head>
 <body>
-<div class="page">
-  <!-- 头部 -->
-  <header>
-    <div class="logo-block">
-      <span class="logo-label">Container Load Calculator</span>
-      <h1>装柜<em>计算器</em></h1>
-    </div>
-    <div class="header-meta">
-      <span id="dateStr"></span><br>
-      PET Resin · CIF Shipment Tool
-    </div>
-  </header>
+  <div class="page">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>
+        </div>
+        <div>
+          <div class="eyebrow">PET Resin Load Planner</div>
+          <h1>装柜<span>计算器</span></h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="save-state" id="saveState">本地自动保存</div>
+        <button class="btn primary" id="printBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>
+          打印报告
+        </button>
+      </div>
+    </header>
 
-  <!-- 基础参数区块 -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-badge">基础参数</span>
-      <span class="section-title">每柜装载配置</span>
-    </div>
-    <div class="field-grid">
-      <div class="field">
-        <label>每柜包数 (Bags/CTN)</label>
-        <input type="number" id="packs" value="20" min="1" step="1">
+    <main class="workspace">
+      <div class="input-column">
+        <section class="panel" aria-labelledby="shipmentTitle">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="section-index">01</span>
+              <div><h2 id="shipmentTitle">货物与柜型</h2><p>客户、目标货量和运输限制</p></div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="field-grid">
+              <div class="field">
+                <label for="customerName">客户名称 Customer</label>
+                <input class="input" id="customerName" type="text" value="SMI（秘鲁）" placeholder="输入客户或项目名称" autocomplete="organization" aria-describedby="customerNameError" />
+                <div class="field-error" id="customerNameError">请输入客户或项目名称</div>
+              </div>
+              <div class="field">
+                <label for="targetQty">目标货量 MT</label>
+                <input class="input" id="targetQty" type="number" value="1760" min="0.001" step="0.001" inputmode="decimal" aria-describedby="targetQtyHint targetQtyError" />
+                <div class="field-hint" id="targetQtyHint">净重，单位 MT</div>
+                <div class="field-error" id="targetQtyError">请输入大于 0 的目标货量</div>
+              </div>
+              <div class="field">
+                <label for="containerType">柜型 Container</label>
+                <select class="select" id="containerType" aria-describedby="maxPayloadHint">
+                  <option value="20GP">20GP · Standard</option>
+                  <option value="40HQ" selected>40HQ · High Cube</option>
+                  <option value="45HQ">45HQ · High Cube</option>
+                </select>
+                <div class="field-hint">切换后自动填入常用最大载重，可手动修改</div>
+              </div>
+              <div class="field">
+                <label for="safetyMargin">安全余量 %</label>
+                <input class="input" id="safetyMargin" type="number" value="0" min="0" max="30" step="0.5" inputmode="decimal" aria-describedby="safetyMarginHint safetyMarginError" />
+                <div class="field-hint" id="safetyMarginHint">从可用载重中预留安全空间</div>
+                <div class="field-error" id="safetyMarginError">安全余量应在 0–30% 之间</div>
+              </div>
+              <div class="field full">
+                <label for="maxPayload">柜型最大载重 MT</label>
+                <input class="input" id="maxPayload" type="number" value="26.5" min="0.001" step="0.001" inputmode="decimal" aria-describedby="maxPayloadHint maxPayloadError" />
+                <div class="field-hint" id="maxPayloadHint">按实际承运或船公司限制调整</div>
+                <div class="field-error" id="maxPayloadError">请输入大于 0 的最大载重</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="loadingTitle">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="section-index">02</span>
+              <div><h2 id="loadingTitle">装载配置</h2><p>每柜包数与单包重量</p></div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="field-grid">
+              <div class="field">
+                <label for="packs">每柜包数 Bags / CTN</label>
+                <input class="input" id="packs" type="number" value="20" min="1" step="1" inputmode="numeric" aria-describedby="packsHint packsError" />
+                <div class="field-hint" id="packsHint">必须是整数</div>
+                <div class="field-error" id="packsError">请输入大于 0 的整数包数</div>
+              </div>
+              <div class="field">
+                <label for="weight">每包重量 MT / Bag</label>
+                <input class="input" id="weight" type="number" value="1.15" min="0.001" step="0.001" inputmode="decimal" aria-describedby="weightError" />
+                <div class="field-error" id="weightError">请输入大于 0 的单包重量</div>
+              </div>
+            </div>
+            <div class="derived-box">
+              <div class="derived-item">
+                <span>Configured Load / CTN</span>
+                <output id="perCont">23.000 MT</output>
+                <small>计划装载重量</small>
+              </div>
+              <div class="derived-item">
+                <span>Safe Bag Limit</span>
+                <output id="safeBagLimit">23 包</output>
+                <small>扣除安全余量后的上限</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="compareTitle">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="section-index">03</span>
+              <div><h2 id="compareTitle">方案对比</h2><p>保存当前配置为 A / B 方案</p></div>
+            </div>
+            <div class="plan-actions">
+              <button class="btn" id="savePlanA" type="button">存为 A</button>
+              <button class="btn" id="savePlanB" type="button">存为 B</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="comparison-wrap">
+              <table class="comparison">
+                <thead><tr><th>指标</th><th>方案 A</th><th>方案 B</th></tr></thead>
+                <tbody id="comparisonBody"></tbody>
+              </table>
+            </div>
+            <button class="btn danger full" id="clearPlansBtn" type="button" style="margin-top:14px">清除对比方案</button>
+          </div>
+        </section>
       </div>
-      <div class="field">
-        <label>每包重量 MT (Wt/Bag)</label>
-        <input type="number" id="weight" value="1.15" step="0.01" min="0.01">
-      </div>
-      <div class="field">
-        <label>每柜载重 MT (Load/CTN)</label>
-        <input type="number" id="perCont" readonly>
-      </div>
-    </div>
+
+      <aside class="result-column" aria-label="计算结果">
+        <section class="result-card" aria-live="polite">
+          <div class="result-head">
+            <span>LOADING SUMMARY</span>
+            <span class="result-status" id="resultStatus">计算就绪</span>
+          </div>
+          <div class="result-body" id="resultBody">
+            <div class="result-customer" id="resultCustomer">SMI（秘鲁） · 40HQ</div>
+            <div class="result-primary">Required Containers</div>
+            <div class="result-count"><strong id="needContainers">77</strong><span>柜</span></div>
+            <div class="result-sub" id="resultSub">目标 1,760.00 MT · 每柜装载 23.000 MT</div>
+            <div class="utilization">
+              <div class="utilization-head"><span>整批载重利用率</span><output id="utilizationRate">86.8%</output></div>
+              <div class="utilization-track"><span id="utilizationBar"></span></div>
+            </div>
+            <div class="result-stats">
+              <div class="result-stat"><span>Actual Load</span><strong id="actualLoad">1,771 <small>MT</small></strong></div>
+              <div class="result-stat"><span>Total Bags</span><strong id="totalBags">1,540 <small>包</small></strong></div>
+              <div class="result-stat"><span>Surplus</span><strong id="surplusQty">11.00 <small>MT</small></strong></div>
+              <div class="result-stat"><span>Last CTN</span><strong id="lastContainer">100% <small>装载</small></strong></div>
+              <div class="result-stat"><span>Free Capacity</span><strong id="freeCapacity">269.5 <small>MT</small></strong></div>
+              <div class="result-stat"><span>Avg / CTN</span><strong id="averageLoad">23.00 <small>MT</small></strong></div>
+            </div>
+            <div class="result-notice" id="resultNotice"></div>
+          </div>
+          <div class="result-empty" id="resultEmpty">请先修正输入内容，计算结果会在这里显示。</div>
+        </section>
+
+        <section class="action-panel panel" aria-label="导出与操作">
+          <div class="action-grid">
+            <button class="btn" id="copyBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></svg>
+              复制摘要
+            </button>
+            <button class="btn" id="csvBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+              导出 CSV
+            </button>
+            <button class="btn" id="resetBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5.5 15a8 8 0 0 0 13 2M18.5 9a8 8 0 0 0-13-2"/></svg>
+              重置参数
+            </button>
+            <button class="btn primary full" id="printBtnMobile" type="button">打印 / 保存 PDF</button>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="page-footer">
+      <span>CONTAINER LOAD CALCULATOR · PET RESIN</span>
+      <span id="footerDate"></span>
+    </footer>
   </div>
 
-  <!-- 客户需求区块 -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-badge blue">客户需求</span>
-      <span class="section-title">Customer Requirement</span>
+  <section class="print-report" aria-label="装柜报告">
+    <div class="print-header">
+      <div><h1>装柜计算报告</h1><p>PET Resin Container Loading Plan</p></div>
+      <div class="print-meta"><div id="printCustomer"></div><div id="printDate"></div></div>
     </div>
-    <div class="field-grid" style="margin-bottom:1.25rem;">
-      <div class="field">
-        <label>客户名称 Customer</label>
-        <input type="text" id="customerName" value="SMI（秘鲁）" placeholder="输入客户名称">
-      </div>
-      <div class="field">
-        <label>目标货量 MT Target</label>
-        <input type="number" id="targetQty" value="1760" min="0" step="0.01">
-      </div>
+    <div class="print-section">
+      <h2>计算参数</h2>
+      <div class="print-grid" id="printConfig"></div>
     </div>
-    <hr class="divider">
-    <!-- 计算结果展示 -->
-    <div class="result-grid">
-      <div class="metric">
-        <div class="metric-label">所需柜数 CTN</div>
-        <div class="metric-value" id="needContainers">0<span class="metric-unit">柜</span></div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">实际装载 Actual MT</div>
-        <div class="metric-value" id="actualLoad">0<span class="metric-unit">MT</span></div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">超出目标 Surplus</div>
-        <div class="metric-value" id="surplusQty">0<span class="metric-unit">MT</span></div>
-        <div class="metric-note" id="surplusRate"></div>
-      </div>
+    <div class="print-section">
+      <h2>计算结果</h2>
+      <div class="print-grid" id="printResults"></div>
     </div>
-  </div>
+    <div class="print-note" id="printNote"></div>
+    <div class="print-footer">本报告由装柜计算器生成。实际装载请以船公司、港务及货物安全要求为准。</div>
+  </section>
 
-  <!-- 按钮区域 -->
-  <div class="btn-row">
-    <button class="primary" onclick="window.print()">🖨 打印 / Print</button>
-    <button onclick="resetCalculator()">重置 Reset</button>
-  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <!-- 页脚 -->
-  <footer>
-    <span class="footer-text">CONTAINER LOAD CALCULATOR · PET RESIN</span>
-    <span class="footer-text" id="footerDate"></span>
-  </footer>
-</div>
+  <script>
+    (() => {
+      'use strict';
 
-<script>
-// 初始化日期显示
-const now = new Date();
-const dateStr = now.toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric' });
-document.getElementById('dateStr').textContent = dateStr;
-document.getElementById('footerDate').textContent = now.toISOString().slice(0,10);
+      const STORAGE_KEY = 'pet-container-load-planner:v2';
+      const CONTAINER_PROFILES = {
+        '20GP': { label: '20GP', maxPayload: 28 },
+        '40HQ': { label: '40HQ', maxPayload: 26.5 },
+        '45HQ': { label: '45HQ', maxPayload: 27.5 }
+      };
+      const DEFAULTS = {
+        customerName: 'SMI（秘鲁）',
+        targetQty: 1760,
+        containerType: '40HQ',
+        safetyMargin: 0,
+        maxPayload: 26.5,
+        packs: 20,
+        weight: 1.15
+      };
 
-// 获取基础参数并计算每柜载重
-function getBaseParams() {
-  const packs = parseFloat(document.getElementById('packs').value) || 0;
-  const weight = parseFloat(document.getElementById('weight').value) || 0;
-  const perCont = parseFloat((packs * weight).toFixed(6));
-  document.getElementById('perCont').value = perCont.toFixed(3);
-  return perCont;
-}
+      const elements = {
+        customerName: document.getElementById('customerName'),
+        targetQty: document.getElementById('targetQty'),
+        containerType: document.getElementById('containerType'),
+        safetyMargin: document.getElementById('safetyMargin'),
+        maxPayload: document.getElementById('maxPayload'),
+        packs: document.getElementById('packs'),
+        weight: document.getElementById('weight'),
+        perCont: document.getElementById('perCont'),
+        safeBagLimit: document.getElementById('safeBagLimit'),
+        resultBody: document.getElementById('resultBody'),
+        resultEmpty: document.getElementById('resultEmpty'),
+        resultStatus: document.getElementById('resultStatus'),
+        resultCustomer: document.getElementById('resultCustomer'),
+        needContainers: document.getElementById('needContainers'),
+        resultSub: document.getElementById('resultSub'),
+        utilizationRate: document.getElementById('utilizationRate'),
+        utilizationBar: document.getElementById('utilizationBar'),
+        actualLoad: document.getElementById('actualLoad'),
+        totalBags: document.getElementById('totalBags'),
+        surplusQty: document.getElementById('surplusQty'),
+        lastContainer: document.getElementById('lastContainer'),
+        freeCapacity: document.getElementById('freeCapacity'),
+        averageLoad: document.getElementById('averageLoad'),
+        resultNotice: document.getElementById('resultNotice'),
+        copyBtn: document.getElementById('copyBtn'),
+        csvBtn: document.getElementById('csvBtn'),
+        comparisonBody: document.getElementById('comparisonBody'),
+        saveState: document.getElementById('saveState'),
+        toast: document.getElementById('toast')
+      };
 
-// 核心计算逻辑
-function calculate() {
-  // 获取基础参数
-  const perCont = getBaseParams();
-  // 获取客户目标货量
-  const targetQty = parseFloat(document.getElementById('targetQty').value) || 0;
-  
-  // 计算核心数据（向上取整保证装满所有柜）
-  const needContainers = perCont > 0 ? Math.ceil(targetQty / perCont) : 0;
-  const actualLoad = parseFloat((needContainers * perCont).toFixed(3));
-  const surplusQty = parseFloat((actualLoad - targetQty).toFixed(3));
-  const surplusRate = targetQty > 0 ? ((surplusQty / targetQty) * 100).toFixed(1) : 0;
+      let currentResult = null;
+      let plans = { A: null, B: null };
+      let saveTimer = null;
+      let toastTimer = null;
 
-  // 更新页面显示
-  document.getElementById('needContainers').textContent = needContainers;
-  document.getElementById('actualLoad').textContent = actualLoad.toLocaleString('zh-CN');
-  document.getElementById('surplusQty').textContent = surplusQty.toFixed(2);
-  
-  // 显示超出比例（仅当超出时）
-  const surplusRateEl = document.getElementById('surplusRate');
-  if (surplusQty > 0) {
-    surplusRateEl.textContent = `+${surplusRate}%`;
-    surplusRateEl.style.display = 'block';
-  } else {
-    surplusRateEl.textContent = '';
-    surplusRateEl.style.display = 'none';
-  }
-}
+      const numberFormat = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 });
+      const preciseFormat = new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+      const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
 
-// 重置计算器
-function resetCalculator() {
-  // 重置基础参数
-  document.getElementById('packs').value = 20;
-  document.getElementById('weight').value = 1.15;
-  // 重置客户信息
-  document.getElementById('customerName').value = 'SMI（秘鲁）';
-  document.getElementById('targetQty').value = 1760;
-  // 重新计算
-  calculate();
-}
+      function notify(message) {
+        clearTimeout(toastTimer);
+        elements.toast.textContent = message;
+        elements.toast.classList.add('visible');
+        toastTimer = setTimeout(() => elements.toast.classList.remove('visible'), 3000);
+      }
 
-// 绑定输入事件（实时计算）
-document.getElementById('packs').addEventListener('input', calculate);
-document.getElementById('weight').addEventListener('input', calculate);
-document.getElementById('targetQty').addEventListener('input', calculate);
-document.getElementById('customerName').addEventListener('input', calculate);
+      function setFieldError(id, message) {
+        const input = document.getElementById(id);
+        const error = document.getElementById(`${id}Error`);
+        const field = input.closest('.field');
+        const hasError = Boolean(message);
+        field.classList.toggle('has-error', hasError);
+        input.setAttribute('aria-invalid', String(hasError));
+        if (hasError) error.textContent = message;
+      }
 
-// 页面初始化
-calculate();
-</script>
+      function readValues() {
+        return {
+          customerName: elements.customerName.value.trim(),
+          targetQty: Number.parseFloat(elements.targetQty.value),
+          containerType: elements.containerType.value,
+          safetyMargin: Number.parseFloat(elements.safetyMargin.value),
+          maxPayload: Number.parseFloat(elements.maxPayload.value),
+          packs: Number.parseFloat(elements.packs.value),
+          weight: Number.parseFloat(elements.weight.value)
+        };
+      }
+
+      function validate(values) {
+        setFieldError('customerName', values.customerName ? '' : '请输入客户或项目名称');
+        setFieldError('targetQty', Number.isFinite(values.targetQty) && values.targetQty > 0 ? '' : '请输入大于 0 的目标货量');
+        setFieldError('containerType', '');
+        setFieldError('safetyMargin', Number.isFinite(values.safetyMargin) && values.safetyMargin >= 0 && values.safetyMargin <= 30 ? '' : '安全余量应在 0–30% 之间');
+        setFieldError('maxPayload', Number.isFinite(values.maxPayload) && values.maxPayload > 0 ? '' : '请输入大于 0 的最大载重');
+        setFieldError('packs', Number.isInteger(values.packs) && values.packs > 0 ? '' : '请输入大于 0 的整数包数');
+        setFieldError('weight', Number.isFinite(values.weight) && values.weight > 0 ? '' : '请输入大于 0 的单包重量');
+        return !document.querySelector('.field.has-error');
+      }
+
+      function round(value, digits = 6) {
+        return Number.parseFloat(value.toFixed(digits));
+      }
+
+      function calculateResult(values) {
+        const usablePayload = round(values.maxPayload * (1 - values.safetyMargin / 100));
+        const safeBagLimit = Math.max(0, Math.floor((usablePayload + 1e-9) / values.weight));
+        const effectiveBags = Math.min(values.packs, safeBagLimit);
+        const loadPerContainer = round(effectiveBags * values.weight);
+        if (loadPerContainer <= 0) return null;
+
+        const needContainers = Math.ceil(values.targetQty / loadPerContainer);
+        const actualLoad = round(needContainers * loadPerContainer);
+        const surplus = round(Math.max(0, actualLoad - values.targetQty));
+        const totalBags = needContainers * effectiveBags;
+        const lastContainerLoad = round(actualLoad - (needContainers - 1) * loadPerContainer);
+        const lastContainerRatio = Math.min(100, (lastContainerLoad / loadPerContainer) * 100);
+        const averageLoad = round(actualLoad / needContainers);
+        const utilization = Math.min(100, (actualLoad / (needContainers * values.maxPayload)) * 100);
+        const freeCapacity = round(Math.max(0, needContainers * values.maxPayload - actualLoad));
+        const warnings = [];
+
+        if (values.packs > safeBagLimit) {
+          warnings.push(`当前每柜 ${values.packs} 包超过安全上限 ${safeBagLimit} 包，结果已按 ${safeBagLimit} 包/柜计算。`);
+        }
+
+        return {
+          values,
+          usablePayload,
+          safeBagLimit,
+          effectiveBags,
+          loadPerContainer,
+          needContainers,
+          actualLoad,
+          surplus,
+          totalBags,
+          lastContainerLoad,
+          lastContainerRatio,
+          averageLoad,
+          utilization,
+          freeCapacity,
+          warnings
+        };
+      }
+
+      function setMetric(element, value, unit) {
+        element.replaceChildren(document.createTextNode(value));
+        if (unit) {
+          const small = document.createElement('small');
+          small.textContent = unit;
+          element.appendChild(small);
+        }
+      }
+
+      function renderResult(result) {
+        currentResult = result;
+        elements.resultBody.style.display = 'block';
+        elements.resultEmpty.style.display = 'none';
+        elements.resultStatus.textContent = result.warnings.length ? '需要关注' : '参数有效';
+        elements.resultCustomer.textContent = `${result.values.customerName} · ${result.values.containerType}`;
+        elements.needContainers.textContent = result.needContainers;
+        elements.resultSub.textContent = `目标 ${preciseFormat.format(result.values.targetQty)} MT · 每柜装载 ${preciseFormat.format(result.loadPerContainer)} MT`;
+        elements.utilizationRate.textContent = `${result.utilization.toFixed(1)}%`;
+        elements.utilizationBar.style.width = `${result.utilization}%`;
+        setMetric(elements.actualLoad, numberFormat.format(result.actualLoad), 'MT');
+        setMetric(elements.totalBags, numberFormat.format(result.totalBags), '包');
+        setMetric(elements.surplusQty, result.surplus.toFixed(2), 'MT');
+        setMetric(elements.lastContainer, `${Math.round(result.lastContainerRatio)}%`, '装载');
+        setMetric(elements.freeCapacity, numberFormat.format(result.freeCapacity), 'MT');
+        setMetric(elements.averageLoad, result.averageLoad.toFixed(2), 'MT');
+        elements.resultNotice.textContent = result.warnings.join(' ');
+        elements.resultNotice.classList.toggle('visible', result.warnings.length > 0);
+        elements.copyBtn.disabled = false;
+        elements.csvBtn.disabled = false;
+        renderPrintReport(result);
+      }
+
+      function renderEmpty() {
+        currentResult = null;
+        elements.resultBody.style.display = 'none';
+        elements.resultEmpty.style.display = 'block';
+        elements.resultStatus.textContent = '等待有效输入';
+        elements.copyBtn.disabled = true;
+        elements.csvBtn.disabled = true;
+      }
+
+      function calculateAndRender() {
+        const values = readValues();
+        if (!validate(values)) {
+          renderEmpty();
+          return;
+        }
+        const result = calculateResult(values);
+        if (!result) {
+          renderEmpty();
+          return;
+        }
+        elements.perCont.textContent = `${result.loadPerContainer.toFixed(3)} MT`;
+        elements.safeBagLimit.textContent = `${result.safeBagLimit} 包`;
+        renderResult(result);
+      }
+
+      function getSerializableState() {
+        return {
+          values: readValues(),
+          plans,
+          savedAt: new Date().toISOString()
+        };
+      }
+
+      function scheduleSave() {
+        clearTimeout(saveTimer);
+        elements.saveState.textContent = '正在保存…';
+        saveTimer = setTimeout(() => {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(getSerializableState()));
+            elements.saveState.textContent = '已自动保存';
+          } catch {
+            elements.saveState.textContent = '本地保存不可用';
+          }
+        }, 350);
+      }
+
+      function restoreState() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+          if (!saved?.values) return false;
+          const values = { ...DEFAULTS, ...saved.values };
+          elements.customerName.value = values.customerName;
+          elements.targetQty.value = values.targetQty;
+          elements.containerType.value = values.containerType;
+          elements.safetyMargin.value = values.safetyMargin;
+          elements.maxPayload.value = values.maxPayload;
+          elements.packs.value = values.packs;
+          elements.weight.value = values.weight;
+          plans = saved.plans && typeof saved.plans === 'object' ? { A: saved.plans.A || null, B: saved.plans.B || null } : { A: null, B: null };
+          elements.saveState.textContent = '已恢复上次配置';
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function summaryText(result = currentResult) {
+        if (!result) return '';
+        const v = result.values;
+        return [
+          `装柜计算摘要 · ${v.customerName}`,
+          `柜型：${v.containerType}（最大载重 ${v.maxPayload} MT）`,
+          `目标货量：${preciseFormat.format(v.targetQty)} MT`,
+          `配置：${v.packs} 包/柜 × ${v.weight} MT/包，安全上限 ${result.safeBagLimit} 包`,
+          `所需柜数：${result.needContainers} 柜`,
+          `实际装载：${preciseFormat.format(result.actualLoad)} MT（${result.totalBags} 包）`,
+          `超出目标：${result.surplus.toFixed(2)} MT`,
+          `整批载重利用率：${result.utilization.toFixed(1)}%`,
+          ...result.warnings
+        ].join('\n');
+      }
+
+      async function copySummary() {
+        if (!currentResult) return;
+        const text = summaryText();
+        let copied = false;
+        if (navigator.clipboard && window.isSecureContext) {
+          try { await navigator.clipboard.writeText(text); copied = true; } catch {}
+        }
+        if (!copied) {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          try { copied = document.execCommand('copy'); } catch { copied = false; }
+          textarea.remove();
+        }
+        notify(copied ? '计算摘要已复制' : '复制失败，请手动选择摘要内容');
+      }
+
+      function csvCell(value) {
+        return `"${String(value).replaceAll('"', '""')}"`;
+      }
+
+      function exportCsv() {
+        if (!currentResult) return;
+        const r = currentResult;
+        const rows = [
+          ['客户', '柜型', '目标货量MT', '安全余量%', '最大载重MT', '配置包数', '单包重量MT', '安全包数上限', '有效包数', '每柜装载MT', '所需柜数', '总包数', '实际装载MT', '超出MT', '利用率%', '尾柜装载率%', '剩余理论舱容MT'],
+          [r.values.customerName, r.values.containerType, r.values.targetQty, r.values.safetyMargin, r.values.maxPayload, r.values.packs, r.values.weight, r.safeBagLimit, r.effectiveBags, r.loadPerContainer, r.needContainers, r.totalBags, r.actualLoad, r.surplus, r.utilization.toFixed(2), r.lastContainerRatio.toFixed(2), r.freeCapacity]
+        ];
+        const csv = '\ufeff' + rows.map(row => row.map(csvCell).join(',')).join('\n');
+        const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `container-plan-${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        notify('CSV 已导出');
+      }
+
+      function snapshotPlan() {
+        if (!currentResult) return null;
+        const r = currentResult;
+        return {
+          customer: r.values.customerName,
+          type: r.values.containerType,
+          target: r.values.targetQty,
+          bags: r.values.packs,
+          weight: r.values.weight,
+          containers: r.needContainers,
+          actual: r.actualLoad,
+          surplus: r.surplus,
+          utilization: r.utilization
+        };
+      }
+
+      function renderComparison() {
+        const rows = [
+          ['客户', 'customer'],
+          ['柜型', 'type'],
+          ['目标 MT', 'target', 2],
+          ['包数/柜', 'bags'],
+          ['单包 MT', 'weight', 2],
+          ['所需柜数', 'containers'],
+          ['实际 MT', 'actual', 2],
+          ['超出 MT', 'surplus', 2],
+          ['利用率', 'utilization', 1, '%']
+        ];
+        elements.comparisonBody.innerHTML = rows.map(([label, key, digits, suffix]) => {
+          const format = (plan) => {
+            if (!plan) return '<span class="empty">未保存</span>';
+            const value = typeof plan[key] === 'number' ? plan[key].toFixed(digits || 0) : plan[key];
+            return `${escapeHtml(value)}${suffix || ''}`;
+          };
+          return `<tr><td>${label}</td><td>${format(plans.A)}</td><td>${format(plans.B)}</td></tr>`;
+        }).join('');
+      }
+
+      function renderPrintReport(result) {
+        const v = result.values;
+        document.getElementById('printCustomer').textContent = `客户：${v.customerName}`;
+        document.getElementById('printDate').textContent = `生成时间：${new Date().toLocaleString('zh-CN')}`;
+        const configItems = [
+          ['柜型', v.containerType],
+          ['目标货量', `${preciseFormat.format(v.targetQty)} MT`],
+          ['最大载重', `${v.maxPayload} MT`],
+          ['安全余量', `${v.safetyMargin}%`],
+          ['配置包数', `${v.packs} 包/柜`],
+          ['单包重量', `${v.weight} MT`]
+        ];
+        const resultItems = [
+          ['所需柜数', `${result.needContainers} 柜`],
+          ['实际装载', `${preciseFormat.format(result.actualLoad)} MT`],
+          ['总包数', `${numberFormat.format(result.totalBags)} 包`],
+          ['超出目标', `${result.surplus.toFixed(2)} MT`],
+          ['载重利用率', `${result.utilization.toFixed(1)}%`],
+          ['尾柜装载', `${Math.round(result.lastContainerRatio)}%`]
+        ];
+        document.getElementById('printConfig').innerHTML = configItems.map(([label, value]) => `<div class="print-item"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
+        document.getElementById('printResults').innerHTML = resultItems.map(([label, value]) => `<div class="print-item"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
+        document.getElementById('printNote').textContent = result.warnings.length
+          ? `注意：${result.warnings.join(' ')}`
+          : `每柜按 ${result.effectiveBags} 包、${result.loadPerContainer.toFixed(3)} MT 计算；扣除安全余量后的可用载重为 ${result.usablePayload.toFixed(3)} MT。`;
+      }
+
+      function resetCalculator() {
+        if (!window.confirm('确定恢复默认参数吗？当前输入会被覆盖。')) return;
+        Object.entries(DEFAULTS).forEach(([key, value]) => {
+          const element = document.getElementById(key);
+          if (element) element.value = value;
+        });
+        calculateAndRender();
+        renderComparison();
+        scheduleSave();
+        notify('已恢复默认参数');
+      }
+
+      [elements.customerName, elements.targetQty, elements.safetyMargin, elements.maxPayload, elements.packs, elements.weight].forEach(input => {
+        input.addEventListener('input', () => { calculateAndRender(); scheduleSave(); });
+      });
+      elements.containerType.addEventListener('change', () => {
+        const profile = CONTAINER_PROFILES[elements.containerType.value];
+        elements.maxPayload.value = profile.maxPayload;
+        calculateAndRender();
+        scheduleSave();
+      });
+      document.getElementById('printBtn').addEventListener('click', () => window.print());
+      document.getElementById('printBtnMobile').addEventListener('click', () => window.print());
+      document.getElementById('copyBtn').addEventListener('click', copySummary);
+      document.getElementById('csvBtn').addEventListener('click', exportCsv);
+      document.getElementById('resetBtn').addEventListener('click', resetCalculator);
+      document.getElementById('savePlanA').addEventListener('click', () => {
+        const plan = snapshotPlan();
+        if (!plan) return notify('请先完成有效计算');
+        plans.A = plan;
+        renderComparison();
+        scheduleSave();
+        notify('当前方案已保存为 A');
+      });
+      document.getElementById('savePlanB').addEventListener('click', () => {
+        const plan = snapshotPlan();
+        if (!plan) return notify('请先完成有效计算');
+        plans.B = plan;
+        renderComparison();
+        scheduleSave();
+        notify('当前方案已保存为 B');
+      });
+      document.getElementById('clearPlansBtn').addEventListener('click', () => {
+        plans = { A: null, B: null };
+        renderComparison();
+        scheduleSave();
+        notify('对比方案已清除');
+      });
+
+      const now = new Date();
+      document.getElementById('footerDate').textContent = now.toISOString().slice(0, 10);
+      restoreState();
+      renderComparison();
+      calculateAndRender();
+    })();
+  </script>
 </body>
 </html>
