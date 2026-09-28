@@ -1,13 +1,20 @@
 [
   {
-    "name": "装柜计算器（单用户版）",
+    "name": "[SBTI] 电子下水道与赛博便秘的深层对视",
+    "path": "/projects/mings-SBTI-test-main/index.html",
+    "tags": [
+      "project"
+    ]
+  },
+  {
+    "name": "装柜计算器 | PET Resin Load Planner",
     "path": "/projects/project-a/index.html",
     "tags": [
       "project"
     ]
   },
   {
-    "name": "Canvas Game",
+    "name": "NEON PULSE // 反应竞技场",
     "path": "/projects/project-b/index.html",
     "tags": [
       "project"
@@ -21,8 +28,15 @@
     ]
   },
   {
-    "name": "报价模板系统",
+    "name": "陈铭 Ming Chen — 市场研究与产品构建",
     "path": "/projects/project-d/index.html",
+    "tags": [
+      "project"
+    ]
+  },
+  {
+    "name": "美国可口可乐供应版图 · Bottler Atlas",
+    "path": "/projects/us-coca-cola-bottler-atlas/index.html",
     "tags": [
       "project"
     ]
