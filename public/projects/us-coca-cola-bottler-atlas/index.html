@@ -6,19 +6,310 @@
 <meta name="description" content="按州查询美国可口可乐装瓶与分销伙伴。覆盖50州及华盛顿特区，供应区域说明与官方来源可追溯。">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23dc1826'/%3E%3Cpath d='M9 9h14v4H13v6h10v4H9z' fill='white'/%3E%3C/svg%3E">
 <style>
-:root{--red:#d81725;--ink:#202122;--muted:#686b70;--line:#dedfe2;--paper:#fff;--bg:#f5f6f8;--pink:#fff0f1}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.6}button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:inherit;text-underline-offset:4px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #1674be;outline-offset:3px}header{background:#fff;border-top:5px solid var(--red);border-bottom:1px solid var(--line)}.top{max-width:1440px;margin:auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px;font-weight:750;letter-spacing:.05em;font-size:14px}.mark{display:grid;place-items:center;width:34px;height:34px;color:#fff;background:var(--red);font-size:22px;border-radius:50%;font-style:italic;font-family:Georgia,serif}.top-meta{font-size:13px;color:var(--muted)}main{max-width:1440px;margin:auto;padding:36px 40px 48px}.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}.eyebrow{font-size:12px;color:var(--red);letter-spacing:.18em;font-weight:750;margin:0 0 6px}h1{font-size:38px;letter-spacing:-.055em;line-height:1.2;margin:0 0 12px;font-weight:800}.intro p:not(.eyebrow){margin:0;color:var(--muted);font-size:15px}.metrics{display:flex;gap:30px;flex-shrink:0}.metric{padding-left:24px;border-left:1px solid var(--line)}.metric strong{display:block;font-size:34px;line-height:1.15;font-weight:650;letter-spacing:-.06em}.metric span{font-size:12px;color:var(--muted)}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 370px;border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 8px 40px #20212204}.explorer{min-width:0;padding:25px 28px 22px}.toolbar{display:flex;align-items:center;gap:10px}.search-wrap{position:relative;flex:1}.search-wrap svg{position:absolute;top:14px;left:14px;color:#85898d;pointer-events:none}.search-wrap input{width:100%;border:1px solid var(--line);background:#f8f9fa;border-radius:8px;padding:11px 10px 11px 42px;font-size:14px;outline-offset:2px}select{border:1px solid var(--line);background:#fff;border-radius:8px;padding:11px 28px 11px 12px;max-width:42%;font-size:14px}.view-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:23px 0 10px}.view-row h2{font-size:16px;font-weight:700;margin:0}.toggle{display:flex;background:#f1f2f4;border-radius:6px;padding:3px}.toggle button{border:0;background:transparent;font-size:13px;padding:5px 12px;color:var(--muted);border-radius:4px}.toggle button[aria-pressed=true]{background:#fff;box-shadow:0 1px 4px #0001;color:var(--ink);font-weight:650}.map-scroll{width:100%;overflow:auto;padding:14px 0}.tilemap{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(8,54px);gap:5px;min-width:540px;position:relative}.tile{border:1px solid #dadcdf;background:#f4f5f7;border-radius:6px;padding:3px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#41464c;position:relative;transition:background .15s,transform .15s,opacity .15s}.tile strong{font-size:17px;line-height:1.2;font-weight:700;letter-spacing:.02em}.tile span{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:12px;line-height:1.2;margin-top:4px;white-space:nowrap}.tile:hover{background:#fde4e7;border-color:#e7a4ab;transform:translateY(-2px)}.tile[aria-pressed=true]{background:var(--red);border-color:var(--red);color:white;box-shadow:0 3px 10px #d8172530}.tile.faded{opacity:.15}.map-label{grid-column:2/8;grid-row:1/3;align-self:center;margin:16px 0 0 8px;pointer-events:none}.map-label b{font-size:12px;letter-spacing:.15em;color:#a0a4aa;font-weight:650;display:block}.map-label span{font-family:Georgia,serif;font-style:italic;color:#c9cbd0;font-size:34px}.map-foot{margin-top:15px;padding-top:17px;border-top:1px solid #eceef0;display:flex;justify-content:space-between;gap:15px;align-items:center;font-size:12px;color:var(--muted)}.key{display:flex;align-items:center;gap:7px}.square{width:10px;height:10px;background:var(--red);border-radius:2px}.map-foot p{margin:0}.detail{max-height:810px;overflow:auto;scrollbar-width:thin;background:#fafafa;border-left:1px solid var(--line);padding:28px;min-width:0}.detail-top{display:flex;align-items:center;justify-content:space-between}.detail-code{font-size:14px;color:var(--red);font-weight:750;letter-spacing:.12em}.detail-region{font-size:12px;color:var(--muted)}.detail h2{font-size:30px;line-height:1.2;margin:12px 0 5px;letter-spacing:-.03em}.english{color:var(--muted);font-family:Georgia,serif;font-size:19px;margin:0 0 20px}.state-summary{font-size:15px;line-height:1.75;color:#60646a;border-bottom:1px solid var(--line);padding-bottom:19px;margin-bottom:20px}.bottler-card{border:1px solid var(--line);border-radius:10px;padding:16px;margin-top:12px;background:#fff}.bottler-card h3{font-size:16px;line-height:1.45;margin:0 0 5px;font-weight:750}.bottler-card .group{font-size:12px;color:var(--muted);margin:0 0 10px}.bottler-card .scope{font-size:15px;line-height:1.7;margin:0;color:#51565c}.source-link{font-size:12px;color:var(--red);display:inline-block;margin-top:12px;text-decoration:none}.source-link:hover{text-decoration:underline}.count-label{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between}.count-label b{color:var(--ink);font-size:14px}.caveat{font-size:12px;line-height:1.7;color:#777e86;margin:18px 0 0}.results-info{font-size:13px;color:var(--muted);margin:8px 0 15px}.states-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:18px;max-height:477px;overflow:auto}.state-row{text-align:left;background:#fff;border:1px solid var(--line);border-radius:7px;padding:12px;display:flex;align-items:center;gap:10px}.state-row[aria-pressed=true]{border-color:var(--red);background:var(--pink)}.state-row .abbr{color:var(--red);font-size:14px;font-weight:750;width:28px;flex-shrink:0}.state-row .state-name{font-size:14px;font-weight:600;line-height:1.4}.state-row small{display:block;color:var(--muted);font-size:12px;font-weight:400;margin-top:2px}.state-row .arrow{margin-left:auto;font-size:16px;color:#999}.empty{grid-column:1/-1;background:#f7f8f9;padding:35px 15px;text-align:center;color:var(--muted);font-size:14px;border-radius:8px}.notes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:28px}.note{padding:0 0 0 15px;border-left:2px solid #e0e2e6}.note b{display:block;font-size:14px;margin-bottom:5px}.note p{font-size:13px;color:var(--muted);margin:0;line-height:1.75}footer{display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:1px solid var(--line);margin-top:30px;padding-top:18px;color:#7e8389;font-size:12px}footer button{font-size:12px;padding:0;color:var(--ink);background:none;border:0;text-decoration:underline;text-underline-offset:4px}.source-directory{margin-top:24px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px}.source-directory h2{margin:0 0 8px;font-size:19px}.source-directory p{font-size:13px;color:var(--muted)}.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.source-item{padding:12px;border:1px solid #e5e6e9;border-radius:7px;font-size:13px;text-decoration:none;overflow-wrap:anywhere}.source-item:hover{border-color:var(--red);color:var(--red)}.source-item span{display:block;font-size:12px;color:var(--muted);margin-top:5px}[hidden]{display:none!important}.mobile-hint{display:none}.reset{font-size:12px;border:0;color:var(--red);background:none;padding:3px 0}.result-notice{font-size:13px;color:var(--muted);min-height:21px;margin:4px 0}.bottler-card em{font-style:normal;color:var(--red)}
-@media(min-width:1300px){.tilemap{grid-template-rows:repeat(8,61px)}.tile strong{font-size:19px}.tile span{font-size:12px}}
-@media(min-width:801px) and (max-width:1200px){.tile span{display:none}}
-@media(max-width:1050px){main{padding:28px 22px}.top{padding:15px 22px}.workspace{grid-template-columns:minmax(0,1fr) 310px}.explorer{padding:22px 18px}.detail{padding:24px 20px}.metrics{gap:18px}.metric{padding-left:18px}.map-foot{display:block}.map-foot p{margin-top:7px}.intro p{max-width:500px}}
-@media(max-width:800px){.workspace{grid-template-columns:1fr}.detail{max-height:none;overflow:visible;border-left:0;border-top:1px solid var(--line)}.metrics{display:none}.tilemap{min-width:0;grid-template-rows:repeat(8,56px)}.tile span{display:none}.map-scroll{overflow:visible}.map-label span{font-size:26px}.map-foot{display:flex}.detail h2{font-size:28px}.bottler-card{display:inline-block;vertical-align:top;width:calc(50% - 7px);margin-right:8px}.bottler-card:nth-child(2n){margin-right:0}.mobile-hint{display:inline;font-size:12px;color:var(--muted)}.detail{scroll-margin-top:16px}.source-grid{grid-template-columns:1fr 1fr}.top-meta{font-size:12px}}
-@media(max-width:520px){main{padding:25px 14px 28px}.top{padding:13px 16px}.brand{font-size:12px;gap:8px}.mark{width:28px;height:28px;font-size:19px}.top-meta{max-width:120px;text-align:right;font-size:11px}h1{font-size:30px;letter-spacing:-.04em}.intro{margin-bottom:20px}.intro p{font-size:14px}.explorer{padding:18px 12px}.toolbar{flex-wrap:wrap;gap:8px}.search-wrap{min-width:100%}.toolbar select{max-width:100%;width:100%;padding-top:9px;padding-bottom:9px}.view-row{margin:19px 0 7px}.view-row h2{font-size:15px}.tilemap{gap:3px;grid-template-rows:repeat(8,36px)}.tile{border-radius:4px;padding:0}.tile strong{font-size:12px}.map-label{margin-top:0}.map-label b{font-size:9px}.map-label span{font-size:21px}.map-foot{display:block;margin-top:6px;padding-top:12px;font-size:11px}.map-foot p{margin:6px 0 0}.detail{padding:23px 18px}.bottler-card{display:block;width:100%;margin-right:0}.notes{grid-template-columns:1fr;gap:17px;margin-top:23px}.note p{font-size:13px}.source-grid{grid-template-columns:1fr}.source-directory{padding:18px}.states-list{grid-template-columns:1fr;max-height:440px}.state-row{padding:11px}footer{align-items:flex-start;font-size:11px}.result-notice{font-size:12px}.map-scroll{padding:10px 0 8px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+/* ============================================================
+   Bottler Atlas — 美国版样式
+   组织顺序：1 变量  2 基础  3 版块  4 地图/州位图  5 详情
+            6 列表  7 供应商目录  8 沿革/说明  9 响应式  10 深色
+   高度不再写死：--row 单一变量驱动州位图行高与列表可视高度
+   州位图按「装瓶商数量」着色（1 家最浅 → 5 家最深）
+   ============================================================ */
 
-.quick-states{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 0;align-items:center}.quick-states>span{font-size:12px;color:var(--muted);margin-right:3px}.quick-states button,.action-button{border:1px solid var(--line);border-radius:7px;background:#fff;padding:7px 11px;font-size:12px;color:#51565c}.quick-states button:hover,.action-button:hover{border-color:var(--red);color:var(--red)}.quick-states button[aria-pressed=true]{background:var(--pink);border-color:#eb9da4;color:var(--red)}.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 20px}.back-explorer{display:none}.bottler-card.filter-hit{border-color:#e6a0a7;box-shadow:inset 3px 0 var(--red)}.filter-label{display:block;color:var(--red);font-size:11px;margin-bottom:8px}.mobile-pick{display:none}.directory{margin-top:26px;border:1px solid var(--line);border-radius:12px;background:white;overflow:hidden}.directory>summary{cursor:pointer;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none}.directory>summary::-webkit-details-marker{display:none}.directory>summary strong{font-size:18px;display:block}.directory>summary small{font-size:13px;color:var(--muted);font-weight:400}.directory>summary:after{content:'＋';color:var(--red);font-size:24px}.directory[open]>summary:after{content:'−'}.directory-content{padding:0 24px 24px}.directory-search{width:100%;max-width:500px;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;background:#f8f9fa}.directory-count{font-size:12px;color:var(--muted)}.supplier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.supplier-card{border:1px solid var(--line);border-radius:9px;padding:18px;display:flex;flex-direction:column;align-items:flex-start}.supplier-card h3{font-size:15px;line-height:1.5;margin:0 0 7px}.supplier-card>p{font-size:12px;color:var(--muted);margin:0 0 12px}.state-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:15px}.state-chips button{border:0;background:#f1f2f4;color:#555a61;font-size:12px;border-radius:4px;padding:5px 8px}.state-chips button:hover{background:var(--pink);color:var(--red)}.supplier-card>.action-button{margin-top:auto;color:var(--red)}.directory-tools{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#25282d;color:white;border-radius:10px;padding:12px 18px;font-size:13px;box-shadow:0 5px 30px #0002;z-index:20;max-width:90vw;width:max-content;pointer-events:none}dialog{border:1px solid var(--line);border-radius:14px;padding:24px;width:min(540px,90vw)}dialog::backdrop{background:#0005}dialog h2{font-size:20px;margin:0 0 10px}dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:12px;border:1px solid var(--line);border-radius:8px;margin-bottom:14px}.filter-summary{color:var(--red);background:var(--pink);border-radius:6px;padding:9px 12px;font-size:12px;margin-top:10px}.scope-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
-@media(max-width:1050px){.supplier-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:800px){.back-explorer{display:inline-block}.mobile-pick{display:flex;gap:10px;align-items:center;margin-top:14px}.mobile-pick label{font-size:12px;color:var(--muted);flex-shrink:0}.mobile-pick select{flex:1;max-width:none;min-width:0;min-height:44px}.detail{scroll-margin-top:12px}.action-button{min-height:44px}.tilemap{min-width:540px;grid-template-rows:repeat(8,44px)}.map-scroll{overflow-x:auto;padding-bottom:12px}.tile strong{font-size:14px}.map-label span{font-size:28px}.states-list{max-height:370px}.quick-states button{min-height:38px}.toggle button{min-height:38px}.directory-content{padding:0 16px 18px}.directory>summary{padding:19px 16px}.state-chips button{min-height:36px}.top-meta{max-width:130px}.brand{white-space:nowrap}.mark{flex-shrink:0}.map-foot:after{content:'可左右滑动州位图；也可切换列表。';display:block;margin-top:5px;color:var(--muted)}}
-@media(max-width:520px){.supplier-grid{grid-template-columns:1fr}.top{flex-wrap:wrap;gap:4px;padding:12px 16px}.top-meta{max-width:none;padding-left:36px;font-size:10px}.brand{font-size:12px}.quick-states{gap:6px}.quick-states>span{display:none}.quick-states button{flex:1;padding:6px;font-size:12px;white-space:nowrap}.quick-states button:last-child{flex:1.5}.mobile-hint{display:none}.directory>summary small{font-size:12px}.directory-search{max-width:none}.directory-tools>.action-button{width:100%}.directory>summary strong{font-size:17px}}
+/* ---------- 1. 设计令牌 ---------- */
+:root{
+  color-scheme:light;
+  --red:#d81725; --red-soft:#fff0f1;
+  --ink:#202122; --muted:#686b70; --line:#dedfe2;
+  --paper:#fff; --bg:#f5f6f8; --panel:#fafafa; --field:#f8f9fa; --chip:#f1f2f4;
+  --rule:#eceef0; --note-rule:#e0e2e6; --src-line:#e5e6e9; --empty:#f7f8f9;
+  --focus:#1674be; --on-red:#fff;
+  /* 对比度已实测 ≥4.5:1 */
+  --label:#6f747b;      /* 地图标注 / 箭头装饰 4.71 */
+  --foot:#6a6f76;       /* 页脚 4.68 */
+  --caveat:#6b7178;     /* 免责文字 4.72 */
+  --tile-ink:#2f3439;   /* 州位图文字，最深一档仍有 6.35 */
+  /* 装瓶商数量色阶 1→5 */
+  --t1:#f4f5f7; --t2:#e6eaf0; --t3:#d3dbe6; --t4:#bfcbd9; --t5:#aabacd;
+  --t1-l:#dadcdf; --t2-l:#c8d2e0; --t3-l:#b4c2d5; --t4-l:#a2b3c8; --t5-l:#93a7bf;
+  /* 地图几何：唯一真源 */
+  --row:54px; --gap:5px; --cols:12; --rows:8;
+  --map-h:calc(var(--row) * var(--rows) + var(--gap) * (var(--rows) - 1));
+}
 
+/* ---------- 2. 基础 ---------- */
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.6}
+button,input,select{font:inherit}
+button,a,input,select{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+a{color:inherit;text-underline-offset:4px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+[hidden]{display:none!important}
+
+/* ---------- 3. 页头 / 导语 / 指标 ---------- */
+header{background:var(--paper);border-top:5px solid var(--red);border-bottom:1px solid var(--line)}
+.top{max-width:1440px;margin:auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:750;letter-spacing:.05em;font-size:14px}
+.mark{display:grid;place-items:center;width:34px;height:34px;color:#fff;background:var(--red);font-size:22px;border-radius:50%;font-style:italic;font-family:Georgia,serif}
+.top-meta{font-size:13px;color:var(--muted)}
+main{max-width:1440px;margin:auto;padding:36px 40px 48px}
+.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.eyebrow{font-size:12px;color:var(--red);letter-spacing:.18em;font-weight:750;margin:0 0 6px}
+h1{font-size:38px;letter-spacing:-.055em;line-height:1.2;margin:0 0 12px;font-weight:800}
+.intro p:not(.eyebrow){margin:0;color:var(--muted);font-size:15px}
+.metrics{display:flex;gap:30px;flex-shrink:0}
+.metric{padding-left:24px;border-left:1px solid var(--line)}
+.metric strong{display:block;font-size:34px;line-height:1.15;font-weight:650;letter-spacing:-.06em}
+.metric span{font-size:12px;color:var(--muted)}
+
+/* ---------- 4. 工作区 / 工具栏 ---------- */
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 370px;border:1px solid var(--line);border-radius:16px;background:var(--paper);overflow:hidden;box-shadow:0 8px 40px #20212204}
+.explorer{min-width:0;padding:25px 28px 22px}
+.toolbar{display:flex;align-items:center;gap:10px}
+.search-wrap{position:relative;flex:1}
+.search-wrap svg{position:absolute;top:14px;left:14px;color:#85898d;pointer-events:none}
+.search-wrap input{width:100%;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:11px 10px 11px 42px;font-size:14px;outline-offset:2px}
+select{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:11px 28px 11px 12px;max-width:42%;font-size:14px}
+.quick-states{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 0;align-items:center}
+.quick-states>span{font-size:12px;color:var(--muted);margin-right:3px}
+.quick-states button,.action-button{border:1px solid var(--line);border-radius:7px;background:var(--paper);padding:7px 11px;font-size:12px;color:#51565c}
+.quick-states button:hover,.action-button:hover{border-color:var(--red);color:var(--red)}
+.quick-states button[aria-pressed=true]{background:var(--red-soft);border-color:#eb9da4;color:var(--red)}
+.view-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:23px 0 10px}
+.view-row h2{font-size:16px;font-weight:700;margin:0}
+.toggle{display:flex;background:var(--chip);border-radius:6px;padding:3px}
+.toggle button{border:0;background:transparent;font-size:13px;padding:5px 12px;color:var(--muted);border-radius:4px}
+.toggle button[aria-pressed=true]{background:var(--paper);box-shadow:0 1px 4px #0001;color:var(--ink);font-weight:650}
+.result-notice{font-size:13px;color:var(--muted);min-height:21px;margin:4px 0}
+.reset{font-size:12px;border:0;color:var(--red);background:none;padding:3px 0}
+.filter-summary{color:var(--red);background:var(--red-soft);border-radius:6px;padding:9px 12px;font-size:12px;margin-top:10px}
+.mobile-hint{display:none}
+.mobile-pick{display:none}
+
+/* ---------- 5. 州位图（按装瓶商数量着色） ---------- */
+.map-scroll{width:100%;overflow:auto;padding:14px 0}
+.tilemap{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));grid-template-rows:repeat(var(--rows),var(--row));gap:var(--gap);min-width:540px;position:relative}
+.tile{border:1px solid var(--t1-l);background:var(--t1);border-radius:6px;padding:3px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--tile-ink);position:relative;transition:background .15s,transform .15s,border-color .15s}
+.tile[data-n="1"]{background:var(--t1);border-color:var(--t1-l)}
+.tile[data-n="2"]{background:var(--t2);border-color:var(--t2-l)}
+.tile[data-n="3"]{background:var(--t3);border-color:var(--t3-l)}
+.tile[data-n="4"]{background:var(--t4);border-color:var(--t4-l)}
+.tile[data-n="5"]{background:var(--t5);border-color:var(--t5-l)}
+.tile strong{font-size:17px;line-height:1.2;font-weight:700;letter-spacing:.02em}
+.tile span{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:12px;line-height:1.2;margin-top:4px;white-space:nowrap}
+.tile:hover{transform:translateY(-2px);border-color:var(--red);box-shadow:0 4px 10px #2021221a}
+/* 单选语义：radiogroup 内的 radio */
+.tile[aria-checked=true]{background:var(--red);border-color:var(--red);color:var(--on-red);box-shadow:0 3px 12px #d8172540}
+/* 筛选外的州：不再是近乎隐形（0.15 → 0.42），并改用虚线边提示 */
+.tile.faded{opacity:.42;border-style:dashed}
+.map-label{grid-column:2/8;grid-row:1/3;align-self:center;margin:16px 0 0 8px;pointer-events:none}
+.map-label b{font-size:12px;letter-spacing:.15em;color:var(--label);font-weight:650;display:block}
+.map-label span{font-family:Georgia,serif;font-style:italic;color:var(--label);font-size:34px}
+.map-foot{margin-top:15px;padding-top:17px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:15px;align-items:center;font-size:12px;color:var(--muted)}
+.key{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.square{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.ramp{display:inline-flex;gap:2px;align-items:center;margin:0 2px}
+.ramp i{width:13px;height:13px;border-radius:2px;display:block;border:1px solid #0001}
+.map-foot p{margin:0}
+
+/* ---------- 6. 详情面板（高度由 grid stretch 自适应，不再写死 810px） ---------- */
+.detail{overflow:auto;min-height:0;background:var(--panel);border-left:1px solid var(--line);padding:28px;min-width:0;scrollbar-width:thin}
+.detail-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.detail-code{font-size:14px;color:var(--red);font-weight:750;letter-spacing:.12em}
+.detail-region{font-size:12px;color:var(--muted)}
+.detail h2{font-size:30px;line-height:1.2;margin:12px 0 5px;letter-spacing:-.03em}
+.english{color:var(--muted);font-family:Georgia,serif;font-size:19px;margin:0 0 20px}
+.state-summary{font-size:15px;line-height:1.75;color:#60646a;border-bottom:1px solid var(--line);padding-bottom:19px;margin-bottom:20px}
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 20px}
+.back-explorer{display:none}
+.count-label{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.count-label b{color:var(--ink);font-size:14px}
+.filter-label{display:block;color:var(--red);font-size:11px;margin-bottom:8px}
+.bottler-card{border:1px solid var(--line);border-radius:10px;padding:16px;margin-top:12px;background:var(--paper)}
+.bottler-card.filter-hit{border-color:#e6a0a7;box-shadow:inset 3px 0 var(--red)}
+.bottler-card h3{font-size:16px;line-height:1.45;margin:0 0 5px;font-weight:750}
+.bottler-card .group{font-size:12px;color:var(--muted);margin:0 0 10px}
+.bottler-card .scope{font-size:15px;line-height:1.7;margin:0;color:#51565c}
+.bottler-card em{font-style:normal;color:var(--red)}
+.source-link{font-size:12px;color:var(--red);display:inline-block;margin-top:12px;text-decoration:none}
+.source-link:hover{text-decoration:underline}
+.caveat{font-size:12px;line-height:1.7;color:var(--caveat);margin:18px 0 0}
+
+/* ---------- 7. 列表视图（高度由 --map-h 推导） ---------- */
+.states-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:18px;max-height:calc(var(--map-h) + 10px);overflow:auto}
+.state-row{text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:12px;display:flex;align-items:center;gap:10px}
+.state-row[aria-current=true]{border-color:var(--red);background:var(--red-soft)}
+.state-row .abbr{color:var(--red);font-size:14px;font-weight:750;width:30px;flex-shrink:0}
+.state-row .state-name{font-size:14px;font-weight:600;line-height:1.4}
+.state-row small{display:block;color:var(--muted);font-size:12px;font-weight:400;margin-top:2px}
+.state-row .arrow{margin-left:auto;font-size:16px;color:var(--label)}
+.empty{grid-column:1/-1;background:var(--empty);padding:35px 15px;text-align:center;color:var(--muted);font-size:14px;border-radius:8px}
+
+/* ---------- 8. 供应商目录 / 来源 / 说明 ---------- */
+.directory{margin-top:26px;border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden}
+.directory>summary{cursor:pointer;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none}
+.directory>summary::-webkit-details-marker{display:none}
+.directory>summary strong{font-size:18px;display:block}
+.directory>summary small{font-size:13px;color:var(--muted);font-weight:400}
+.directory>summary:after{content:'＋';color:var(--red);font-size:24px}
+.directory[open]>summary:after{content:'−'}
+.directory-content{padding:0 24px 24px}
+.directory-tools{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.directory-search{width:100%;max-width:500px;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;background:var(--field)}
+.directory-count{font-size:12px;color:var(--muted)}
+.supplier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.supplier-card{border:1px solid var(--line);border-radius:9px;padding:18px;display:flex;flex-direction:column;align-items:flex-start}
+.supplier-card h3{font-size:15px;line-height:1.5;margin:0 0 7px}
+.supplier-card>p{font-size:12px;color:var(--muted);margin:0 0 12px}
+.state-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:15px}
+.state-chips button{border:0;background:var(--chip);color:#555a61;font-size:12px;border-radius:4px;padding:5px 8px}
+.state-chips button:hover{background:var(--red-soft);color:var(--red)}
+.supplier-card>.action-button{margin-top:auto;color:var(--red)}
+.source-directory{margin-top:24px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:24px}
+.source-directory h2{margin:0 0 8px;font-size:19px}
+.source-directory p{font-size:13px;color:var(--muted)}
+.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.source-item{padding:12px;border:1px solid var(--src-line);border-radius:7px;font-size:13px;text-decoration:none;overflow-wrap:anywhere}
+.source-item:hover{border-color:var(--red);color:var(--red)}
+.source-item span{display:block;font-size:12px;color:var(--muted);margin-top:5px}
+footer{display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:1px solid var(--line);margin-top:30px;padding-top:18px;color:var(--foot);font-size:12px}
+footer button{font-size:12px;padding:0;color:var(--ink);background:none;border:0;text-decoration:underline;text-underline-offset:4px}
+.notes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:28px}
+.note{padding:0 0 0 15px;border-left:2px solid var(--note-rule)}
+.note b{display:block;font-size:14px;margin-bottom:5px}
+.note p{font-size:13px;color:var(--muted);margin:0;line-height:1.75}
+
+/* ---------- 9. toast / dialog ---------- */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#25282d;color:#fff;border-radius:10px;padding:12px 18px;font-size:13px;box-shadow:0 5px 30px #0002;z-index:20;max-width:90vw;width:max-content;pointer-events:none}
+dialog{border:1px solid var(--line);border-radius:14px;padding:24px;width:min(540px,90vw);background:var(--paper);color:var(--ink)}
+dialog::backdrop{background:#0005}
+dialog h2{font-size:20px;margin:0 0 10px}
+dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:12px;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;background:var(--field);color:var(--ink)}
+
+/* ---------- 10. 响应式（每档只出现一次，--row 是唯一几何真源） ---------- */
+@media(min-width:1300px){
+  :root{--row:61px}
+  .tile strong{font-size:19px}
+}
+/* 1200→1300：原先 1201–1290px 区间州名可见但被截断，此处与放大断点对齐 */
+@media(max-width:1299px){
+  .tile span{display:none}
+}
+@media(max-width:1050px){
+  main{padding:28px 22px}
+  .top{padding:15px 22px}
+  .workspace{grid-template-columns:minmax(0,1fr) 310px}
+  .explorer{padding:22px 18px}
+  .detail{padding:24px 20px}
+  .metrics{gap:18px}
+  .metric{padding-left:18px}
+  .map-foot{display:block}
+  .map-foot p{margin-top:7px}
+  .intro p{max-width:500px}
+  .supplier-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:800px){
+  :root{--row:44px}
+  .workspace{grid-template-columns:1fr}
+  .detail{overflow:visible;border-left:0;border-top:1px solid var(--line);min-height:0}
+  .metrics{display:none}
+  .tilemap{min-width:540px}
+  .map-scroll{overflow-x:auto;padding-bottom:12px}
+  .map-label span{font-size:28px}
+  .map-foot{display:flex}
+  .map-foot:after{content:'可左右滑动州位图；也可切换列表。';display:block;margin-top:5px;color:var(--muted)}
+  .back-explorer{display:inline-block}
+  .mobile-pick{display:flex;gap:10px;align-items:center;margin-top:14px}
+  .mobile-pick label{font-size:12px;color:var(--muted);flex-shrink:0}
+  .mobile-pick select{flex:1;max-width:none;min-width:0;min-height:44px}
+  .action-button{min-height:44px}
+  .quick-states button{min-height:38px}
+  .toggle button{min-height:38px}
+  .state-chips button{min-height:36px}
+  .detail{scroll-margin-top:12px}
+  .detail h2{font-size:28px}
+  .bottler-card{display:inline-block;vertical-align:top;width:calc(50% - 7px);margin-right:8px}
+  .bottler-card:nth-child(2n){margin-right:0}
+  .states-list{max-height:calc(var(--map-h) - 60px)}
+  .source-grid{grid-template-columns:1fr 1fr}
+  .directory-content{padding:0 16px 18px}
+  .directory>summary{padding:19px 16px}
+  .top-meta{max-width:130px}
+  .brand{white-space:nowrap}
+  .mark{flex-shrink:0}
+  .mobile-hint{display:inline;font-size:12px;color:var(--muted)}
+}
+@media(max-width:520px){
+  :root{--row:36px;--gap:3px}
+  main{padding:25px 14px 28px}
+  .top{flex-wrap:wrap;gap:4px;padding:12px 16px}
+  .top-meta{max-width:none;padding-left:36px;font-size:10px}
+  .brand{font-size:12px}
+  .mark{width:28px;height:28px;font-size:19px}
+  h1{font-size:30px;letter-spacing:-.04em}
+  .intro{margin-bottom:20px}
+  .intro p{font-size:14px}
+  .explorer{padding:18px 12px}
+  .toolbar{flex-wrap:wrap;gap:8px}
+  .search-wrap{min-width:100%}
+  .toolbar select{max-width:100%;width:100%;padding-top:9px;padding-bottom:9px}
+  .view-row{margin:19px 0 7px}
+  .view-row h2{font-size:15px}
+  .tile{border-radius:4px;padding:0}
+  .tile strong{font-size:13px}
+  .map-label{margin-top:0}
+  .map-label b{font-size:9px}
+  .map-label span{font-size:21px}
+  .map-scroll{padding:10px 0 8px}
+  .map-foot{display:block;margin-top:6px;padding-top:12px;font-size:11px}
+  .map-foot p{margin:6px 0 0}
+  .quick-states{gap:6px}
+  .quick-states>span{display:none}
+  .quick-states button{flex:1;padding:6px;font-size:12px;white-space:nowrap}
+  .quick-states button:last-child{flex:1.5}
+  .mobile-hint{display:none}
+  .detail{padding:23px 18px}
+  .bottler-card{display:block;width:100%;margin-right:0}
+  .states-list{grid-template-columns:1fr;max-height:calc(var(--map-h) - 20px)}
+  .state-row{padding:11px}
+  .result-notice{font-size:12px}
+  .notes{grid-template-columns:1fr;gap:17px;margin-top:23px}
+  .note p{font-size:13px}
+  .supplier-grid{grid-template-columns:1fr}
+  .source-grid{grid-template-columns:1fr}
+  .source-directory{padding:18px}
+  .directory>summary strong{font-size:17px}
+  .directory>summary small{font-size:12px}
+  .directory-search{max-width:none}
+  .directory-tools>.action-button{width:100%}
+  footer{align-items:flex-start;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important;transition:none!important}
+}
+
+/* ---------- 11. 深色模式（独立打开时跟随系统） ---------- */
+@media(prefers-color-scheme:dark){
+  :root{
+    color-scheme:dark;
+    --red:#ff5f6b; --red-soft:#331a1d;
+    --ink:#e8eaed; --muted:#a8adb4; --line:#3c4045;
+    --paper:#202124; --bg:#17181a; --panel:#1c1e21; --field:#292a2d; --chip:#2f3134;
+    --rule:#2f3236; --note-rule:#3a3d41; --src-line:#3c4045; --empty:#25272a;
+    --focus:#8ab4f8; --on-red:#1a0b0c;
+    --label:#9aa0a6;
+    --foot:#9aa0a6; --caveat:#9aa0a6;
+    --tile-ink:#e8eaed;
+    --t1:#2a2d31; --t2:#33373c; --t3:#3d4248; --t4:#474d54; --t5:#525a62;
+    --t1-l:#3a3e43; --t2-l:#44494f; --t3-l:#4e545b; --t4-l:#5a6169; --t5-l:#676f78;
+  }
+  .state-summary{color:#c3c7cd}
+  .bottler-card .scope{color:#d0d4da}
+  .state-chips button{color:#c3c7cd}
+  .search-wrap svg{color:#9aa0a6}
+  .mark{color:#fff}
+  .toast{background:#3c4045;border:1px solid var(--line)}
+  .tile:hover{box-shadow:0 4px 10px #0006}
+}
 </style>
 </head>
 <body>
@@ -30,13 +321,13 @@
 <div class="toolbar"><div class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="搜索州名、缩写或供应商" aria-label="搜索州名、缩写或供应商" autocomplete="off"></div><select id="bottler-filter" aria-label="筛选供应商"><option value="">全部供应商</option></select></div>
 <div class="quick-states" aria-label="常用州"><span>快速查看</span><button data-state="CA">加州</button><button data-state="NY">纽约</button><button data-state="TX">得州</button><button data-state="FL">佛州</button><button data-state="WI">威斯康星</button></div><div class="mobile-pick"><label for="state-picker">跳转到</label><select id="state-picker" aria-label="直接选择州"></select></div><div id="filter-summary" class="filter-summary" hidden></div><div class="view-row"><h2>选择一个州 <span class="mobile-hint">↓ 详情在下方</span></h2><div class="toggle" role="group" aria-label="显示方式"><button id="map-tab" aria-pressed="true">州位图</button><button id="list-tab" aria-pressed="false">列表</button></div></div>
 <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div class="result-notice" id="result-notice" aria-live="polite">点击州缩写，查看供应详情。</div><button class="reset" id="clear-filter" hidden>清除筛选</button></div>
-<div id="map-view"><div class="map-scroll"><div class="tilemap" id="tilemap" aria-label="美国各州示意图"><div class="map-label"><b>50 STATES + WASHINGTON, D.C.</b><span>United States of America</span></div></div></div><div class="map-foot"><span class="key"><i class="square"></i> 当前选中州 <span style="margin-left:10px">浅灰：其他州</span></span><p>州位示意，不表示实际地理或经营边界。</p></div></div>
+<div id="map-view"><div class="map-scroll"><div class="tilemap" id="tilemap" role="radiogroup" aria-label="美国各州示意图，按已收录装瓶商数量着色"><div class="map-label"><b>50 STATES + WASHINGTON, D.C.</b><span>United States of America</span></div></div></div><div class="map-foot"><span class="key">本页收录装瓶商 <span class="ramp" aria-hidden="true"><i style="background:var(--t1)"></i><i style="background:var(--t2)"></i><i style="background:var(--t3)"></i><i style="background:var(--t4)"></i><i style="background:var(--t5)"></i></span> 1 → 5 家<i class="square" style="background:var(--red);margin-left:12px"></i> 当前选中<i class="square" style="background:var(--t1);border:1px dashed var(--t1-l);margin-left:12px"></i> 筛选外</span><p>深浅只表示本页收录数量，不代表销量或经营规模；州位示意，不表示实际地理或经营边界。</p></div></div>
 <div id="list-view" hidden><div id="states-list" class="states-list"></div></div>
 </section>
 <aside class="detail" id="detail" aria-label="所选州的供应详情" aria-live="polite"></aside>
 </div>
 <details class="directory" id="supplier-directory"><summary><span><strong>从供应商，看它服务哪些州</strong><small>30 家已收录伙伴 · 点击州缩写跳转 · 不按规模排名</small></span></summary><div class="directory-content"><div class="directory-tools"><input type="search" class="directory-search" id="supplier-search" placeholder="搜索供应商名称，例如：太古、Reyes" aria-label="搜索供应商目录"><button class="action-button" id="export-data">下载州—供应商对照表 ↓</button></div><p class="directory-count" id="directory-count" aria-live="polite"></p><div id="supplier-grid" class="supplier-grid"></div></div></details>
-<section class="notes" aria-label="如何理解供应区域"><div class="note"><b>一个州，可能不止一家</b><p>特许经营区域通常细到城市或县。州内出现多家供应商，代表它们服务不同区域。</p></div><div class="note"><b>供应商 ≠ 每瓶饮料的生产工厂</b><p>这里查询瓶装、罐装饮料的装瓶与分销伙伴。实际生产地、餐饮现调及跨区调货可能不同。</p></div><div class="note"><b>每条记录，都有出处</b><p>优先使用供应商官网与正式披露。收录已核实的主要伙伴及地方装瓶商，不将全州标成一家独占。</p></div></section>
+<section class="notes" aria-label="如何理解供应区域"><div class="note"><b>深浅 = 收录数量，不是销量</b><p>州位图的底色深浅表示本页收录的装瓶商数量（1 家最浅、5 家最深），不表示销量或经营规模。51 个州里只有 16 个是单装瓶商。</p></div><div class="note"><b>供应商 ≠ 每瓶饮料的生产工厂</b><p>这里查询瓶装、罐装饮料的装瓶与分销伙伴。实际生产地、餐饮现调及跨区调货可能不同。</p></div><div class="note"><b>每条记录，都有出处</b><p>优先使用供应商官网与正式披露。收录已核实的主要伙伴及地方装瓶商，不将全州标成一家独占。</p></div></section>
 <footer><span>资料核对：2026.09.28 · 州级概览，具体地址请向当地装瓶商确认</span><button id="sources-button" aria-expanded="false" aria-controls="source-directory">查看资料来源 ↗</button></footer>
 <section id="source-directory" class="source-directory" hidden><h2>资料来源与覆盖说明</h2><p>各供应商的州级关联来自以下公开资料。列表不是县级特许经营区域清单，也不是穷尽所有地方装瓶商的名录。点击州内记录可查看该条关联的具体依据。更多地方伙伴可查阅 <a href="https://www.ccbss.com/about-ccbss/bottlers/" target="_blank" rel="noopener noreferrer">CCBSS官方装瓶商名录</a>；精确地址可从 <a href="https://www.coca-cola.com/us/en/about-us/faq/i-represent-a-business-that-sells-coca-cola-bottle-can-beverages" target="_blank" rel="noopener noreferrer">可口可乐官方查询指引</a> 联系当地装瓶商。</p><div id="source-grid" class="source-grid"></div></section>
 </main><div id="toast" class="toast" role="status" hidden></div><dialog id="copy-dialog"><h2>复制本州资料</h2><p>请选择并复制下方文字。</p><textarea id="copy-text" aria-label="本州供应资料" readonly></textarea><button id="close-dialog" class="action-button">关闭</button></dialog>
@@ -102,10 +393,11 @@ let selected=STATES.some(s=>s.a===location.hash.slice(1))?location.hash.slice(1)
 let view='map';
 const qsel=s=>document.querySelector(s);
 const providers=a=>B.filter(b=>b.stateList.includes(a));
-function selectState(a,fromUser=false){if(!STATES.some(s=>s.a===a))return;selected=a;if(!matching(STATES.find(s=>s.a===a))){qsel('#search').value='';qsel('#bottler-filter').value=''}history.replaceState(null,'','#'+a);render();qsel('#detail').scrollTop=0;if(fromUser&&innerWidth<=800){qsel('#detail').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}}
+function selectState(a,fromUser=false){if(!STATES.some(s=>s.a===a))return;selected=a;if(!matching(STATES.find(s=>s.a===a))){qsel('#search').value='';qsel('#bottler-filter').value=''}history.replaceState(null,'','#'+a);render();qsel('#detail').scrollTop=0;if(fromUser&&innerWidth<=800){qsel('#detail').scrollIntoView({behavior:(typeof matchMedia!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches)?'auto':'smooth',block:'start'})}}
 function matching(s){const q=qsel('#search').value.trim().toLowerCase(),f=qsel('#bottler-filter').value,p=providers(s.a);const aliases={CA:'加州',NY:'纽约州',TX:'德州 德克萨斯',MA:'麻省 麻萨诸塞',IA:'爱荷华',PA:'宾州',FL:'佛州'};const exactCode=STATES.some(t=>t.a.toLowerCase()===q);return(!f||p.some(b=>b.id===f))&&(!q||(exactCode?s.a.toLowerCase()===q:[s.a,s.zh,s.en,aliases[s.a]||'',...p.map(b=>b.name+' '+b.group)].join(' ').toLowerCase().includes(q)))}
-function render(){qsel('#state-picker').value=selected;document.querySelectorAll('.quick-states button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.state===selected)));const chosen=B.find(b=>b.id===qsel('#bottler-filter').value);qsel('#filter-summary').hidden=!chosen;qsel('#filter-summary').textContent=chosen?'正在查看 '+chosen.name+' 的关联州；州详情仍显示当地全部已收录伙伴。':'';const matches=STATES.filter(matching),active=STATES.find(s=>s.a===selected),p=providers(selected),filtered=!!(qsel('#search').value.trim()||qsel('#bottler-filter').value);document.querySelectorAll('.tile').forEach(el=>{el.setAttribute('aria-pressed',String(el.dataset.state===selected));el.classList.toggle('faded',!matches.some(s=>s.a===el.dataset.state));});qsel('#clear-filter').hidden=!filtered;qsel('#result-notice').textContent=filtered?(matches.length?'找到 '+matches.length+' 个州／地区；点击州查看全部已收录伙伴。':'没有匹配结果，请尝试其他州名或清除筛选。'):(view==='list'?'点击州名，查看供应详情。':'点击州缩写，查看供应详情。');qsel('#states-list').innerHTML=matches.length?matches.sort((a,b)=>a.en.localeCompare(b.en)).map(s=>'<button class="state-row" data-state="'+s.a+'" aria-pressed="'+(selected===s.a)+'"><span class="abbr">'+s.a+'</span><span class="state-name">'+s.zh+(s.a==='DC'?'':'州')+'<small>'+s.en+' · '+providers(s.a).length+' 家已收录</small></span><span class="arrow" aria-hidden="true">↗</span></button>').join(''):'<div class="empty">没有匹配的州。<br><button class="reset" id="reset-filter">清除筛选</button></div>';qsel('#detail').innerHTML='<div class="detail-top"><span class="detail-code">'+active.a+' / '+(active.a==='DC'?'FEDERAL DISTRICT':'STATE PROFILE')+'</span><span class="detail-region">'+active.region+'</span></div><h2>'+active.zh+(active.a==='DC'?'':'州')+'</h2><p class="english">'+active.en+'</p><div class="detail-actions"><button class="action-button back-explorer" id="back-explorer">↑ 返回选州</button><button class="action-button" id="copy-state">复制本州资料</button></div><div class="state-summary">'+esc(DATA.notes[selected]||'装瓶与分销按特许区域经营。以下为已核实与本州有关联的供应商，具体城市及县域请查阅官方资料。')+'</div><div class="count-label"><b>已收录的供应伙伴</b><span>'+p.length+' 家 · 非穷尽清单</span></div><div>'+p.map(b=>{const o=DATA.overrides[selected+'_'+b.id]||{};return'<article class="bottler-card'+(chosen?.id===b.id?' filter-hit':'')+'">'+(chosen?.id===b.id?'<span class="filter-label">当前筛选的供应商</span>':'')+'<h3>'+esc(b.name)+'</h3><p class="group">'+esc(b.group)+'</p><p class="scope">'+esc(o.note||b.note)+'</p><a class="source-link" href="'+esc(o.url||b.url)+'" target="_blank" rel="noopener noreferrer">官方供应区域 / 资料 ↗</a></article>'}).join('')+(p.length?'':'<p class="caveat">本州资料正在核对中。</p>')+'</div><p class="caveat">“已收录”不等于本州全部供应商；单一记录也不代表全州独家。工厂或分销中心所在州不一定等同其完整配送区域。</p>'}
-qsel('#tilemap').insertAdjacentHTML('beforeend',STATES.map(s=>'<button class="tile" data-state="'+s.a+'" style="grid-column:'+(s.x+1)+';grid-row:'+(s.y+1)+'" aria-label="'+s.zh+(s.a==='DC'?'':'州')+' '+s.en+'" title="'+s.zh+' · '+s.en+'" aria-pressed="false"><strong>'+s.a+'</strong><span>'+({CA:'加州',MA:'麻省',NH:'新罕布什尔',PA:'宾州',WV:'西弗吉尼亚',VA:'弗吉尼亚',NC:'北卡',SC:'南卡',ND:'北达科他',SD:'南达科他',MN:'明尼苏达',WI:'威斯康星',NM:'新墨西哥',TX:'得州',FL:'佛州',DC:'首都特区',OK:'俄克拉何马',LA:'路易斯安那'}[s.a]||s.zh)+'</span></button>').join(''));
+function render(){qsel('#state-picker').value=selected;document.querySelectorAll('.quick-states button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.state===selected)));const chosen=B.find(b=>b.id===qsel('#bottler-filter').value);qsel('#filter-summary').hidden=!chosen;qsel('#filter-summary').textContent=chosen?'正在查看 '+chosen.name+' 的关联州；州详情仍显示当地全部已收录伙伴。':'';const matches=STATES.filter(matching),active=STATES.find(s=>s.a===selected),p=providers(selected),filtered=!!(qsel('#search').value.trim()||qsel('#bottler-filter').value);document.querySelectorAll('.tile').forEach(el=>{const on=el.dataset.state===selected,off=!matches.some(s=>s.a===el.dataset.state);el.setAttribute('aria-checked',String(on));el.tabIndex=on?0:-1;el.classList.toggle('faded',off);el.setAttribute('aria-label',el.dataset.label+(off?'（不在当前筛选结果内）':''));});qsel('#clear-filter').hidden=!filtered;qsel('#result-notice').textContent=filtered?(matches.length?'找到 '+matches.length+' 个州／地区；点击州查看全部已收录伙伴。':'没有匹配结果，请尝试其他州名或清除筛选。'):(view==='list'?'点击州名，查看供应详情。':'点击州缩写，查看供应详情。');qsel('#states-list').innerHTML=matches.length?matches.sort((a,b)=>a.en.localeCompare(b.en)).map(s=>'<button type="button" class="state-row" data-state="'+s.a+'" aria-current="'+(selected===s.a)+'"><span class="abbr">'+s.a+'</span><span class="state-name">'+s.zh+(s.a==='DC'?'':'州')+'<small>'+s.en+' · '+providers(s.a).length+' 家已收录</small></span><span class="arrow" aria-hidden="true">↗</span></button>').join(''):'<div class="empty">没有匹配的州。<br><button class="reset" id="reset-filter">清除筛选</button></div>';qsel('#detail').innerHTML='<div class="detail-top"><span class="detail-code">'+active.a+' / '+(active.a==='DC'?'FEDERAL DISTRICT':'STATE PROFILE')+'</span><span class="detail-region">'+active.region+'</span></div><h2>'+active.zh+(active.a==='DC'?'':'州')+'</h2><p class="english">'+active.en+'</p><div class="detail-actions"><button class="action-button back-explorer" id="back-explorer">↑ 返回选州</button><button class="action-button" id="copy-state">复制本州资料</button></div><div class="state-summary">'+esc(DATA.notes[selected]||'装瓶与分销按特许区域经营。以下为已核实与本州有关联的供应商，具体城市及县域请查阅官方资料。')+'</div><div class="count-label"><b>已收录的供应伙伴</b><span>'+p.length+' 家 · 非穷尽清单</span></div><div>'+p.map(b=>{const o=DATA.overrides[selected+'_'+b.id]||{};return'<article class="bottler-card'+(chosen?.id===b.id?' filter-hit':'')+'">'+(chosen?.id===b.id?'<span class="filter-label">当前筛选的供应商</span>':'')+'<h3>'+esc(b.name)+'</h3><p class="group">'+esc(b.group)+'</p><p class="scope">'+esc(o.note||b.note)+'</p><a class="source-link" href="'+esc(o.url||b.url)+'" target="_blank" rel="noopener noreferrer">官方供应区域 / 资料 ↗</a></article>'}).join('')+(p.length?'':'<p class="caveat">本州资料正在核对中。</p>')+'</div><p class="caveat">“已收录”不等于本州全部供应商；单一记录也不代表全州独家。工厂或分销中心所在州不一定等同其完整配送区域。</p>'}
+const SHORT={CA:'加州',MA:'麻省',PA:'宾州',NC:'北卡',SC:'南卡',TX:'得州',FL:'佛州',DC:'首都特区'};
+qsel('#tilemap').insertAdjacentHTML('beforeend',STATES.map(s=>{const n=providers(s.a).length,nm=SHORT[s.a]||s.zh,lab=s.zh+(s.a==='DC'?'':'州')+' '+s.en+' · 本页收录 '+n+' 家装瓶商';return'<button type="button" class="tile" role="radio" data-n="'+n+'" data-state="'+s.a+'" data-label="'+lab+'" style="grid-column:'+(s.x+1)+';grid-row:'+(s.y+1)+'" aria-label="'+lab+'" title="'+s.a+' · '+lab+'" aria-checked="false" tabindex="-1"><strong>'+s.a+'</strong><span>'+esc(nm)+'</span></button>'}).join(''));
 qsel('#group-count').textContent=B.length;
 qsel('#state-picker').innerHTML=[...STATES].sort((a,b)=>a.en.localeCompare(b.en)).map(s=>'<option value="'+s.a+'">'+s.a+' · '+s.zh+(s.a==='DC'?'':'州')+' / '+s.en+'</option>').join('');qsel('#state-picker').onchange=e=>selectState(e.target.value,true);
 qsel('#bottler-filter').insertAdjacentHTML('beforeend',B.map(b=>'<option value="'+b.id+'">'+esc(b.name)+'</option>').join(''));
@@ -113,9 +405,11 @@ qsel('#source-grid').innerHTML=B.map(b=>'<a class="source-item" href="'+esc(b.ur
 function setView(v){view=v;qsel('#map-view').hidden=v!=='map';qsel('#list-view').hidden=v!=='list';qsel('#map-tab').setAttribute('aria-pressed',v==='map');qsel('#list-tab').setAttribute('aria-pressed',v==='list');if(!qsel('#search').value&&!qsel('#bottler-filter').value)qsel('#result-notice').textContent=v==='list'?'点击州名，查看供应详情。':'点击州缩写，查看供应详情。'}
 qsel('#map-tab').onclick=()=>setView('map');qsel('#list-tab').onclick=()=>setView('list');
 function applyFilters(){const matched=STATES.filter(matching);if(matched.length&&!matched.some(s=>s.a===selected)){selected=matched[0].a;history.replaceState(null,'','#'+selected)}render();if(!matched.length)qsel('#detail').innerHTML='<div class="detail-top"><span class="detail-code">NO MATCHES</span></div><h2>没有匹配结果</h2><p class="state-summary">试试中文州名、英文名称或两字母缩写，例如：加州、California、CA。</p><button class="reset" id="reset-filter">清除筛选</button>'}qsel('#search').oninput=applyFilters;qsel('#bottler-filter').onchange=applyFilters;
-document.addEventListener('click',e=>{const el=e.target.closest('[data-state]');if(el){if(el.closest('#supplier-directory')){qsel('#search').value='';qsel('#bottler-filter').value=''}if(el.classList.contains('faded')){qsel('#search').value='';qsel('#bottler-filter').value=''}selectState(el.dataset.state,true);if(el.closest('#supplier-directory')&&innerWidth>800)qsel('#explorer').scrollIntoView({behavior:'smooth'});}if(e.target.id==='reset-filter'||e.target.id==='clear-filter'){qsel('#search').value='';qsel('#bottler-filter').value='';render()}});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-state]');if(el){if(el.closest('#supplier-directory')){qsel('#search').value='';qsel('#bottler-filter').value=''}if(el.classList.contains('faded')){qsel('#search').value='';qsel('#bottler-filter').value='';notify('该州不在筛选结果内，已清除筛选条件')}selectState(el.dataset.state,true);if(el.closest('#supplier-directory')&&innerWidth>800)qsel('#explorer').scrollIntoView({behavior:'smooth'});}if(e.target.id==='reset-filter'||e.target.id==='clear-filter'){qsel('#search').value='';qsel('#bottler-filter').value='';render()}});
 qsel('#sources-button').onclick=()=>{const panel=qsel('#source-directory');panel.hidden=!panel.hidden;qsel('#sources-button').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)panel.scrollIntoView({behavior:'smooth',block:'start'})};
 window.addEventListener('hashchange',()=>{const a=location.hash.slice(1);if(STATES.some(s=>s.a===a)){qsel('#search').value='';qsel('#bottler-filter').value='';selectState(a)}});
+// 州位图是 radiogroup：方向键在读序中移动，Home/End 跳到首尾
+qsel('#tilemap').addEventListener('keydown',e=>{const k=e.key,dir=(k==='ArrowRight'||k==='ArrowDown')?1:(k==='ArrowLeft'||k==='ArrowUp')?-1:0;if(!dir&&k!=='Home'&&k!=='End')return;e.preventDefault();let i=STATES.findIndex(s=>s.a===selected);if(k==='Home')i=0;else if(k==='End')i=STATES.length-1;else i=(i+dir+STATES.length)%STATES.length;selectState(STATES[i].a,true);const el=qsel('#tilemap').querySelector('[data-state="'+STATES[i].a+'"]');if(el)el.focus()});
 
 function notify(message){qsel('#toast').textContent=message;qsel('#toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>qsel('#toast').hidden=true,2600)}
 function renderDirectory(){const query=qsel('#supplier-search').value.trim().toLowerCase(),items=B.filter(b=>(b.name+' '+b.group).toLowerCase().includes(query));qsel('#directory-count').textContent='显示 '+items.length+' / '+B.length+' 家 · 州数只表示本页收录关联，不代表销量或市场排名';qsel('#supplier-grid').innerHTML=items.length?items.map(b=>'<article class="supplier-card"><h3>'+esc(b.name)+'</h3><p>'+esc(b.group)+' · '+b.stateList.length+' 个州／地区</p><div class="state-chips">'+b.stateList.map(a=>'<button data-state="'+a+'" title="'+STATES.find(s=>s.a===a).zh+'">'+a+'</button>').join('')+'</div><button class="action-button" data-bottler="'+b.id+'">查看关联州 ↗</button></article>').join(''):'<div class="empty">没有找到供应商，请换一个名称。</div>'}
@@ -123,7 +417,9 @@ qsel('#supplier-search').oninput=renderDirectory;renderDirectory();
 qsel('#close-dialog').onclick=()=>qsel('#copy-dialog').close();
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-bottler]');if(b){qsel('#search').value='';qsel('#bottler-filter').value=b.dataset.bottler;applyFilters();setView('list');qsel('#explorer').scrollIntoView({behavior:'smooth'});qsel('#bottler-filter').focus({preventScroll:true})}if(e.target.id==='back-explorer'){qsel('#explorer').scrollIntoView({behavior:'smooth'});qsel('#state-picker').focus({preventScroll:true})}if(e.target.id==='copy-state'){const s=STATES.find(s=>s.a===selected);const text=s.zh+(s.a==='DC'?'':'州')+' / '+s.en+' ('+s.a+')\n美国可口可乐装瓶与分销伙伴（非穷尽清单）\n\n'+providers(selected).map(b=>{const o=DATA.overrides[selected+'_'+b.id]||{};return b.name+'\n'+(o.note||b.note)+'\n来源：'+(o.url||b.url)}).join('\n\n')+'\n\n资料核对：'+DATA.checkedAt+'。州内通常分区经营，具体地址请向当地装瓶商确认。';try{await navigator.clipboard.writeText(text);notify('已复制本州供应商和官方来源')}catch(_){qsel('#copy-text').value=text;qsel('#copy-dialog').showModal();qsel('#copy-text').select()}}});
 qsel('#export-data').onclick=()=>{const rows=[['州缩写','中文州名','英文州名','供应商','区域说明','官方来源','资料核对日期']];for(const s of [...STATES].sort((a,b)=>a.a.localeCompare(b.a)))for(const b of providers(s.a)){const o=DATA.overrides[s.a+'_'+b.id]||{};rows.push([s.a,s.zh+(s.a==='DC'?'':'州'),s.en,b.name,o.note||b.note,o.url||b.url,DATA.checkedAt])}const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='美国可口可乐州供应商对照表.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('已导出 '+(rows.length-1)+' 条州与供应商关联')};
-if(innerWidth<=800)setView('list');
+// 窄屏优先列表；仅在跨入窄屏时自动切换一次，不与用户的手动选择打架
+const narrowMQ=typeof matchMedia==='function'?matchMedia('(max-width:800px)'):null;
+if(narrowMQ){if(narrowMQ.matches)setView('list');narrowMQ.addEventListener('change',e=>{if(e.matches&&view!=='list')setView('list')})}else if(innerWidth<=800)setView('list');
 
 render();
 // Optional browser-native agent navigation uses the same state action as the UI.
