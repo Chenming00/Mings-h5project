@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import ProjectCard from './components/ProjectCard';
 import ProjectListRow from './components/ProjectListRow';
 import PreviewPane from './components/PreviewPane';
+import { useProjectUrlState } from './hooks/useProjectUrlState';
 import {
   AlertCircle,
   ArrowRight,
@@ -17,17 +18,14 @@ import {
 } from 'lucide-react';
 
 const FALLBACK_PROJECTS = [
-  { name: 'Interactive Particles', path: '/projects/project-a/index.html', tags: ['animation'] },
-  { name: 'Canvas Game', path: '/projects/project-b/index.html', tags: ['game'] },
+  { name: 'Interactive Particles', slug: 'interactive-particles', path: '/projects/interactive-particles/', tags: ['animation'] },
+  { name: 'Canvas Game', slug: 'canvas-game', path: '/projects/canvas-game/', tags: ['game'] },
 ];
 
 export default function App() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTag, setSelectedTag] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState(() => localStorage.getItem('viewMode') || 'grid');
   const [isDark, setIsDark] = useState(() => {
@@ -35,6 +33,17 @@ export default function App() {
     return localStorage.theme === 'dark' ||
       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedTag,
+    setSelectedTag,
+    clearFilters,
+    selectedProject,
+    openProject,
+    closeProject,
+  } = useProjectUrlState(projects);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -85,10 +94,6 @@ export default function App() {
   }, [projects, searchQuery, selectedTag]);
 
   const hasActiveFilter = Boolean(searchQuery.trim() || selectedTag);
-  const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedTag(null);
-  };
   const handleOpenNew = project => {
     const openedWindow = window.open(project.path, '_blank', 'noopener,noreply');
     if (openedWindow) openedWindow.opener = null;
@@ -263,7 +268,7 @@ export default function App() {
                   key={project.path || project.name}
                   project={project}
                   index={index}
-                  onClick={setSelectedProject}
+                  onClick={openProject}
                   onOpenNew={handleOpenNew}
                   onTagClick={setSelectedTag}
                 />
@@ -276,7 +281,7 @@ export default function App() {
                   key={project.path || project.name}
                   project={project}
                   index={index}
-                  onClick={setSelectedProject}
+                  onClick={openProject}
                   onOpenNew={handleOpenNew}
                   onTagClick={setSelectedTag}
                 />
@@ -288,7 +293,7 @@ export default function App() {
 
       <PreviewPane
         project={selectedProject}
-        onClose={() => setSelectedProject(null)}
+        onClose={closeProject}
         onOpenNew={handleOpenNew}
       />
     </div>

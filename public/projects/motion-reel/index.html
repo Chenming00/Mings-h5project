@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>MOTION REEL · AI 动态设计师 · 30s</title>
+<meta name="description" content="30 秒纯代码实时渲染动态短片 — AI Motion Designer Showreel" />
+<meta name="theme-color" content="#05060b" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="app">
+  <header id="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>
+      </span>
+      <span class="btxt">
+        <b>MOTION REEL</b>
+        <i>AI 动态设计师 · 30 秒 · 纯代码实时渲染</i>
+      </span>
+    </div>
+    <div class="topright">
+      <div id="aspect" class="segmented" role="group" aria-label="画幅"></div>
+      <select id="quality" aria-label="画质">
+        <option value="high">画质 高</option>
+        <option value="medium">画质 中</option>
+        <option value="low">画质 低</option>
+      </select>
+      <button id="hud" class="tgl" title="画面 HUD (H)">HUD</button>
+      <button id="fps" class="tgl is-off" title="性能信息">FPS</button>
+      <button id="letterbox" class="tgl is-off" title="2.39:1 遮幅">2.39</button>
+      <button id="expand" class="icon" title="全屏 (F)" aria-label="全屏"></button>
+    </div>
+  </header>
+
+  <main id="stage">
+    <canvas id="reel" width="1920" height="1080"></canvas>
+
+    <div id="exportBar">
+      <span class="rec"></span>
+      <span>正在实时录制 30 秒 — 导出完成后自动下载 WebM</span>
+    </div>
+
+    <div id="overlay">
+      <div class="ov-inner">
+        <p class="ov-kicker">SHOWREEL / 2026</p>
+        <h1 class="ov-title">MOTION</h1>
+        <p class="ov-cn">一段 30 秒的自我介绍 — 由代码实时生成</p>
+        <ul class="ov-facts">
+          <li><b>8</b> 个章节</li>
+          <li><b>100%</b> 程序化绘制</li>
+          <li><b>0</b> 外部素材</li>
+          <li><b>126</b> BPM 原创合成音轨</li>
+        </ul>
+        <div class="ov-actions">
+          <button id="startBtn" class="primary">播放（带声音）</button>
+          <button id="silentBtn" class="ghost">静音播放</button>
+        </div>
+        <p class="ov-keys">空格 播放/暂停 · ←/→ 快退快进 1s · 1–8 跳章节 · H 隐藏 HUD · S 存图 · E 导出</p>
+      </div>
+    </div>
+  </main>
+
+  <footer id="transport">
+    <div class="tr-row">
+      <button id="play" class="icon big" title="播放 / 暂停 (Space)" aria-label="播放"></button>
+      <button id="replay" class="icon" title="重播 (R)" aria-label="重播"></button>
+      <button id="mute" class="icon" title="静音 (M)" aria-label="静音"></button>
+
+      <div id="scrub" class="scrub" role="slider" aria-label="时间轴" aria-valuemin="0" aria-valuemax="30" tabindex="0"></div>
+      <span id="time" class="time">00:00 / 30:00</span>
+
+      <button id="snap" class="icon" title="导出当前帧 PNG (S)" aria-label="截图"></button>
+      <button id="rec" class="recbtn" title="录制并导出 WebM (E)">
+        <span class="dot"></span><span id="recLabel">导出 WebM</span>
+      </button>
+    </div>
+    <div id="chapters" class="chapters"></div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+</div>
+
+<script src="js/math.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/postfx.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

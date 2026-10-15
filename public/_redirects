@@ -1,0 +1,26 @@
+# Cloudflare Pages redirects. Rules are matched top-down, first match wins.
+
+# --- 旧占位目录名 -> 语义化 slug（永久保留，勿删）---
+/projects/project-a/*                       /projects/pet-load-planner/:splat  301
+/projects/project-b/*                       /projects/neon-pulse/:splat        301
+/projects/project-c/*                       /projects/resume/:splat            301
+/projects/project-d/*                       /projects/portfolio/:splat         301
+/projects/mings-SBTI-test-main/*            /projects/sbti/:splat              301
+/projects/cn-coca-cola-bottler-atlas/*      /projects/coca-cola-cn/:splat      301
+/projects/us-coca-cola-bottler-atlas/*      /projects/coca-cola-us/:splat      301
+
+# --- 目录名 -> 规范化 slug ---
+/projects/project-a                         /projects/pet-load-planner/        301
+/projects/project-b                         /projects/neon-pulse/              301
+/projects/project-c                         /projects/resume/                  301
+/projects/project-d                         /projects/portfolio/               301
+/projects/mings-SBTI-test-main              /projects/sbti/                    301
+/projects/cn-coca-cola-bottler-atlas        /projects/coca-cola-cn/            301
+/projects/us-coca-cola-bottler-atlas        /projects/coca-cola-us/            301
+
+# --- 去掉冗余的 index 文件名（兜底任意项目）---
+/projects/:slug/index.htm                   /projects/:slug/                   301
+/projects/:slug/index.html                  /projects/:slug/                   301
+
+# --- 补齐尾部斜杠 ---
+/projects/:slug                             /projects/:slug/                   301
