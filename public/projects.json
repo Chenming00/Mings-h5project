@@ -41,6 +41,16 @@
     ]
   },
   {
+    "name": "PET Spread Calculator｜聚酯三腿价差计算器",
+    "slug": "pet-spread-calculator",
+    "path": "/projects/pet-spread-calculator/",
+    "tags": [
+      "finance",
+      "calculator",
+      "tools"
+    ]
+  },
+  {
     "name": "陈铭 Ming Chen — 市场研究与产品构建",
     "slug": "portfolio",
     "path": "/projects/portfolio/",
