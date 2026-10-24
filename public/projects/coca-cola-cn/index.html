@@ -4,230 +4,305 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>中国可口可乐供应版图 · Bottler Atlas</title>
 <meta name="description" content="按省查询中国可口可乐装瓶与分销伙伴。中国大陆市场由中粮可口可乐与太古可口可乐两家特许经营集团分区供应，边界清晰可追溯。">
+<meta name="theme-color" content="#f40009">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23d81725'/%3E%3Cpath d='M9 9h14v4H13v6h10v4H9z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/800.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/900.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/great-vibes@5/index.css">
 <style>
-:root{--red:#f40009;--red-dark:#c10007;--red-deep:#bd0006;--ink:#1d1512;--muted:#7a6e66;--line:#eadfd2;--paper:#fffdfb;--bg:#fdf6ee;--pink:#ffe6e7;--cofco:#f40009;--cofco-bg:#ffe3e4;--cofco-line:#ffaeb1;--cofco-ink:#a80006;--swire:#0a4595;--swire-bg:#e4edfb;--swire-line:#aec6ee;--swire-ink:#072f66;--sel:#17100e;--gold:#e9b64a;--card-shadow:0 30px 60px -40px rgba(70,25,10,.55);--radius:24px}
+:root{
+  --red:#f40009;--red-dark:#c50007;--red-deep:#8a0e18;
+  --ink:#161412;--ink-soft:#37322d;--muted:#6f6862;--faint:#a39b93;
+  --line:#e8e3dc;--line-2:#f1ede7;
+  --paper:#ffffff;--surface:#f7f5f1;
+  --cofco:#f40009;--cofco-bg:#fcebec;--cofco-line:#f6d7d9;--cofco-ink:#a30005;--cofco-sub:#b25a60;
+  --swire:#16448c;--swire-bg:#eaf0f9;--swire-line:#d7e2f2;--swire-ink:#0e3266;--swire-sub:#5b77a3;
+  --sel:#161412;
+  --font-sans:"Archivo","Helvetica Neue",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --font-script:"Great Vibes","Snell Roundhand","Brush Script MT","Segoe Script",cursive;
+  --radius:14px;--radius-lg:22px;
+  --shadow:0 24px 48px -32px rgba(22,20,18,.28);
+  --ease-out:cubic-bezier(.25,1,.5,1);
+  --ease-expo:cubic-bezier(.16,1,.3,1);
+}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:linear-gradient(180deg,var(--bg) 0%,#f7efe4 45%,#f4ece0 100%);background-attachment:fixed;color:var(--ink);font-family:"Helvetica Neue",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--red);color:#fff}
 button,input,select{font:inherit}
 button,a,input,select{-webkit-tap-highlight-color:transparent}
 button{cursor:pointer}
 a{color:var(--red);text-underline-offset:4px}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-#atlas,#groups,#timeline,#notes,#source-directory{scroll-margin-top:110px}
-header{position:sticky;top:0;z-index:15;color:#fff;background:linear-gradient(115deg,#ff1f2a 0%,#f40009 45%,var(--red-deep) 100%);box-shadow:0 16px 34px -24px rgba(90,0,4,.95)}
-.top{max-width:1440px;margin:auto;padding:14px 40px 4px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.13em;font-size:13px;white-space:nowrap}
-.brand-text i{font-style:normal;font-weight:400;opacity:.6;margin:0 5px}
-.mark{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;color:var(--red);background:#fff;font-size:25px;border-radius:50%;font-style:italic;font-family:"Snell Roundhand","Brush Script MT","Segoe Script",cursive;letter-spacing:0;box-shadow:0 10px 20px -10px rgba(70,0,3,.9)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+#atlas,#groups,#timeline,#notes,#source-directory{scroll-margin-top:96px}
+header{position:sticky;top:0;z-index:15;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:inset 0 3px 0 var(--red)}
+.top{max-width:1360px;margin:auto;padding:15px 40px 13px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.13em;font-size:13px;white-space:nowrap;color:var(--ink)}
+.brand-text i{font-style:normal;font-weight:400;color:var(--faint);margin:0 5px}
+.mark{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;color:#fff;background:var(--red);font-size:22px;line-height:1;border-radius:50%;font-style:normal;font-family:var(--font-script)}
 .top-actions{display:flex;align-items:center;gap:14px}
-.top-meta{font-size:12px;letter-spacing:.05em;color:rgba(255,255,255,.85)}
-.ribbon{display:block;width:100%;height:44px}
-.hero{position:relative;overflow:hidden;color:#fff;background:radial-gradient(1100px 480px at 88% -12%,rgba(255,255,255,.16),transparent 60%),linear-gradient(120deg,#ff1f2a 0%,#f40009 48%,#a80006 100%)}
-.hero-inner{max-width:1440px;margin:auto;padding:74px 40px 88px;position:relative;z-index:2}
-.eyebrow{display:flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.24em;font-weight:800;margin:0 0 14px;text-transform:uppercase}
+.top-meta{font-size:12px;letter-spacing:.04em;color:var(--muted)}
+.hero{position:relative;overflow:hidden;background:var(--red);color:#fff;min-height:88vh;display:flex;align-items:center}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(150,0,6,.28));pointer-events:none;z-index:0}
+.hero-inner{max-width:1360px;margin:auto;padding:110px 40px 190px;position:relative;z-index:3;width:100%}
+.hero .eyebrow{color:rgba(255,255,255,.85)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.22em;font-weight:800;margin:0 0 18px;text-transform:uppercase;color:var(--red)}
 .eyebrow:before{content:"";width:26px;height:3px;border-radius:3px;background:currentColor}
-.eyebrow.light{color:#ffd9dc}
-.hero h1{font-size:58px;letter-spacing:-.045em;line-height:1.12;margin:0 0 18px;font-weight:900}
-.hero h1 em{font-style:normal;color:#ffd76a}
-.hero-sub{margin:0;color:rgba(255,255,255,.88);font-size:17px;max-width:62ch}
-.hero-stats{display:flex;gap:14px;margin:34px 0 30px;flex-wrap:wrap}
-.hstat{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:18px;padding:14px 24px;backdrop-filter:blur(4px)}
-.hstat b{display:block;font-size:34px;line-height:1.15;font-weight:800;letter-spacing:-.05em}
-.hstat span{font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.82)}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:13px 26px;font-size:14px;font-weight:700;text-decoration:none;border:1px solid transparent;transition:transform .16s,box-shadow .16s,background .16s}
-.btn.primary{background:#fff;color:var(--red);box-shadow:0 16px 32px -16px rgba(0,0,0,.55)}
-.btn.primary:hover{transform:translateY(-2px)}
-.btn.ghost{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
-.btn.ghost:hover{background:rgba(255,255,255,.14)}
-.hero-watermark{position:absolute;right:-14px;bottom:-34px;font-family:"Snell Roundhand","Brush Script MT","Segoe Script",cursive;font-size:190px;line-height:1;color:rgba(255,255,255,.07);transform:rotate(-8deg);pointer-events:none;white-space:nowrap;user-select:none}
-.bubble{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.22);background:rgba(255,255,255,.05);pointer-events:none}
-.section{max-width:1440px;margin:0 auto;padding:66px 40px 6px}
-.section-head{margin-bottom:28px;max-width:860px}
-.section-head h2{font-size:34px;font-weight:900;letter-spacing:-.035em;margin:0 0 10px}
-.section-sub{color:var(--muted);font-size:15px;margin:0;max-width:72ch}
-.group-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.group-card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:var(--card-shadow);display:flex;flex-direction:column;transition:transform .16s,box-shadow .16s}
-.group-card:hover{transform:translateY(-3px)}
-.group-card[data-group=cofco]{border-top:5px solid var(--cofco)}
-.group-card[data-group=swire]{border-top:5px solid var(--swire)}
+.hero h1{font-size:clamp(52px,8.4vw,116px);letter-spacing:-.035em;line-height:1.04;margin:0 0 26px;font-weight:900}
+.hero h1 .l1,.hero h1 .l2{display:block}
+.hero h1 em{font-style:normal;color:transparent;-webkit-text-stroke:2px #fff}
+@supports not (-webkit-text-stroke:1px #fff){.hero h1 em{color:#fff}}
+.hero-sub{margin:0;color:rgba(255,255,255,.88);font-size:17px;max-width:56ch}
+.hero-stats{display:flex;margin:52px 0 42px;flex-wrap:wrap}
+.hstat{padding:2px 36px 2px 0}
+.hstat+.hstat{border-left:1px solid rgba(255,255,255,.32);padding:2px 0 2px 36px}
+.hstat b{display:block;font-size:clamp(42px,4.6vw,60px);line-height:1;font-weight:800;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums}
+.hstat span{font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,.78)}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:15px 30px;font-size:14px;font-weight:800;text-decoration:none;border:1.5px solid transparent;transition:transform .2s var(--ease-out),box-shadow .2s var(--ease-out),background .2s,color .2s,border-color .2s;user-select:none}
+.btn:active{transform:scale(.96)}
+.hero .btn.primary{background:#fff;color:var(--red);box-shadow:0 18px 36px -18px rgba(90,0,4,.6)}
+.hero .btn.primary:hover{transform:translateY(-3px);box-shadow:0 24px 44px -18px rgba(90,0,4,.7)}
+.hero .btn.ghost{background:transparent;border-color:rgba(255,255,255,.75);color:#fff}
+.hero .btn.ghost:hover{background:#fff;color:var(--red);border-color:#fff;transform:translateY(-3px)}
+.hero-watermark{position:absolute;top:2%;right:-3%;font-family:var(--font-script);font-size:clamp(140px,20vw,300px);line-height:1;color:rgba(255,255,255,.15);transform:rotate(-7deg);pointer-events:none;white-space:nowrap;user-select:none;z-index:1}
+.hero-ribbon{position:absolute;left:0;bottom:26px;width:100%;height:130px;z-index:2;pointer-events:none}
+.fizz{position:absolute;bottom:-140px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.08);pointer-events:none;z-index:1;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0);opacity:0}8%{opacity:1}88%{opacity:1}100%{transform:translateY(-118vh);opacity:0}}
+.scroll-cue{position:absolute;left:40px;bottom:22px;z-index:3;display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.75);font-weight:800}
+.scroll-cue::after{content:"";width:56px;height:1.5px;background:rgba(255,255,255,.55)}
+.load-in{opacity:0;transform:translateY(36px);animation:loadIn .9s var(--ease-expo) forwards}
+@keyframes loadIn{to{opacity:1;transform:none}}
+.section{max-width:1360px;margin:0 auto;padding:96px 40px 12px}
+.section-head{margin-bottom:36px;max-width:880px}
+.section-head h2{font-size:clamp(30px,3.6vw,46px);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin:0 0 12px}
+.section-sub{color:var(--muted);font-size:15px;line-height:1.8;margin:0;max-width:70ch}
+.vs{margin:0 0 30px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0 8px}
+.vs-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.vs-head b{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.vs-head span{font-size:12px;color:var(--faint)}
+.vs-row{display:grid;grid-template-columns:110px 1fr;gap:8px 18px;align-items:center;margin-bottom:20px}
+.vs-row>span{font-size:13px;color:var(--muted);grid-row:span 2}
+.vs-line{display:flex;align-items:center;gap:12px}
+.vs-tag{font-size:11px;font-weight:800;letter-spacing:.1em;width:34px;flex-shrink:0}
+.vs-line.cofco .vs-tag{color:var(--cofco-ink)}
+.vs-line.swire .vs-tag{color:var(--swire-ink)}
+.vs-track{flex:1;height:16px;background:var(--line-2);border-radius:99px;overflow:hidden}
+.vs-track i{display:block;height:100%;width:var(--w);border-radius:99px;transform-origin:left center}
+.vs-line.cofco .vs-track i{background:var(--cofco)}
+.vs-line.swire .vs-track i{background:var(--swire)}
+.vs-line>b{font-size:18px;font-weight:800;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.vs.anim .vs-track i{transform:scaleX(0);transition:transform 1.1s var(--ease-expo)}
+.vs.anim.in .vs-track i{transform:scaleX(1)}
+.group-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.group-card{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--line);border-radius:var(--radius-lg);padding:30px 32px;display:flex;flex-direction:column;transition:transform .25s var(--ease-out),box-shadow .25s var(--ease-out)}
+.group-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.group-card[data-group=cofco]{border-top-color:var(--cofco)}
+.group-card[data-group=swire]{border-top-color:var(--swire)}
 .group-card h3{font-size:20px;margin:0 0 6px;font-weight:800;letter-spacing:-.01em}
-.group-desc{font-size:13px;color:var(--muted);margin:0 0 18px}
-.group-stats{display:flex;gap:10px;margin-bottom:18px}
-.group-stats div{flex:1;background:#faf3ea;border-radius:14px;padding:12px 14px}
-.group-stats b{display:block;font-size:24px;font-weight:800;letter-spacing:-.05em}
-.group-stats span{font-size:11px;color:var(--muted)}
-.group-card footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:16px;border-top:1px dashed var(--line);flex-wrap:wrap}
-.atlas-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:22px;align-items:start}
-.map-panel{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--card-shadow)}
+.group-desc{font-size:13px;color:var(--muted);margin:0 0 22px}
+.group-stats{display:flex;margin-bottom:22px}
+.group-stats div{flex:1;padding:8px 16px 0 0}
+.group-stats div+div{border-left:1px solid var(--line);padding-left:16px}
+.group-stats b{display:block;font-size:30px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.group-stats span{font-size:11px;letter-spacing:.06em;color:var(--muted)}
+.group-card footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:18px;border-top:1px solid var(--line-2);flex-wrap:wrap}
+.band{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.band--surface{background:var(--surface)}
+.atlas-grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:24px;align-items:start}
 .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.search-wrap{position:relative;flex:1;min-width:200px}
-.search-wrap svg{position:absolute;top:14px;left:16px;color:#b99a92;pointer-events:none}
-.search-wrap input{width:100%;border:1px solid var(--line);background:#fff;border-radius:999px;padding:12px 16px 12px 44px;font-size:14px;outline-offset:2px;transition:border-color .16s,box-shadow .16s}
-.search-wrap input:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(244,0,9,.12)}
-.search-wrap input::placeholder{color:#b0a59d}
-.toolbar select{border:1px solid var(--line);background:#fff;border-radius:999px;padding:12px 34px 12px 16px;font-size:14px;max-width:220px;transition:border-color .16s,box-shadow .16s}
-.toolbar select:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(244,0,9,.12)}
-.toggle{display:flex;background:#f4ece3;border-radius:999px;padding:4px;gap:3px}
-.toggle button{border:0;background:transparent;font-size:13px;padding:8px 16px;color:var(--muted);border-radius:999px;transition:.16s}
-.toggle button:hover{color:var(--red)}
-.toggle button[aria-pressed=true]{background:var(--red);box-shadow:0 8px 16px -10px rgba(244,0,9,.95);color:#fff;font-weight:700}
-.quick-states{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0;align-items:center}
-.quick-states>span{font-size:11px;letter-spacing:.14em;color:var(--muted);margin-right:3px;text-transform:uppercase;font-weight:700}
-.quick-states button,.action-button{border:1px solid var(--line);border-radius:999px;background:#fff;padding:8px 14px;font-size:12px;color:#5b514b;transition:.16s}
-.quick-states button:hover,.action-button:hover{border-color:var(--red);color:#fff;background:var(--red);box-shadow:0 10px 20px -12px rgba(244,0,9,.95)}
-.quick-states button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 10px 20px -12px rgba(244,0,9,.95);font-weight:700}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap svg{position:absolute;top:50%;left:17px;transform:translateY(-50%);color:var(--faint);pointer-events:none}
+.search-wrap input{width:100%;border:1px solid var(--line);background:#fff;border-radius:999px;padding:13px 18px 13px 46px;font-size:15px;outline:none;transition:border-color .18s,box-shadow .18s}
+.search-wrap input:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(244,0,9,.1)}
+.search-wrap input::placeholder{color:var(--faint)}
+.toolbar select{border:1px solid var(--line);background:#fff;border-radius:999px;padding:13px 34px 13px 16px;font-size:14px;max-width:230px;outline:none;transition:border-color .18s,box-shadow .18s}
+.toolbar select:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(244,0,9,.1)}
+.toggle{display:flex;background:var(--line-2);border-radius:999px;padding:4px;gap:3px}
+.toggle button{border:0;background:transparent;font-size:13px;padding:9px 18px;color:var(--muted);border-radius:999px;transition:.18s}
+.toggle button:hover{color:var(--ink)}
+.toggle button[aria-pressed=true]{background:var(--ink);color:#fff;font-weight:700}
+.quick-states{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0;align-items:center}
+.quick-states>span{font-size:11px;letter-spacing:.14em;color:var(--faint);margin-right:3px;text-transform:uppercase;font-weight:800}
+.quick-states button,.action-button{border:1px solid var(--line);border-radius:999px;background:#fff;padding:9px 16px;font-size:13px;font-weight:700;color:#57504a;transition:border-color .18s,color .18s,background .18s,transform .18s}
+.quick-states button:hover,.action-button:hover{border-color:var(--red);color:var(--red)}
+.quick-states button:active,.action-button:active{transform:scale(.95)}
+.quick-states button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
+.action-button:hover{transform:translateY(-1px)}
+#export-data{background:var(--red);border-color:var(--red);color:#fff}
+#export-data:hover{background:var(--red-dark);border-color:var(--red-dark);color:#fff}
+.region-tabs{display:flex;gap:4px;flex-wrap:wrap;margin:18px 0 0;border-bottom:1px solid var(--line);padding-bottom:0}
+.region-tabs button{border:0;background:none;padding:10px 12px;font-size:13px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .18s,border-color .18s}
+.region-tabs button:hover{color:var(--ink)}
+.region-tabs button[aria-pressed=true]{color:var(--red);border-bottom-color:var(--red)}
 .mobile-pick{display:none}
-.filter-summary{border-radius:12px;padding:10px 14px;font-size:12px;margin-top:12px;border:1px solid transparent}
+.filter-summary{border-radius:12px;padding:11px 16px;font-size:13px;margin-top:16px;border:1px solid transparent}
 .filter-summary[data-group=cofco]{color:var(--cofco-ink);background:var(--cofco-bg);border-color:var(--cofco-line)}
 .filter-summary[data-group=swire]{color:var(--swire-ink);background:var(--swire-bg);border-color:var(--swire-line)}
-.atlas-status{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:14px 0 0}
+.atlas-status{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:18px 0 0}
 .result-notice{font-size:13px;color:var(--muted);min-height:21px}
-.reset{font-size:12px;border:0;color:var(--red);background:none;padding:3px 0;font-weight:700}
+.reset{font-size:13px;border:0;color:var(--red);background:none;padding:3px 0;font-weight:700}
 .reset:hover{text-decoration:underline}
-.map-scroll{width:100%;overflow:auto;padding:14px 0}
-.tilemap{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(10,54px);gap:5px;min-width:540px;position:relative}
-.tile{border:1px solid var(--line);background:#fff;border-radius:11px;padding:3px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ink);position:relative;transition:transform .16s,box-shadow .16s,background .16s,border-color .16s,opacity .16s}
-.tile strong{font-size:18px;line-height:1.2;font-weight:800;letter-spacing:.02em}
-.tile span{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:12px;line-height:1.2;margin-top:4px;white-space:nowrap;opacity:.75}
-.tile[data-group=cofco]{background:linear-gradient(180deg,#fff,var(--cofco-bg));border-color:var(--cofco-line);color:var(--cofco-ink)}
-.tile[data-group=swire]{background:linear-gradient(180deg,#fff,var(--swire-bg));border-color:var(--swire-line);color:var(--swire-ink)}
-.tile:hover{transform:translateY(-3px);box-shadow:0 12px 22px -12px rgba(40,10,5,.55)}
-.tile[data-group=cofco]:hover{background:var(--red);border-color:var(--red-dark);color:#fff}
-.tile[data-group=cofco]:hover span{opacity:.9}
-.tile[data-group=swire]:hover{background:var(--swire);border-color:#083a7d;color:#fff}
-.tile[data-group=swire]:hover span{opacity:.9}
-.tile[aria-pressed=true]{background:var(--sel);border-color:var(--sel);color:#fff;box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--sel),0 14px 26px -14px rgba(0,0,0,.8);z-index:2}
-.tile[aria-pressed=true] span{opacity:.85}
-.tile.faded{opacity:.16}
-.map-label{grid-column:1/6;grid-row:1/3;align-self:center;margin:16px 0 0 6px;pointer-events:none}
-.map-label b{font-size:11px;letter-spacing:.18em;color:#c08a82;font-weight:800;display:block}
-.map-label span{font-family:"Snell Roundhand","Brush Script MT","Segoe Script",cursive;font-style:italic;color:#eec4bc;font-size:36px;line-height:1.15;display:block}
-.map-foot{margin-top:15px;padding-top:16px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;gap:15px;align-items:center;font-size:12px;color:var(--muted)}
+.map-panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow)}
+.map-scroll{width:100%;overflow:auto;padding:12px 0 4px}
+.tilemap{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(10,58px);gap:6px;min-width:560px;position:relative}
+.tile{border:1px solid var(--line);border-radius:12px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;transition:transform .18s var(--ease-out),box-shadow .18s,background .18s,border-color .18s,opacity .18s}
+.tile[data-group=cofco]{background:var(--cofco-bg);border-color:var(--cofco-line)}
+.tile[data-group=swire]{background:var(--swire-bg);border-color:var(--swire-line)}
+.tile strong{font-size:20px;line-height:1.2;font-weight:800;letter-spacing:.02em}
+.tile[data-group=cofco] strong{color:var(--cofco-ink)}
+.tile[data-group=swire] strong{color:var(--swire-ink)}
+.tile span{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:12px;line-height:1.2;margin-top:3px;white-space:nowrap}
+.tile[data-group=cofco] span{color:var(--cofco-sub)}
+.tile[data-group=swire] span{color:var(--swire-sub)}
+.tile:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 14px 24px -14px rgba(22,20,18,.45);z-index:2}
+.tile[data-group=cofco]:hover{background:var(--cofco);border-color:var(--cofco)}
+.tile[data-group=swire]:hover{background:var(--swire);border-color:var(--swire)}
+.tile:hover strong,.tile:hover span{color:#fff}
+.tile[aria-pressed=true]{background:var(--sel);border-color:var(--sel);box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--sel),0 16px 28px -14px rgba(0,0,0,.55);z-index:3;transform:scale(1.06)}
+.tile[aria-pressed=true] strong,.tile[aria-pressed=true] span{color:#fff}
+.tile.faded{opacity:.12}
+.map-label{grid-column:1/6;grid-row:1/3;align-self:center;margin:10px 0 0 8px;pointer-events:none}
+.map-label b{font-size:10px;letter-spacing:.2em;color:#c3bcb2;font-weight:800;display:block}
+.map-label span{font-family:var(--font-script);color:#e9e3d9;font-size:36px;line-height:1.15;display:block}
+.map-foot{margin-top:18px;padding-top:16px;border-top:1px solid var(--line-2);display:flex;justify-content:space-between;gap:15px;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap}
 .key{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.square{width:11px;height:11px;border-radius:4px;display:inline-block}
+.square{width:11px;height:11px;border-radius:3px;display:inline-block}
 .square.cofco{background:var(--cofco)}
 .square.swire{background:var(--swire)}
 .square.sel{background:var(--sel)}
 .map-foot p{margin:0}
-.detail{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:var(--card-shadow);position:sticky;top:110px;max-height:calc(100vh - 130px);overflow:auto;scrollbar-width:thin;min-width:0}
+.map-hint{font-size:11px;color:var(--faint);margin-top:10px}
+.detail{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px;position:sticky;top:92px;max-height:calc(100vh - 116px);overflow:auto;scrollbar-width:thin;min-width:0;box-shadow:var(--shadow)}
 .detail-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.detail-code{font-size:11px;font-weight:800;letter-spacing:.14em;padding:6px 12px;border-radius:999px;background:var(--pink);color:var(--cofco-ink);text-transform:uppercase}
+.detail-code{font-size:11px;font-weight:800;letter-spacing:.14em;padding:6px 12px;border-radius:999px;background:var(--cofco-bg);color:var(--cofco-ink);text-transform:uppercase}
 .detail-code[data-group=swire]{background:var(--swire-bg);color:var(--swire-ink)}
 .detail-region{font-size:12px;color:var(--muted);letter-spacing:.08em}
-.detail h2{font-size:32px;line-height:1.18;margin:16px 0 4px;letter-spacing:-.04em;font-weight:900}
-.english{color:var(--muted);font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:19px;margin:0 0 20px}
-.state-summary{font-size:15px;line-height:1.8;color:#5b514b;background:#fff6ef;border-left:3px solid var(--red);border-radius:0 14px 14px 0;padding:15px 17px;margin-bottom:20px}
-.bottler-card{border:1px solid var(--line);border-top:4px solid var(--line);border-radius:16px;padding:18px;margin-top:14px;background:#fff;box-shadow:0 18px 34px -30px rgba(60,20,10,.7);transition:transform .16s,box-shadow .16s}
-.bottler-card:hover{transform:translateY(-2px);box-shadow:0 22px 36px -26px rgba(60,20,10,.75)}
+.detail h2{font-size:34px;line-height:1.18;margin:18px 0 4px;letter-spacing:-.04em;font-weight:800}
+.english{color:var(--muted);font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:18px;margin:0 0 20px}
+.state-summary{font-size:15px;line-height:1.85;color:#4c453f;background:var(--surface);border-left:3px solid var(--red);border-radius:0 12px 12px 0;padding:16px 18px;margin-bottom:22px}
+.bottler-card{border:1px solid var(--line);border-top:4px solid var(--line);border-radius:14px;padding:20px;margin-top:14px;background:#fff;transition:transform .18s,box-shadow .18s}
+.bottler-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
 .bottler-card[data-group=cofco]{border-top-color:var(--cofco)}
 .bottler-card[data-group=swire]{border-top-color:var(--swire)}
-.bottler-card h3{font-size:16px;line-height:1.45;margin:0 0 5px;font-weight:800}
+.bottler-card h3{font-size:16px;line-height:1.5;margin:0 0 5px;font-weight:800}
 .bottler-card .group{font-size:12px;color:var(--muted);margin:0 0 10px}
-.bottler-card .scope{font-size:15px;line-height:1.75;margin:0;color:#5a504a}
-.source-link{font-size:12px;display:inline-block;margin-top:12px;text-decoration:none;font-weight:700;letter-spacing:.03em}
+.bottler-card .scope{font-size:15px;line-height:1.75;margin:0;color:#4c453f}
+.bottler-card em{font-style:normal;font-weight:800}
+.bottler-card[data-group=cofco] em{color:var(--cofco)}
+.bottler-card[data-group=swire] em{color:var(--swire)}
+.source-link{font-size:12px;display:inline-block;margin-top:12px;text-decoration:none;font-weight:700;letter-spacing:.02em}
 .source-link[data-group=cofco]{color:var(--cofco)}
 .source-link[data-group=swire]{color:var(--swire)}
 .source-link:hover{text-decoration:underline}
 .count-label{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:10px}
 .count-label b{color:var(--ink);font-size:15px;font-weight:800}
-.caveat{font-size:12px;line-height:1.75;color:#8b817a;margin:18px 0 0}
+.caveat{font-size:12px;line-height:1.75;color:var(--faint);margin:18px 0 0}
 .states-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.state-row{text-align:left;background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:10px;transition:.16s}
-.state-row:hover{border-color:var(--red);box-shadow:0 12px 22px -16px rgba(244,0,9,.7);transform:translateY(-1px)}
-.state-row[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 4px 0 var(--red),0 10px 22px -16px rgba(0,0,0,.7)}
+.state-row{text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 15px;display:flex;align-items:center;gap:10px;transition:border-color .18s,box-shadow .18s,transform .18s}
+.state-row:hover{border-color:var(--red);box-shadow:0 12px 22px -18px rgba(22,20,18,.5);transform:translateY(-1px)}
+.state-row[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 3px 0 var(--red)}
 .state-row .abbr{font-size:15px;font-weight:800;width:30px;flex-shrink:0}
 .state-row[data-group=cofco] .abbr{color:var(--cofco)}
 .state-row[data-group=swire] .abbr{color:var(--swire)}
 .state-row .state-name{font-size:14px;font-weight:700;line-height:1.4}
 .state-row small{display:block;color:var(--muted);font-size:12px;font-weight:400;margin-top:2px}
-.state-row .arrow{margin-left:auto;font-size:16px;color:#c9b7ae}
+.state-row .arrow{margin-left:auto;font-size:16px;color:#cfc8bf}
 .state-row:hover .arrow{color:var(--red)}
-.empty{grid-column:1/-1;background:#fbf4ec;padding:35px 15px;text-align:center;color:var(--muted);font-size:14px;border-radius:14px;border:1px dashed var(--line)}
-.tl-wrap{position:relative}
-.tl-wrap::before{content:"";position:absolute;top:13px;left:0;right:0;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(244,0,9,.4),rgba(10,69,149,.4))}
-.tl-scroll{overflow-x:auto;padding:32px 2px 18px;scrollbar-width:thin}
-.tl{display:flex;gap:16px;list-style:none;margin:0;padding:0}
-.tl li{flex:0 0 292px;position:relative;padding-top:28px}
-.tl li::before{content:"";position:absolute;top:6px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #dcc9bf}
-.tl li.key::before{border-color:var(--red);background:var(--red);box-shadow:0 0 0 5px rgba(244,0,9,.14)}
-.tl-card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px 18px;height:100%;box-shadow:0 18px 34px -30px rgba(60,20,10,.8);transition:transform .16s,box-shadow .16s}
-.tl-card:hover{transform:translateY(-3px);box-shadow:0 24px 40px -28px rgba(60,20,10,.85)}
-.tl li.key .tl-card{border-top:3px solid var(--red)}
-.tl time{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--red);font-family:Georgia,serif}
-.tl b{display:block;font-size:14px;margin:5px 0 6px;font-weight:800;line-height:1.45}
-.tl p{font-size:13px;color:var(--muted);margin:0;line-height:1.7}
-.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.note{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--card-shadow)}
-.note .num{font-family:Georgia,serif;font-size:14px;color:var(--red);font-weight:700;letter-spacing:.14em}
-.note b{display:block;font-size:16px;margin:10px 0 8px;font-weight:800}
-.note p{font-size:13px;color:var(--muted);margin:0;line-height:1.75}
-footer{max-width:1440px;margin:60px auto 0;padding:22px 40px 42px;display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:2px solid var(--ink);color:#7e736c;font-size:12px}
-footer button{font-size:12px;padding:0;color:var(--red);background:none;border:0;font-weight:700;text-decoration:underline;text-underline-offset:4px}
-.source-directory{margin:24px auto 0;max-width:1440px;padding:0 40px 40px}
-.source-directory-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--card-shadow)}
-.source-directory h2{margin:0 0 8px;font-size:20px;font-weight:900;letter-spacing:-.02em}
-.source-directory p{font-size:13px;color:var(--muted)}
-.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.source-item{padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:#fff;font-size:13px;font-weight:600;text-decoration:none;overflow-wrap:anywhere;transition:.16s}
-.source-item:hover{border-color:var(--red);color:var(--red);transform:translateY(-2px);box-shadow:0 14px 24px -18px rgba(244,0,9,.8)}
-.source-item span{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:5px}
-[hidden]{display:none!important}
-.mobile-hint{display:none}
-.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:linear-gradient(135deg,#ff1f2a,#c10007);color:white;border-radius:999px;padding:13px 24px;font-size:13px;font-weight:600;box-shadow:0 18px 40px -18px rgba(200,0,10,.9);z-index:20;max-width:90vw;width:max-content;pointer-events:none}
-dialog{border:1px solid var(--line);border-radius:20px;padding:26px;width:min(540px,90vw);background:var(--paper);box-shadow:0 40px 80px -40px rgba(0,0,0,.6)}
-dialog::backdrop{background:rgba(29,21,18,.55)}
-dialog h2{font-size:21px;margin:0 0 10px;font-weight:900}
-dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:14px;background:#fff}
-#export-data{background:#fff;color:var(--red);border-color:#fff}
-#export-data:hover{background:var(--red);color:#fff;border-color:var(--red)}
-.back-explorer{display:none}
-.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 20px}
-.bottler-card em{font-style:normal;font-weight:800}
-.bottler-card[data-group=cofco] em{color:var(--cofco)}
-.bottler-card[data-group=swire] em{color:var(--swire)}
-.bottler-card.filter-hit{box-shadow:inset 3px 0 var(--red)}
+.empty{grid-column:1/-1;background:var(--surface);padding:34px 15px;text-align:center;color:var(--muted);font-size:14px;border-radius:12px;border:1px dashed var(--line)}
+.scope-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:24px}
+.state-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.state-chips button{border:1px solid var(--line);background:#fff;color:#57504a;font-size:12px;font-weight:700;border-radius:999px;padding:6px 11px;transition:.18s}
+.state-chips button:hover{border-color:var(--red);color:var(--red)}
+.state-chips button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
 .filter-label{display:block;font-size:11px;margin-bottom:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .filter-label[data-group=cofco]{color:var(--cofco)}
 .filter-label[data-group=swire]{color:var(--swire)}
-.scope-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:22px}
-.state-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
-.state-chips button{border:1px solid var(--line);background:#fbf4ec;color:#5b514b;font-size:12px;font-weight:700;border-radius:999px;padding:6px 11px;transition:.16s}
-.state-chips button:hover{background:var(--red);border-color:var(--red);color:#fff}
-.state-chips button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
-@media(min-width:1300px){.tilemap{grid-template-rows:repeat(10,61px)}.tile strong{font-size:20px}.tile span{font-size:12px}}
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 22px}
+.band--dark{background:var(--ink);color:#f5f2ed;border-top:0;border-bottom:0}
+.band--dark .section{padding:96px 40px 48px}
+.band--dark .eyebrow{color:#ff6d73}
+.band--dark .section-head h2{color:#fff}
+.band--dark .section-sub{color:#a8a099}
+.tl-wrap{position:relative}
+.tl-wrap::before{content:"";position:absolute;top:13px;left:0;right:0;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(244,0,9,.65),rgba(255,255,255,.14))}
+.tl-scroll{overflow-x:auto;padding:32px 2px 18px;scrollbar-width:thin;scroll-snap-type:x proximity}
+.tl{display:flex;gap:16px;list-style:none;margin:0;padding:0}
+.tl li{flex:0 0 292px;position:relative;padding-top:28px;scroll-snap-align:start}
+.tl li::before{content:"";position:absolute;top:6px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--ink);border:3px solid #4a453f}
+.tl li.key::before{border-color:var(--red);background:var(--red);box-shadow:0 0 0 5px rgba(244,0,9,.18)}
+.tl-card{background:#221e1a;border:1px solid #39342e;border-radius:16px;padding:16px 18px;height:100%;transition:transform .25s var(--ease-out),border-color .25s}
+.tl-card:hover{transform:translateY(-3px);border-color:#4a453f}
+.tl li.key .tl-card{border-top:3px solid var(--red)}
+.tl time{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;color:#ff6d73}
+.tl b{display:block;font-size:14px;margin:5px 0 6px;font-weight:800;line-height:1.45;color:#fff}
+.tl p{font-size:13px;color:#a8a099;margin:0;line-height:1.7}
+.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.note{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:26px}
+.note .num{font-size:13px;color:var(--red);font-weight:800;letter-spacing:.14em}
+.note b{display:block;font-size:16px;margin:10px 0 8px;font-weight:800}
+.note p{font-size:13px;color:var(--muted);margin:0;line-height:1.75}
+footer{max-width:1360px;margin:76px auto 0;padding:26px 40px 44px;display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+footer button{font-size:13px;padding:0;color:var(--red);background:none;border:0;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.source-directory{margin:20px auto 0;max-width:1360px;padding:0 40px 44px}
+.source-directory-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px}
+.source-directory h2{margin:0 0 8px;font-size:20px;font-weight:800;letter-spacing:-.02em}
+.source-directory p{font-size:13px;color:var(--muted)}
+.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.source-item{padding:14px 15px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:13px;font-weight:700;text-decoration:none;color:var(--ink);overflow-wrap:anywhere;transition:border-color .18s,color .18s,transform .18s}
+.source-item:hover{border-color:var(--red);color:var(--red);transform:translateY(-2px)}
+.source-item span{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:5px}
+[hidden]{display:none!important}
+.mobile-hint{display:none}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--red);color:#fff;border-radius:999px;padding:13px 24px;font-size:13px;font-weight:600;box-shadow:0 18px 40px -18px rgba(200,0,10,.9);z-index:20;max-width:90vw;width:max-content;pointer-events:none}
+dialog{border:1px solid var(--line);border-radius:18px;padding:28px;width:min(540px,90vw);background:var(--paper);color:var(--ink)}
+dialog::backdrop{background:rgba(22,20,18,.5)}
+dialog h2{font-size:21px;margin:0 0 10px;font-weight:800}
+dialog p{font-size:14px;color:var(--muted)}
+dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:14px;background:#fff;color:var(--ink)}
+.back-explorer{display:none}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
+.reveal.in{opacity:1;transform:none}
+@media(min-width:1300px){.tilemap{grid-template-rows:repeat(10,64px)}.tile strong{font-size:21px}.tile span{font-size:12px}}
 @media(min-width:801px) and (max-width:1200px){.tile span{display:none}}
-@media(max-width:1050px){.section{padding:52px 22px 6px}.hero-inner{padding:56px 22px 70px}.group-grid{grid-template-columns:1fr}.atlas-grid{grid-template-columns:minmax(0,1fr) 320px}.detail{position:static;max-height:none}.source-directory{padding:0 22px 30px}footer{padding:20px 22px 34px}.source-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:800px){header{position:static}.hero h1{font-size:38px}.hero-watermark{font-size:120px;bottom:-22px}.hero-stats{gap:10px}.hstat{padding:12px 16px}.hstat b{font-size:26px}.atlas-grid{grid-template-columns:1fr}.detail{position:static;max-height:none;overflow:visible}.tilemap{min-width:0;grid-template-rows:repeat(10,56px)}.tile span{display:none}.map-scroll{overflow:visible}.map-label span{font-size:26px}.map-foot{display:flex}.detail h2{font-size:28px}.states-list{grid-template-columns:repeat(2,minmax(0,1fr))}.notes{grid-template-columns:1fr}.mobile-hint{display:inline;font-size:12px;color:var(--muted)}.source-grid{grid-template-columns:1fr}.top-meta{font-size:11px}.mobile-pick{display:flex;gap:10px;align-items:center;margin-top:14px}.mobile-pick label{font-size:12px;color:var(--muted);flex-shrink:0}.mobile-pick select{flex:1;max-width:none;min-width:0;min-height:44px}.action-button{min-height:44px}.quick-states button{min-height:38px}.toggle button{min-height:38px}.state-chips button{min-height:36px}}
-@media(max-width:520px){.section{padding:44px 14px 4px}.hero-inner{padding:44px 16px 56px}.hero h1{font-size:30px;letter-spacing:-.03em}.hero-sub{font-size:15px}.hero-cta .btn{width:100%;justify-content:center}.top{padding:12px 16px 2px;flex-wrap:wrap;gap:6px}.brand{font-size:11px;gap:8px;letter-spacing:.08em}.mark{width:30px;height:30px;font-size:21px}.top-meta{font-size:10px}.group-card{padding:20px}.group-stats{flex-wrap:wrap}.group-stats div{flex:1 1 40%}.map-panel{padding:16px 12px}.toolbar{gap:8px}.search-wrap{min-width:100%}.toolbar select{max-width:100%;width:100%;padding-top:10px;padding-bottom:10px}.toggle{width:100%}.toggle button{flex:1}.quick-states{gap:6px}.quick-states>span{display:none}.quick-states button{flex:1;padding:8px 6px;font-size:12px;white-space:nowrap}.quick-states button:last-child{flex:1.5}.tilemap{gap:3px;grid-template-rows:repeat(10,36px)}.tile{border-radius:7px;padding:0}.tile strong{font-size:13px}.map-label{margin-top:0}.map-label b{font-size:9px}.map-label span{font-size:21px}.map-foot{display:block;margin-top:6px;padding-top:12px;font-size:11px}.map-foot p{margin:6px 0 0}.detail{padding:22px 18px}.states-list{grid-template-columns:1fr}.state-row{padding:11px}.notes{gap:14px}.note{padding:20px}.source-directory{padding:0 14px 26px}.source-directory-card{padding:18px}.tl li{flex:0 0 250px}footer{flex-direction:column;align-items:flex-start;font-size:11px}.result-notice{font-size:12px}.map-scroll{padding:10px 0 8px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+@media(max-width:1050px){.section{padding:64px 22px 10px}.band--dark .section{padding:64px 22px 34px}.hero-inner{padding:80px 22px 150px}.group-grid{grid-template-columns:1fr}.atlas-grid{grid-template-columns:minmax(0,1fr) 320px}.detail{position:static;max-height:none}.source-directory{padding:0 22px 30px}footer{padding:20px 22px 34px}.source-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){header{position:static}.hero{min-height:0}.hero-watermark{font-size:150px;top:4%}.hero-ribbon{height:80px;bottom:30px}.hstat{padding:0;border:0}.hstat+.hstat{border-left:0;padding:0}.hero-stats{gap:24px}.hstat b{font-size:42px}.atlas-grid{grid-template-columns:1fr}.detail{position:static;max-height:none;overflow:visible}.tilemap{min-width:0;grid-template-rows:repeat(10,54px)}.tile span{display:none}.map-scroll{overflow:visible}.map-label span{font-size:24px}.map-foot{display:flex}.detail h2{font-size:28px}.states-list{grid-template-columns:repeat(2,minmax(0,1fr))}.notes{grid-template-columns:1fr}.source-grid{grid-template-columns:1fr}.top-meta{font-size:11px}.mobile-pick{display:flex;gap:10px;align-items:center;margin-top:16px}.mobile-pick label{font-size:12px;color:var(--muted);flex-shrink:0}.mobile-pick select{flex:1;max-width:none;min-width:0;min-height:44px}.action-button{min-height:44px}.quick-states button{min-height:38px}.toggle button{min-height:38px}.state-chips button{min-height:36px}.region-tabs button{min-height:40px;padding:10px 10px}.back-explorer{display:inline-flex;align-items:center}.scroll-cue{display:none}.vs-row{grid-template-columns:80px 1fr}}
+@media(max-width:520px){.section{padding:48px 14px 6px}.band--dark .section{padding:48px 14px 28px}.hero-inner{padding:64px 16px 130px}.hero-cta .btn{width:100%;justify-content:center}.top{padding:12px 16px 10px;flex-wrap:wrap;gap:6px}.brand{font-size:11px;gap:8px;letter-spacing:.08em}.mark{width:30px;height:30px;font-size:19px}.top-meta{font-size:10px}.group-card{padding:22px}.group-stats{flex-wrap:wrap}.group-stats div{flex:1 1 40%;border-left:0!important;padding-left:0!important}.map-panel{padding:16px 12px}.toolbar{gap:8px}.search-wrap{min-width:100%}.toolbar select{max-width:100%;width:100%;padding-top:10px;padding-bottom:10px}.toggle{width:100%}.toggle button{flex:1}.quick-states{gap:6px}.quick-states>span{display:none}.quick-states button{flex:1;padding:8px 6px;font-size:12px;white-space:nowrap}.quick-states button:last-child{flex:1.5}.tilemap{gap:3px;grid-template-rows:repeat(10,38px)}.tile{border-radius:8px}.tile strong{font-size:13px}.map-label{margin-top:0}.map-label b{font-size:9px}.map-label span{font-size:20px}.map-foot{display:block;margin-top:6px;padding-top:12px;font-size:11px}.map-foot p{margin:6px 0 0}.map-hint{display:none}.detail{padding:22px 18px}.states-list{grid-template-columns:1fr}.state-row{padding:11px}.notes{gap:14px}.note{padding:20px}.source-directory{padding:0 14px 26px}.source-directory-card{padding:18px}.tl li{flex:0 0 250px}footer{flex-direction:column;align-items:flex-start;font-size:11px}.result-notice{font-size:12px}.map-scroll{padding:10px 0 8px}dialog{padding:20px}.vs-row{grid-template-columns:1fr;gap:6px}.vs-row>span{grid-row:auto}.vs-head{margin-bottom:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}.reveal{opacity:1!important;transform:none!important}.load-in{opacity:1;transform:none;animation:none}.fizz{display:none}.vs.anim .vs-track i{transform:scaleX(1)}}
 </style>
 </head>
 <body>
-<header><div class="top"><div class="brand"><span class="mark" aria-hidden="true">C</span><span class="brand-text">BOTTLER ATLAS <i>/</i> 中国供应版图</span></div><div class="top-actions"><span class="top-meta">独立资料整理 · 非可口可乐官方网站</span><button class="action-button" id="export-data">下载对照表 ↓</button></div></div><svg class="ribbon" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34C170 6 330 56 520 40 712 24 840 -6 1032 10c158 13 258 46 408 26" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="7" stroke-linecap="round"/><path d="M0 48C170 20 330 70 520 54 712 38 840 8 1032 24c158 13 258 46 408 26V56H0Z" fill="#fdf6ee"/></svg></header>
+<header><div class="top"><div class="brand"><span class="mark" aria-hidden="true">C</span><span class="brand-text">BOTTLER ATLAS <i>/</i> 中国供应版图</span></div><div class="top-actions"><span class="top-meta">独立资料整理 · 非可口可乐官方网站</span><button class="action-button" id="export-data">下载对照表 ↓</button></div></div></header>
 <main>
 <section class="hero">
+  <div class="hero-watermark" aria-hidden="true">Coca-Cola</div>
+  <span class="fizz" style="width:88px;height:88px;left:6%;animation-duration:15s;animation-delay:-3s" aria-hidden="true"></span>
+  <span class="fizz" style="width:30px;height:30px;left:16%;animation-duration:11s;animation-delay:-7s" aria-hidden="true"></span>
+  <span class="fizz" style="width:52px;height:52px;left:38%;animation-duration:17s;animation-delay:-11s" aria-hidden="true"></span>
+  <span class="fizz" style="width:20px;height:20px;left:52%;animation-duration:10s;animation-delay:-2s" aria-hidden="true"></span>
+  <span class="fizz" style="width:64px;height:64px;left:66%;animation-duration:14s;animation-delay:-9s" aria-hidden="true"></span>
+  <span class="fizz" style="width:36px;height:36px;left:78%;animation-duration:12s;animation-delay:-5s" aria-hidden="true"></span>
+  <span class="fizz" style="width:110px;height:110px;left:88%;animation-duration:19s;animation-delay:-13s" aria-hidden="true"></span>
+  <span class="fizz" style="width:24px;height:24px;left:94%;animation-duration:9s;animation-delay:-1s" aria-hidden="true"></span>
+  <svg class="hero-ribbon" viewBox="0 0 1440 130" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 84 C 300 16, 620 122, 940 56 C 1140 16, 1320 44, 1460 24 L1460 66 C 1300 86, 1140 56, 950 96 C 630 162, 300 56, -20 124 Z" fill="#ffffff" opacity=".96"/></svg>
   <div class="hero-inner">
-    <p class="eyebrow light">CHINA · COCA-COLA BOTTLING SYSTEM</p>
-    <h1>南北两分天下，<em>谁来灌装？</em></h1>
-    <p class="hero-sub">中国大陆的可口可乐装瓶体系只由两家特许经营集团分区供应：北方与西部归中粮，华东与华南归太古。点一个省，看它归谁。</p>
-    <div class="hero-stats">
-      <div class="hstat"><b>31</b><span>省级市场（大陆）</span></div>
-      <div class="hstat"><b>2</b><span>特许经营集团</span></div>
-      <div class="hstat"><b>37</b><span>家装瓶厂</span></div>
+    <p class="eyebrow load-in">CHINA BOTTLING ATLAS · 1979—2025</p>
+    <h1><span class="l1 load-in" style="animation-delay:.08s">中国可乐，</span><span class="l2 load-in" style="animation-delay:.18s"><em>两分天下。</em></span></h1>
+    <p class="hero-sub load-in" style="animation-delay:.28s">大陆 31 个省级市场，由中粮与太古两家特许经营集团分区供应：北方与西部归中粮，华东与华南归太古。点一个省，看它归谁。</p>
+    <div class="hero-stats load-in" style="animation-delay:.38s">
+      <div class="hstat"><b data-count="31">31</b><span>省级市场（大陆）</span></div>
+      <div class="hstat"><b data-count="2">2</b><span>特许经营集团</span></div>
+      <div class="hstat"><b data-count="37">37</b><span>家装瓶厂</span></div>
     </div>
-    <div class="hero-cta">
-      <a class="btn primary" href="#atlas">查看省位图 ↓</a>
+    <div class="hero-cta load-in" style="animation-delay:.48s">
+      <a class="btn primary" href="#atlas">进入版图 ↓</a>
       <button class="btn ghost" id="export-hero">下载省—装瓶集团对照表 ↓</button>
     </div>
   </div>
-  <span class="bubble" style="width:130px;height:130px;top:10%;right:24%" aria-hidden="true"></span>
-  <span class="bubble" style="width:64px;height:64px;top:56%;right:13%" aria-hidden="true"></span>
-  <span class="bubble" style="width:36px;height:36px;top:22%;right:7%" aria-hidden="true"></span>
-  <span class="bubble" style="width:88px;height:88px;bottom:6%;right:32%" aria-hidden="true"></span>
-  <div class="hero-watermark" aria-hidden="true">Coca-Cola</div>
+  <div class="scroll-cue" aria-hidden="true">SCROLL</div>
 </section>
 
 <section class="section" id="groups">
@@ -236,9 +311,21 @@ dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;b
     <h2>两家集团，各管一半</h2>
     <p class="section-sub">2016—2017 年重组后，中国内地装瓶业务全部划归中粮与太古。点击省份简称，直接跳到该省的供应详情。</p>
   </header>
+  <div class="vs" id="vs">
+    <div class="vs-head"><b>格局速览</b><span>中粮红 × 太古蓝，长度即份额</span></div>
+    <div class="vs-row"><span>省级市场</span>
+      <div class="vs-line cofco"><span class="vs-tag">中粮</span><div class="vs-track"><i style="--w:61.3%"></i></div><b data-count="19">19</b></div>
+      <div class="vs-line swire"><span class="vs-tag">太古</span><div class="vs-track"><i style="--w:38.7%"></i></div><b data-count="12">12</b></div>
+    </div>
+    <div class="vs-row"><span>装瓶厂</span>
+      <div class="vs-line cofco"><span class="vs-tag">中粮</span><div class="vs-track"><i style="--w:54.1%"></i></div><b data-count="20">20</b></div>
+      <div class="vs-line swire"><span class="vs-tag">太古</span><div class="vs-track"><i style="--w:45.9%"></i></div><b data-count="17">17</b></div>
+    </div>
+  </div>
   <div class="group-grid" id="group-grid"></div>
 </section>
 
+<div class="band band--surface">
 <section class="section" id="atlas">
   <header class="section-head">
     <p class="eyebrow">PROVINCE MAP</p>
@@ -250,18 +337,21 @@ dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;b
     <div class="toggle" role="group" aria-label="显示方式"><button id="map-tab" aria-pressed="true">省位图</button><button id="list-tab" aria-pressed="false">列表</button></div>
   </div>
   <div class="quick-states" aria-label="常用省份"><span>快速查看</span><button data-state="GD">广东</button><button data-state="JS">江苏</button><button data-state="SC">四川</button><button data-state="BJ">北京</button><button data-state="SH">上海</button><button data-state="XJ">新疆</button></div>
+  <div class="region-tabs" id="region-tabs" role="group" aria-label="按地理大区筛选"><button data-region="" aria-pressed="true">全部地区</button><button data-region="华北" aria-pressed="false">华北</button><button data-region="东北" aria-pressed="false">东北</button><button data-region="华东" aria-pressed="false">华东</button><button data-region="华中" aria-pressed="false">华中</button><button data-region="华南" aria-pressed="false">华南</button><button data-region="西南" aria-pressed="false">西南</button><button data-region="西北" aria-pressed="false">西北</button></div>
   <div class="mobile-pick"><label for="state-picker">跳转到</label><select id="state-picker" aria-label="直接选择省"></select></div>
   <div id="filter-summary" class="filter-summary" hidden></div>
   <div class="atlas-status"><div class="result-notice" id="result-notice" aria-live="polite">点击省份简称，查看供应详情。</div><button class="reset" id="clear-filter" hidden>清除筛选</button></div>
   <div class="atlas-grid">
     <div>
-      <div id="map-view" class="map-panel"><div class="map-scroll"><div class="tilemap" id="tilemap" aria-label="中国各省级行政区示意图"><div class="map-label"><b>31 PROVINCES · 2 BOTTLING GROUPS</b><span>People's Republic of China</span></div></div></div><div class="map-foot"><span class="key"><i class="square cofco"></i> 中粮可口可乐 <i class="square swire" style="margin-left:10px"></i> 太古可口可乐 <i class="square sel" style="margin-left:10px"></i> 当前选中</span><p>省位示意，不表示实际地理或经营边界。</p></div></div>
+      <div id="map-view" class="map-panel"><div class="map-scroll"><div class="tilemap" id="tilemap" aria-label="中国各省级行政区示意图"><div class="map-label"><b>31 PROVINCES · 2 BOTTLING GROUPS</b><span>People's Republic of China</span></div></div></div><div class="map-foot"><span class="key"><i class="square cofco"></i> 中粮可口可乐 <i class="square swire" style="margin-left:10px"></i> 太古可口可乐 <i class="square sel" style="margin-left:10px"></i> 当前选中</span><p>省位示意，不表示实际地理或经营边界。</p></div><p class="map-hint">键盘也能逛：Tab 选中瓦片后，用 ← → ↑ ↓ 在省份间移动。</p></div>
       <div id="list-view" hidden><div id="states-list" class="states-list"></div></div>
     </div>
     <aside class="detail" id="detail" aria-label="所选省份的供应详情" aria-live="polite"></aside>
   </div>
 </section>
+</div>
 
+<div class="band band--dark">
 <section class="section" id="timeline">
   <header class="section-head">
     <p class="eyebrow">TIMELINE · 1979—2025</p>
@@ -280,6 +370,7 @@ dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;b
     <li><div class="tl-card"><time>2025</time><b>郑州、西安新厂投产</b><p>两座新厂同年投产。西安厂规划 7 条饮料生产线与 1 条糖浆线，服务西北市场；郑州厂按 LEED 金级标准建设，设计年供应能力逾 100 万吨。</p></div></li>
   </ul></div></div>
 </section>
+</div>
 
 <section class="section" id="notes">
   <header class="section-head">
@@ -293,10 +384,87 @@ dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;b
   </div>
 </section>
 
+</main>
 <footer><span>资料核对：2026.09.28 · 省级概览，具体装瓶厂与订货请向当地装瓶商确认</span><button id="sources-button" aria-expanded="false" aria-controls="source-directory">查看资料来源 ↗</button></footer>
 <div class="source-directory" id="source-directory" hidden><div class="source-directory-card"><h2>资料来源与覆盖说明</h2><p>各省级归属来自以下公开披露。本页是省级特许经营区域的概览，不是县级或市级分区清单，也不含各集团下属公司的工商登记信息。精确的装瓶厂地址、覆盖县市与订货渠道，请直接联系当地装瓶商，或查阅 <a href="https://www.coca-cola.com/cn/zh" target="_blank" rel="noopener noreferrer">可口可乐中国官网</a>。</p><div id="source-grid" class="source-grid"></div></div></div>
-</main><div id="toast" class="toast" role="status" hidden></div><dialog id="copy-dialog"><h2>复制本省资料</h2><p>请选择并复制下方文字。</p><textarea id="copy-text" aria-label="本省供应资料" readonly></textarea><button id="close-dialog" class="action-button">关闭</button></dialog>
-<script id="atlas-data" type="application/json">{"checkedAt": "2026-09-28", "bottlers": [{"id": "cofco", "name": "中粮可口可乐饮料有限公司", "group": "中粮集团控股 65% · 中国区唯一中方控股装瓶集团", "states": "BJ TJ HE SD HL JL LN SX SN SC CQ NM GS NX QH XZ XJ HN GZ", "plants": 20, "url": "https://www.cofco.com/cn/BrandProduct/COFCOCocaCola", "note": "中粮可口可乐由中粮集团与可口可乐公司合资组建，2000 年成立。官方披露拥有 20 家装瓶厂，经营 19 个省级市场，覆盖 81% 的国土面积和 46.8% 的中国大陆人口。"}, {"id": "swire", "name": "太古可口可乐有限公司", "group": "Swire Coca-Cola · 可口可乐全球销量第五大装瓶伙伴", "states": "SH GD ZJ AH JS FJ HA HB GX YN JX HI HK MO TW", "plants": 17, "url": "https://www.swirecocacola.com/sc/index.html", "note": "太古可口可乐在中国内地十一个省份及上海市拥有专营权，另有香港与台湾。2017 年重组后专营区域扩至 12 个省市，覆盖超过 6 亿中国消费者。"}, {"id": "cofco-shares", "name": "中国食品有限公司（控股方披露）", "group": "香港上市 00506 · 中粮唯一专业化饮料业务平台", "states": "", "plants": 0, "url": "http://www.chinafoodsltd.com/aboutUs.html", "note": "中国食品持有中粮可口可乐 65% 权益。其官网逐一列出中粮可口可乐经营的 19 个省级市场：北京、天津、河北、山东、黑龙江、吉林、辽宁、山西、陕西、四川、重庆、内蒙、甘肃、宁夏、青海、西藏、新疆、湖南、贵州。本页省级归属以此为直接依据。"}, {"id": "swire-swire", "name": "太古集团（控股方披露）", "group": "Swire Pacific · 饮料及食物链业务", "states": "", "plants": 0, "url": "https://www.swire.com/sc/businesses/beverages_foodchain.php", "note": "太古集团官网载明太古可口可乐在中国内地十一个省份及上海市、香港特别行政区、台湾地区拥有专营权，并逐一说明广东、浙江、安徽、江苏、河南、广西、云南、江西、海南、湖北、湛江及茂名等各地装瓶公司。"}, {"id": "restructure", "name": "太古 2016 年重整公告（原文）", "group": "太古股份有限公司 · 装瓶系统重整", "states": "", "plants": 0, "url": "https://www.swirepacific.com/sc/investor-relations/updates-to-our-shareholders/press-releases/realignment-of-coca-cola-mainland-china-bottling-system", "note": "公告载明重整后太古在内地专营区域覆盖 49% 居住人口、可口可乐饮用量占 51%；新增湖北、广西、云南、江西、海南、上海及广东湛江市、茂名市，陕西区域转让予中国食品旗下附属公司。"}, {"id": "coca-cola-cn", "name": "可口可乐中国", "group": "品牌方 · 不直接持有中国内地装瓶业务", "states": "", "plants": 0, "url": "https://www.coca-cola.com/cn/zh", "note": "自 2017 年重组完成后，可口可乐不再直接拥有中国内地装瓶业务权益，专注建设品牌与领导全球特许经营系统。公开发布中提及装瓶伙伴为中粮可口可乐与太古可口可乐。"}], "notes": {"GD": "广东太古可口可乐有限公司是太古在中国内地销量最大的装瓶厂，服务超过 9,000 万名消费者，在广东含汽饮料市场占据领导地位。省内广州、惠州、三水各有一所生产厂房，湛江与茂名由广东太古可口可乐湛江有限公司单独供应。太古在佛山、东莞另设装瓶公司。珠海历史上曾有独立的珠海可口可乐饮料有限公司。", "SC": "中粮可口可乐华中饮料有限公司位于长沙望城经济技术开发区，为湖南装瓶主体。2017 年重组时四川装瓶厂自可口可乐体系划入中粮。", "BJ": "中粮可口可乐饮料（北京）有限公司是中粮在北京地区唯一授权装瓶厂，前身始建于 1981 年、坐落丰台五里店，是新中国第一家可口可乐装瓶厂。", "SH": "上海申美饮料食品有限公司 1988 年成立，原为可口可乐与中方合资企业。2017 年 7 月太古购入股权后持股 54% 并取得管理权。申美覆盖上海、苏州、无锡、南通及嘉兴一带，是太古专营区内人均饮用量最高的区域。", "XJ": "中粮可口可乐饮料（陕西）有限公司位于西安经济技术开发区，1995 年成立，在陕西各地建立了广泛销售网络。2025 年投产的西安新厂规划 7 条饮料生产线与 1 条糖浆线，服务西北市场。", "JS": "江苏太古可口可乐饮料有限公司 1987 年成立，位于省会南京，运作 9 条生产线。太古中萃发展与太古饮料控股分别持有八成及两成权益。太古在苏州另设有装瓶公司。", "ZJ": "浙江太古可口可乐饮料有限公司 1987 年成立，在杭州营运一所设有七条生产线的厂房，并通过附属公司温州太古在温州营运另一所设有四条生产线的厂房。太古中萃与太古饮料控股分别持有六成及两成权益。", "CQ": "中粮重庆厂在 2017 年重组中自可口可乐体系划入中粮，与四川厂同批交接。", "SD": "中粮在山东设有装瓶厂。不含气饮料业务重组中，济南装瓶公司归属中粮。", "AH": "合肥太古可口可乐饮料有限公司 1995 年成立，位于合肥经济技术开发区，运作 6 条生产线。太古持有该公司主要权益。", "FJ": "厦门太古可口可乐饮料有限公司 1995 年成立，位于厦门湖里区，运作 7 条生产线。太古另在福州设有生产厂房，并于 2006 年收购厦门绿泉实业全部股权，后者主要生产不含汽饮料及瓶盖、瓶胚、标签等上游组件。", "HB": "湖北太古可口可乐饮料有限公司 1994 年成立，位于武汉经济技术开发区，运作 7 条生产线。太古持有该公司 95.8% 权益。湖北于 2017 年自中粮体系划入太古。", "YN": "云南太古可口可乐饮料有限公司 1995 年成立，位于昆明高新技术产业开发区，运作 4 条生产线。太古持有 95.1% 权益。", "HA": "河南由郑州太古可口可乐饮料有限公司供应，该公司 1995 年成立，并通过全资附属的漯河太古在漯河营运另一所厂房，合共 10 条生产线。2025 年 10 月投产的郑州新厂按 LEED 金级标准建设。", "GS": "中粮在甘肃设有装瓶厂。2025 年投产的郑州厂设计年供应能力逾 100 万吨，可辐射周边区域。"}, "timeline": []}</script>
+<div id="toast" class="toast" role="status" hidden></div><dialog id="copy-dialog"><h2>复制本省资料</h2><p>请选择并复制下方文字。</p><textarea id="copy-text" aria-label="本省供应资料" readonly></textarea><button id="close-dialog" class="action-button">关闭</button></dialog>
+<script id="atlas-data" type="application/json">{
+ "checkedAt": "2026-09-28",
+ "bottlers": [
+  {
+   "id": "cofco",
+   "name": "中粮可口可乐饮料有限公司",
+   "group": "中粮集团控股 65% · 中国区唯一中方控股装瓶集团",
+   "states": "BJ TJ HE SD HL JL LN SX SN SC CQ NM GS NX QH XZ XJ HN GZ",
+   "plants": 20,
+   "url": "https://www.cofco.com/cn/BrandProduct/COFCOCocaCola",
+   "note": "中粮可口可乐由中粮集团与可口可乐公司合资组建，2000 年成立。官方披露拥有 20 家装瓶厂，经营 19 个省级市场，覆盖 81% 的国土面积和 46.8% 的中国大陆人口。"
+  },
+  {
+   "id": "swire",
+   "name": "太古可口可乐有限公司",
+   "group": "Swire Coca-Cola · 可口可乐全球销量第五大装瓶伙伴",
+   "states": "SH GD ZJ AH JS FJ HA HB GX YN JX HI HK MO TW",
+   "plants": 17,
+   "url": "https://www.swirecocacola.com/sc/index.html",
+   "note": "太古可口可乐在中国内地十一个省份及上海市拥有专营权，另有香港与台湾。2017 年重组后专营区域扩至 12 个省市，覆盖超过 6 亿中国消费者。"
+  },
+  {
+   "id": "cofco-shares",
+   "name": "中国食品有限公司（控股方披露）",
+   "group": "香港上市 00506 · 中粮唯一专业化饮料业务平台",
+   "states": "",
+   "plants": 0,
+   "url": "http://www.chinafoodsltd.com/aboutUs.html",
+   "note": "中国食品持有中粮可口可乐 65% 权益。其官网逐一列出中粮可口可乐经营的 19 个省级市场：北京、天津、河北、山东、黑龙江、吉林、辽宁、山西、陕西、四川、重庆、内蒙、甘肃、宁夏、青海、西藏、新疆、湖南、贵州。本页省级归属以此为直接依据。"
+  },
+  {
+   "id": "swire-swire",
+   "name": "太古集团（控股方披露）",
+   "group": "Swire Pacific · 饮料及食物链业务",
+   "states": "",
+   "plants": 0,
+   "url": "https://www.swire.com/sc/businesses/beverages_foodchain.php",
+   "note": "太古集团官网载明太古可口可乐在中国内地十一个省份及上海市、香港特别行政区、台湾地区拥有专营权，并逐一说明广东、浙江、安徽、江苏、河南、广西、云南、江西、海南、湖北、湛江及茂名等各地装瓶公司。"
+  },
+  {
+   "id": "restructure",
+   "name": "太古 2016 年重整公告（原文）",
+   "group": "太古股份有限公司 · 装瓶系统重整",
+   "states": "",
+   "plants": 0,
+   "url": "https://www.swirepacific.com/sc/investor-relations/updates-to-our-shareholders/press-releases/realignment-of-coca-cola-mainland-china-bottling-system",
+   "note": "公告载明重整后太古在内地专营区域覆盖 49% 居住人口、可口可乐饮用量占 51%；新增湖北、广西、云南、江西、海南、上海及广东湛江市、茂名市，陕西区域转让予中国食品旗下附属公司。"
+  },
+  {
+   "id": "coca-cola-cn",
+   "name": "可口可乐中国",
+   "group": "品牌方 · 不直接持有中国内地装瓶业务",
+   "states": "",
+   "plants": 0,
+   "url": "https://www.coca-cola.com/cn/zh",
+   "note": "自 2017 年重组完成后，可口可乐不再直接拥有中国内地装瓶业务权益，专注建设品牌与领导全球特许经营系统。公开发布中提及装瓶伙伴为中粮可口可乐与太古可口可乐。"
+  }
+ ],
+ "notes": {
+  "GD": "广东太古可口可乐有限公司是太古在中国内地销量最大的装瓶厂，服务超过 9,000 万名消费者，在广东含汽饮料市场占据领导地位。省内广州、惠州、三水各有一所生产厂房，湛江与茂名由广东太古可口可乐湛江有限公司单独供应。太古在佛山、东莞另设装瓶公司。珠海历史上曾有独立的珠海可口可乐饮料有限公司。",
+  "SC": "中粮可口可乐华中饮料有限公司位于长沙望城经济技术开发区，为湖南装瓶主体。2017 年重组时四川装瓶厂自可口可乐体系划入中粮。",
+  "BJ": "中粮可口可乐饮料（北京）有限公司是中粮在北京地区唯一授权装瓶厂，前身始建于 1981 年、坐落丰台五里店，是新中国第一家可口可乐装瓶厂。",
+  "SH": "上海申美饮料食品有限公司 1988 年成立，原为可口可乐与中方合资企业。2017 年 7 月太古购入股权后持股 54% 并取得管理权。申美覆盖上海、苏州、无锡、南通及嘉兴一带，是太古专营区内人均饮用量最高的区域。",
+  "XJ": "中粮可口可乐饮料（陕西）有限公司位于西安经济技术开发区，1995 年成立，在陕西各地建立了广泛销售网络。2025 年投产的西安新厂规划 7 条饮料生产线与 1 条糖浆线，服务西北市场。",
+  "JS": "江苏太古可口可乐饮料有限公司 1987 年成立，位于省会南京，运作 9 条生产线。太古中萃发展与太古饮料控股分别持有八成及两成权益。太古在苏州另设有装瓶公司。",
+  "ZJ": "浙江太古可口可乐饮料有限公司 1987 年成立，在杭州营运一所设有七条生产线的厂房，并通过附属公司温州太古在温州营运另一所设有四条生产线的厂房。太古中萃与太古饮料控股分别持有六成及两成权益。",
+  "CQ": "中粮重庆厂在 2017 年重组中自可口可乐体系划入中粮，与四川厂同批交接。",
+  "SD": "中粮在山东设有装瓶厂。不含气饮料业务重组中，济南装瓶公司归属中粮。",
+  "AH": "合肥太古可口可乐饮料有限公司 1995 年成立，位于合肥经济技术开发区，运作 6 条生产线。太古持有该公司主要权益。",
+  "FJ": "厦门太古可口可乐饮料有限公司 1995 年成立，位于厦门湖里区，运作 7 条生产线。太古另在福州设有生产厂房，并于 2006 年收购厦门绿泉实业全部股权，后者主要生产不含汽饮料及瓶盖、瓶胚、标签等上游组件。",
+  "HB": "湖北太古可口可乐饮料有限公司 1994 年成立，位于武汉经济技术开发区，运作 7 条生产线。太古持有该公司 95.8% 权益。湖北于 2017 年自中粮体系划入太古。",
+  "YN": "云南太古可口可乐饮料有限公司 1995 年成立，位于昆明高新技术产业开发区，运作 4 条生产线。太古持有 95.1% 权益。",
+  "HA": "河南由郑州太古可口可乐饮料有限公司供应，该公司 1995 年成立，并通过全资附属的漯河太古在漯河营运另一所厂房，合共 10 条生产线。2025 年 10 月投产的郑州新厂按 LEED 金级标准建设。",
+  "GS": "中粮在甘肃设有装瓶厂。2025 年投产的郑州厂设计年供应能力逾 100 万吨，可辐射周边区域。"
+ },
+ "timeline": []
+}</script>
 <script>
 'use strict';
 const DATA=JSON.parse(document.getElementById('atlas-data').textContent);
@@ -344,19 +512,21 @@ const AUTONOMOUS={NM:'自治区',GX:'自治区',XZ:'自治区',NX:'自治区',XJ
 const SPECIAL={HK:'特别行政区',MO:'特别行政区',TW:'地区'};
 let selected=STATES.some(s=>s.a===location.hash.slice(1))?location.hash.slice(1):'GD';
 let view='map';
+let region='';
 const qsel=s=>document.querySelector(s);
 const providers=a=>B.filter(b=>b.states.split(' ').includes(a));
 const stateName=s=>s.zh+(MUNI[s.a]||AUTONOMOUS[s.a]||SPECIAL[s.a]||'省');
-function selectState(a,fromUser=false){if(!STATES.some(s=>s.a===a))return;selected=a;if(!matching(STATES.find(s=>s.a===a))){qsel('#search').value='';qsel('#group-filter').value=''}history.replaceState(null,'','#'+a);render();qsel('#detail').scrollTop=0;if(fromUser&&innerWidth<=800){qsel('#atlas').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}}
-function matching(s){const q=qsel('#search').value.trim().toLowerCase(),g=qsel('#group-filter').value;const exactCode=STATES.some(t=>t.a.toLowerCase()===q||t.abbr===q);const hay=[s.a,s.abbr,s.zh,s.en,ALIASES[s.a]||'',GROUP_NAME[s.group]||'',s.region].join(' ').toLowerCase();return(!g||s.group===g)&&(!q||(exactCode?s.a.toLowerCase()===q||s.abbr===q:hay.includes(q)))}
+function selectState(a,fromUser=false){if(!STATES.some(s=>s.a===a))return;selected=a;if(!matching(STATES.find(s=>s.a===a))){qsel('#search').value='';qsel('#group-filter').value='';region=''}history.replaceState(null,'','#'+a);render();qsel('#detail').scrollTop=0;if(fromUser&&innerWidth<=800){qsel('#atlas').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}}
+function matching(s){const q=qsel('#search').value.trim().toLowerCase(),g=qsel('#group-filter').value;const exactCode=STATES.some(t=>t.a.toLowerCase()===q||t.abbr===q);const hay=[s.a,s.abbr,s.zh,s.en,ALIASES[s.a]||'',GROUP_NAME[s.group]||'',s.region].join(' ').toLowerCase();return(!g||s.group===g)&&(!region||s.region===region)&&(!q||(exactCode?s.a.toLowerCase()===q||s.abbr===q:hay.includes(q)))}
 function render(){
   qsel('#state-picker').value=selected;
   document.querySelectorAll('.quick-states button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.state===selected)));
   document.querySelectorAll('.state-chips button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.state===selected)));
+  document.querySelectorAll('.region-tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.region===region)));
   const chosen=B.find(b=>b.id===qsel('#group-filter').value);
   qsel('#filter-summary').hidden=!chosen;
   if(chosen){qsel('#filter-summary').dataset.group=chosen.id;qsel('#filter-summary').textContent='正在查看 '+GROUP_NAME[chosen.id]+' 的供应省；右侧详情仍显示该省的全部已收录伙伴。'}
-  const matches=STATES.filter(matching),active=STATES.find(s=>s.a===selected),p=providers(selected),filtered=!!(qsel('#search').value.trim()||qsel('#group-filter').value);
+  const matches=STATES.filter(matching),active=STATES.find(s=>s.a===selected),p=providers(selected),filtered=!!(qsel('#search').value.trim()||qsel('#group-filter').value||region);
   document.querySelectorAll('.tile').forEach(el=>{el.setAttribute('aria-pressed',String(el.dataset.state===selected));el.classList.toggle('faded',!matches.some(s=>s.a===el.dataset.state))});
   qsel('#clear-filter').hidden=!filtered;
   qsel('#result-notice').textContent=filtered?(matches.length?'找到 '+matches.length+' 个省级市场；点击查看详情。':'没有匹配结果，请尝试其他省名或清除筛选。'):(view==='list'?'点击省名，查看供应详情。':'点击省份简称，查看供应详情。');
@@ -369,14 +539,16 @@ function renderGroups(){
 function setView(v){view=v;qsel('#map-view').hidden=v!=='map';qsel('#list-view').hidden=v!=='list';qsel('#map-tab').setAttribute('aria-pressed',v==='map');qsel('#list-tab').setAttribute('aria-pressed',v==='list');if(!qsel('#search').value&&!qsel('#group-filter').value)qsel('#result-notice').textContent=v==='list'?'点击省名，查看供应详情。':'点击省份简称，查看供应详情。'}
 qsel('#map-tab').onclick=()=>setView('map');qsel('#list-tab').onclick=()=>setView('list');
 function applyFilters(){const matched=STATES.filter(matching);if(matched.length&&!matched.some(s=>s.a===selected)){selected=matched[0].a;history.replaceState(null,'','#'+selected)}render();if(!matched.length)qsel('#detail').innerHTML='<div class="detail-top"><span class="detail-code" data-group="cofco">NO MATCHES</span></div><h2>没有匹配结果</h2><p class="state-summary">试试中文省名、简称或英文名称，例如：广东、沪、Shanghai。</p><button class="reset" id="reset-filter">清除筛选</button>'}qsel('#search').oninput=applyFilters;qsel('#group-filter').onchange=applyFilters;
-document.addEventListener('click',e=>{const el=e.target.closest('[data-state]');if(el){if(el.closest('#group-grid')){qsel('#search').value='';qsel('#group-filter').value=''}if(el.classList.contains('faded')){qsel('#search').value='';qsel('#group-filter').value=''}selectState(el.dataset.state,true);if(el.closest('#group-grid')&&innerWidth>800)qsel('#atlas').scrollIntoView({behavior:'smooth'});}if(e.target.id==='reset-filter'||e.target.id==='clear-filter'){qsel('#search').value='';qsel('#group-filter').value='';render()}});
+qsel('#region-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-region]');if(!b)return;region=b.dataset.region;applyFilters()});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-state]');if(el){if(el.closest('#group-grid')){qsel('#search').value='';qsel('#group-filter').value='';region=''}if(el.classList.contains('faded')){qsel('#search').value='';qsel('#group-filter').value='';region=''}selectState(el.dataset.state,true);if(el.closest('#group-grid')&&innerWidth>800)qsel('#atlas').scrollIntoView({behavior:'smooth'});}if(e.target.id==='reset-filter'||e.target.id==='clear-filter'){qsel('#search').value='';qsel('#group-filter').value='';region='';render()}});
+qsel('#tilemap').addEventListener('keydown',e=>{const t=e.target.closest('.tile');if(!t)return;const dirs={ArrowRight:[1,0],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowUp:[0,-1]};const d=dirs[e.key];if(!d)return;e.preventDefault();const cur=STATES.find(s=>s.a===t.dataset.state);let best=null,bestScore=Infinity;for(const s of STATES){const dx=s.x-cur.x,dy=s.y-cur.y;if(d[0]&&Math.sign(dx)!==d[0]||d[1]&&Math.sign(dy)!==d[1]||dx===0&&dy===0)continue;if(d[0]&&dy!==0||d[1]&&dx!==0)continue;const score=d[0]?Math.abs(dx)*100+Math.abs(dy):Math.abs(dy)*100+Math.abs(dx);if(score<bestScore){bestScore=score;best=s}}if(!best){for(const s of STATES){const dx=s.x-cur.x,dy=s.y-cur.y;if(d[0]&&Math.sign(dx)!==d[0]||d[1]&&Math.sign(dy)!==d[1]||dx===0&&dy===0)continue;const score=(d[0]?Math.abs(dx):Math.abs(dy))*100+(d[0]?Math.abs(dy):Math.abs(dx));if(score<bestScore){bestScore=score;best=s}}}if(best){selectState(best.a);const nt=qsel('.tile[data-state="'+best.a+'"]');if(nt)nt.focus({preventScroll:true})}});
 qsel('#sources-button').onclick=()=>{const panel=qsel('#source-directory');panel.hidden=!panel.hidden;qsel('#sources-button').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)panel.scrollIntoView({behavior:'smooth',block:'start'})};
-window.addEventListener('hashchange',()=>{const a=location.hash.slice(1);if(STATES.some(s=>s.a===a)){qsel('#search').value='';qsel('#group-filter').value='';selectState(a)}});
+window.addEventListener('hashchange',()=>{const a=location.hash.slice(1);if(STATES.some(s=>s.a===a)){qsel('#search').value='';qsel('#group-filter').value='';region='';selectState(a)}});
 function notify(message){qsel('#toast').textContent=message;qsel('#toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>qsel('#toast').hidden=true,2600)}
-function exportCSV(){const rows=[['省份简称','中文省名','英文名','地理大区','装瓶集团','控股方','装机厂数','官方来源','资料核对日期']];for(const s of [...STATES].sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN'))){const p=providers(s.a);if(!p.length)continue;rows.push([s.a,stateName(s),s.en,s.region,GROUP_NAME[s.group],s.group==='cofco'?'中粮集团（控股65%）':'太古集团',p[0].plants,p[0].url,DATA.checkedAt])}const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='中国可口可乐省装瓶集团对照表.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('已导出 '+(rows.length-1)+' 条省份与装瓶集团关联')}
+function exportCSV(){const rows=[['省份简称','中文省名','英文名','地理大区','装瓶集团','控股方','装机厂数','官方来源','资料核对日期']];for(const s of [...STATES].sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN'))){const p=providers(s.a);if(!p.length)continue;rows.push([s.a,stateName(s),s.en,s.region,GROUP_NAME[s.group],s.group==='cofco'?'中粮集团（控股65%）':'太古集团',p[0].plants,p[0].url,DATA.checkedAt])}const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='中国可口可乐省装瓶集团对照表.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('已导出 '+(rows.length-1)+' 条省份与装瓶集团关联')}
 qsel('#export-data').onclick=exportCSV;qsel('#export-hero').onclick=exportCSV;
 qsel('#close-dialog').onclick=()=>qsel('#copy-dialog').close();
-document.addEventListener('click',async e=>{const b=e.target.closest('[data-bottler]');if(b){qsel('#search').value='';qsel('#group-filter').value=b.dataset.bottler;applyFilters();setView('list');qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#group-filter').focus({preventScroll:true})}if(e.target.id==='back-explorer'){qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#state-picker').focus({preventScroll:true})}if(e.target.id==='copy-state'){const s=STATES.find(x=>x.a===selected);const text=stateName(s)+' / '+s.en+' ('+s.a+')\n中国可口可乐装瓶与分销伙伴（省级概览）\n装瓶集团：'+GROUP_NAME[s.group]+'\n\n'+providers(selected).map(b=>b.name+'\n'+(DATA.notes[s.a]?DATA.notes[s.a]+'\n':'')+b.note+'\n来源：'+b.url).join('\n\n')+'\n\n资料核对：'+DATA.checkedAt+'。省级特许经营区域，非市级/县级清单；具体装瓶厂与订货请向当地装瓶商确认。';try{await navigator.clipboard.writeText(text);notify('已复制本省装瓶集团和官方来源')}catch(_){qsel('#copy-text').value=text;qsel('#copy-dialog').showModal();qsel('#copy-text').select()}}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-bottler]');if(b){qsel('#search').value='';qsel('#group-filter').value=b.dataset.bottler;region='';applyFilters();setView('list');qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#group-filter').focus({preventScroll:true})}if(e.target.id==='back-explorer'){qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#state-picker').focus({preventScroll:true})}if(e.target.id==='copy-state'){const s=STATES.find(x=>x.a===selected);const text=stateName(s)+' / '+s.en+' ('+s.a+')\n中国可口可乐装瓶与分销伙伴（省级概览）\n装瓶集团：'+GROUP_NAME[s.group]+'\n\n'+providers(selected).map(b=>b.name+'\n'+(DATA.notes[s.a]?DATA.notes[s.a]+'\n':'')+b.note+'\n来源：'+b.url).join('\n\n')+'\n\n资料核对：'+DATA.checkedAt+'。省级特许经营区域，非市级/县级清单；具体装瓶厂与订货请向当地装瓶商确认。';try{await navigator.clipboard.writeText(text);notify('已复制本省装瓶集团和官方来源')}catch(_){qsel('#copy-text').value=text;qsel('#copy-dialog').showModal();qsel('#copy-text').select()}}});
 qsel('#tilemap').insertAdjacentHTML('beforeend',STATES.map(s=>'<button class="tile" data-group="'+s.group+'" data-state="'+s.a+'" style="grid-column:'+(s.x+1)+';grid-row:'+(s.y+1)+'" aria-label="'+esc(stateName(s))+' '+esc(s.en)+' '+GROUP_NAME[s.group]+'" title="'+esc(stateName(s))+' · '+GROUP_NAME[s.group]+'" aria-pressed="false"><strong>'+esc(s.abbr)+'</strong><span>'+esc(s.zh)+'</span></button>').join(''));
 qsel('#state-picker').innerHTML=[...STATES].sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN')).map(s=>'<option value="'+s.a+'">'+s.a+' · '+esc(stateName(s))+' / '+esc(s.en)+'</option>').join('');qsel('#state-picker').onchange=e=>selectState(e.target.value,true);
 qsel('#group-filter').insertAdjacentHTML('beforeend',B.map(b=>'<option value="'+b.id+'">'+esc(GROUP_NAME[b.id])+'</option>').join(''));
@@ -384,6 +556,16 @@ qsel('#source-grid').innerHTML=DATA.bottlers.map(b=>'<a class="source-item" href
 renderGroups();
 if(innerWidth<=800)setView('list');
 render();
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function animateCount(el){const n=parseInt(el.dataset.count||el.textContent,10);if(isNaN(n))return;el.textContent='0';const t0=performance.now(),dur=900;(function tick(t){const p=Math.min(1,(t-t0)/dur);el.textContent=String(Math.round(n*(1-Math.pow(1-p,3))));if(p<1)requestAnimationFrame(tick)})(t0)}
+if(!REDUCE){
+  document.querySelectorAll('.hstat b').forEach(animateCount);
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{threshold:.12});
+  document.querySelectorAll('.section-head,.group-card,.map-panel,.detail,.tl-card,.note,.source-directory-card').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%4)*70+'ms';io.observe(el)});
+  const vs=qsel('#vs');vs.classList.add('anim');
+  const vio=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){vs.classList.add('in');vs.querySelectorAll('b[data-count]').forEach(animateCount);vio.disconnect()}}),{threshold:.4});
+  vio.observe(vs);
+}else{qsel('#vs').classList.add('in')}
 if(document.modelContext?.registerTool){
   const lifecycle=new AbortController();
   try{Promise.resolve(document.modelContext.registerTool({
@@ -391,9 +573,10 @@ if(document.modelContext?.registerTool){
     description:'Select a Chinese province-level region, clear filters, and show the curated bottling-group record and official sources. Coverage is a province-level overview, not an exhaustive city or county directory.',
     inputSchema:{type:'object',properties:{province:{type:'string',description:'Chinese province abbreviation such as 广东/GD, or full name like 广东省'}},required:['province'],additionalProperties:false},
     annotations:{readOnlyHint:false,untrustedContentHint:false},
-    execute(input){if(!input||typeof input.province!=='string'||Object.keys(input).some(k=>k!=='province'))throw new Error('Expected only province');const raw=input.province.trim();const s=STATES.find(t=>t.a===raw.toUpperCase()||t.zh===raw||t.zh+'省'===raw||t.zh+'市'===raw||t.zh+'自治区'===raw||t.zh+'特别行政区'===raw||t.en.toLowerCase()===raw.toLowerCase());if(!s)throw new Error('Unknown Chinese province or region: '+raw);qsel('#search').value='';qsel('#group-filter').value='';selectState(s.a);return{province:s.a,name:stateName(s),checkedAt:DATA.checkedAt,coverage:'province-level overview',bottlingGroup:GROUP_NAME[s.group],groupNote:DATA.notes[s.a]||null,bottlers:providers(s.a).map(b=>({name:b.name,note:b.note,source:b.url}))}}
+    execute(input){if(!input||typeof input.province!=='string'||Object.keys(input).some(k=>k!=='province'))throw new Error('Expected only province');const raw=input.province.trim();const s=STATES.find(t=>t.a===raw.toUpperCase()||t.zh===raw||t.zh+'省'===raw||t.zh+'市'===raw||t.zh+'自治区'===raw||t.zh+'特别行政区'===raw||t.en.toLowerCase()===raw.toLowerCase());if(!s)throw new Error('Unknown Chinese province or region: '+raw);qsel('#search').value='';qsel('#group-filter').value='';region='';selectState(s.a);return{province:s.a,name:stateName(s),checkedAt:DATA.checkedAt,coverage:'province-level overview',bottlingGroup:GROUP_NAME[s.group],groupNote:DATA.notes[s.a]||null,bottlers:providers(s.a).map(b=>({name:b.name,note:b.note,source:b.url}))}}
   },{signal:lifecycle.signal})).catch(()=>{});}catch(_){}
   window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});
 }
 </script>
-</body></html>
+</body>
+</html>
