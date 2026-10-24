@@ -366,7 +366,6 @@
     ui.rec = document.getElementById('rec');
     ui.recLabel = document.getElementById('recLabel');
     ui.snap = document.getElementById('snap');
-    ui.cam = document.getElementById('cam');
     ui.scrub = document.getElementById('scrub');
     ui.time = document.getElementById('time');
     ui.quality = document.getElementById('quality');
@@ -381,8 +380,6 @@
     ui.replay.innerHTML = icon('replay');
     ui.mute.innerHTML = icon('sound');
     ui.snap.innerHTML = icon('cam');
-    ui.cam.innerHTML = icon('rec');
-    ui.expand.innerHTML = icon('expand');
     document.getElementById('expand').innerHTML = icon('expand');
 
     ui.play.addEventListener('click', toggle);
@@ -394,7 +391,6 @@
       ui.mute.classList.toggle('is-off', state.muted);
     });
     ui.snap.addEventListener('click', snapshot);
-    ui.cam.addEventListener('click', startExport);
     ui.rec.addEventListener('click', startExport);
     ui.expand = document.getElementById('expand');
     ui.expand.addEventListener('click', function () {

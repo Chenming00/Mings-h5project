@@ -236,5 +236,5 @@
     return { left: nx, w: nw };
   }
 
-  REEL.FX = { init: init, render: render, flash: flash, bars: bars, get w() { return FX.w; }, get h() { return FX.h; } };
+  REEL.FX = { init: init, render: render, flash: flash, bars: bars, get scene() { return FX.scene; }, get w() { return FX.w; }, get h() { return FX.h; } };
 })(window);
