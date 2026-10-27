@@ -20,6 +20,8 @@ export const tagLabels = {
   resume: '简历',
   quiz: '趣味测试',
   animation: '动画',
+  audio: '音频',
+  generative: '生成艺术',
   project: '项目',
 };
 
@@ -105,6 +107,41 @@ const presentations = {
     artwork: 'sbti',
     displayOrder: 8,
     label: 'A LITTLE WEIRD / A LOT OF YOU',
+  },
+  'gravity-well': {
+    displayTitle: 'GRAVITY WELL · 引力沙盒',
+    description: '用手指搅动一片星云：引力、排斥、漩涡三种力场。',
+    artwork: 'gravity',
+    displayOrder: 9,
+    label: 'PARTICLE PHYSICS / PLAY',
+  },
+  'beat-forge': {
+    displayTitle: 'BEAT FORGE · 十六步鼓机',
+    description: '在浏览器里合成一整套鼓组，编一段属于你的节奏。',
+    artwork: 'beat',
+    displayOrder: 10,
+    label: 'RHYTHM / WEB AUDIO',
+  },
+  'maze-weave': {
+    displayTitle: 'MAZE WEAVE · 迷宫编织',
+    description: '递归回溯实时开凿，广度优先把解法走给你看。',
+    artwork: 'maze',
+    displayOrder: 11,
+    label: 'GENERATIVE / ALGORITHM',
+  },
+  'type-clock': {
+    displayTitle: 'TYPE CLOCK · 排版时钟',
+    description: '只有时间本身：巨大的数字，和一条走完当天的细线。',
+    artwork: 'clock',
+    displayOrder: 12,
+    label: 'MINIMAL / TIME',
+  },
+  'poster-lab': {
+    displayTitle: 'POSTER LAB · 海报实验室',
+    description: '写一句话，自动排成一张瑞士风海报，可导出 PNG。',
+    artwork: 'poster',
+    displayOrder: 13,
+    label: 'TYPOGRAPHY / GENERATOR',
   },
 };
 

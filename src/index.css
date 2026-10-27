@@ -1527,6 +1527,31 @@ iframe {
   color:#e9e0ba;
 }
 
+.artwork-gravity {
+  background:#080c16;
+  color:#b9a7ff;
+}
+
+.artwork-beat {
+  background:#14161b;
+  color:#c8f560;
+}
+
+.artwork-maze {
+  background:#f2f0e9;
+  color:#23262b;
+}
+
+.artwork-clock {
+  background:#f7f7f4;
+  color:#141413;
+}
+
+.artwork-poster {
+  background:#f4efe6;
+  color:#1c1b19;
+}
+
 .motion-fallback {
   position:absolute;
   inset:30% auto auto 15%;

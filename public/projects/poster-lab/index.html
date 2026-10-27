@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="zh-CN" data-tags="tools,generative">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2f2ee">
+<meta name="description" content="输入一句话，即时排成一张瑞士风海报：自动断行、自动适配字号，可导出 PNG。">
+<title>POSTER LAB · 海报实验室</title>
+<style>
+  :root{
+    color-scheme:light;
+    --bg:#f2f2ee;
+    --ink:#15161a;
+    --muted:#8a8b86;
+    --line:#dedfd7;
+    --paper:#fff;
+    --accent:#c9503a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;min-height:100svh;background:var(--bg);color:var(--ink);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  }
+  .wrap{
+    max-width:1120px;margin:0 auto;padding:clamp(18px,3.6vw,40px) clamp(16px,3.4vw,32px) 36px;
+    display:grid;grid-template-columns:1fr minmax(300px,352px);gap:clamp(20px,4vw,46px);align-items:start;
+  }
+
+  .panel{position:sticky;top:clamp(18px,3.6vw,40px)}
+  .eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:0}
+  h1{margin:9px 0 0;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.8px;font-weight:700;line-height:1.2}
+  h1 em{font-style:normal;color:var(--accent)}
+  .lede{margin:10px 0 22px;color:#6e6f6a;font-size:13px}
+
+  label.field{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  input[type=text]{
+    width:100%;font:inherit;font-size:15px;color:var(--ink);
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;transition:border-color .18s,box-shadow .18s;
+  }
+  input[type=text]:focus{outline:none;border-color:#a9aaa2;box-shadow:0 0 0 3px #15161a0d}
+
+  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:18px}
+  .styles button{
+    appearance:none;cursor:pointer;font:inherit;font-size:12px;
+    border:1px solid var(--line);background:var(--paper);color:#5d5e59;
+    border-radius:8px;padding:9px 4px;transition:border-color .15s,color .15s,background .15s;
+  }
+  .styles button:hover{border-color:#bfc0b7;color:var(--ink)}
+  .styles button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#f7f7f3}
+  .styles button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .palettes{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .palettes button{
+    appearance:none;cursor:pointer;width:34px;height:34px;border-radius:50%;
+    border:2px solid transparent;padding:0;position:relative;
+    box-shadow:inset 0 0 0 1px #00000014;transition:transform .12s,border-color .15s;
+  }
+  .palettes button:hover{transform:scale(1.08)}
+  .palettes button[aria-pressed="true"]{border-color:var(--ink)}
+  .palettes button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  .actions{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+  .actions button{
+    appearance:none;cursor:pointer;font:inherit;font-size:13px;
+    border-radius:9px;padding:11px 18px;border:1px solid var(--line);
+    background:var(--paper);color:#4b4c47;transition:border-color .15s,color .15s,background .15s;
+  }
+  .actions button:hover{border-color:#c0c1b8;color:var(--ink)}
+  .actions button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .actions .primary{background:var(--ink);border-color:var(--ink);color:#f7f7f3;font-weight:600}
+  .actions .primary:hover{background:#2b2d33;border-color:#2b2d33}
+
+  .tip{margin-top:18px;font-size:11.5px;color:var(--muted);line-height:1.9}
+  .tip kbd{font:inherit;font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 5px;background:var(--paper)}
+
+  .stage{
+    background:#e8e8e2;border-radius:16px;padding:clamp(14px,2.6vw,28px);
+    display:flex;align-items:center;justify-content:center;min-height:40vh;
+  }
+  canvas{
+    display:block;width:100%;max-width:560px;height:auto;border-radius:2px;
+    box-shadow:0 20px 50px -28px #15161a80,0 2px 8px -4px #15161a26;
+    background:#fff;cursor:pointer;
+  }
+  .caption{
+    max-width:560px;margin:14px auto 0;text-align:center;
+    font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#6f706a;
+  }
+
+  @media(max-width:860px){
+    .wrap{grid-template-columns:1fr;gap:22px}
+    .panel{position:static;order:2}
+    .stage{order:1;padding:14px}
+    .lede{margin-bottom:18px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stage">
+    <div>
+      <canvas id="poster" width="1080" height="1350" role="img" aria-label="生成的排版海报预览" title="点击换一张"></canvas>
+      <p class="caption" id="caption">1080 × 1350 · 点击海报换一张</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Poster Lab / 001</p>
+    <h1>海报<em>实验室</em></h1>
+    <p class="lede">写一句话，它会自动断行、缩放到刚好撑满版心，再配一套克制的配色。</p>
+
+    <label class="field" for="text">海报标题</label>
+    <input id="text" type="text" value="把好奇心写成代码" maxlength="40" autocomplete="off" spellcheck="false">
+
+    <div class="styles" role="group" aria-label="版式">
+      <button data-layout="stack" aria-pressed="true">堆叠</button>
+      <button data-layout="split" aria-pressed="false">分割</button>
+      <button data-layout="concrete" aria-pressed="false">具象</button>
+    </div>
+
+    <div class="palettes" id="palettes" role="group" aria-label="配色"></div>
+
+    <div class="actions">
+      <button class="primary" id="export">导出 PNG</button>
+      <button id="shuffle">换一套</button>
+    </div>
+
+    <p class="tip">
+      <kbd>Enter</kbd> 重新排版 · <kbd>R</kbd> 随机配色<br>
+      海报在本机生成，不上传任何内容。
+    </p>
+  </div>
+</div>
+
+<script>
+'use strict';
+(function () {
+  var canvas = document.getElementById('poster');
+  var ctx = canvas.getContext('2d');
+  var textInput = document.getElementById('text');
+  var captionEl = document.getElementById('caption');
+  var paletteWrap = document.getElementById('palettes');
+
+  var W = canvas.width;
+  var H = canvas.height;
+  var M = 84;
+
+  var FAMILY = '-apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif';
+
+  var PALETTES = [
+    { name: 'Risograph', bg: '#f4efe6', ink: '#1c1b19', accent: '#e4572e', soft: '#2f6f6a' },
+    { name: 'Noir', bg: '#141414', ink: '#f2f0ec', accent: '#ff4d3d', soft: '#8f8f8a' },
+    { name: 'Klein', bg: '#0f2a9e', ink: '#fdfcf7', accent: '#ffd400', soft: '#9fb0ff' },
+    { name: 'Sage', bg: '#dfe5d8', ink: '#22301f', accent: '#c4553a', soft: '#6f8468' },
+    { name: 'Paper', bg: '#faf7f0', ink: '#14140f', accent: '#1f6feb', soft: '#b8a68c' }
+  ];
+
+  var LAYOUTS = ['stack', 'split', 'concrete'];
+
+  var state = { palette: 0, layout: 'stack' };
+
+  function font(size, weight) {
+    return (weight || 700) + ' ' + size + 'px ' + FAMILY;
+  }
+
+  function today() {
+    var now = new Date();
+    var months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    return now.getFullYear() + '.' + months[now.getMonth()] + '.' + (now.getDate() < 10 ? '0' : '') + now.getDate();
+  }
+
+  function splitLines(text, maxLines) {
+    var clean = text.trim().replace(/\s+/g, ' ');
+    if (!clean) return ['—'];
+    var chars = Array.from(clean);
+
+    if (chars.length <= maxLines) return chars;
+
+    // Latin phrases read better broken on spaces than mid-word.
+    if (clean.indexOf(' ') > -1 && chars.length < 30) {
+      var words = clean.split(' ');
+      var groups = Math.min(maxLines, words.length);
+      var lines = [];
+      var per = Math.ceil(words.length / groups);
+      for (var i = 0; i < words.length; i += per) {
+        lines.push(words.slice(i, i + per).join(' '));
+      }
+      return lines;
+    }
+
+    var perChar = Math.ceil(chars.length / maxLines);
+    var out = [];
+    for (var j = 0; j < chars.length; j += perChar) {
+      out.push(chars.slice(j, j + perChar).join(''));
+    }
+    return out;
+  }
+
+  function fitSize(lines, maxWidth, startSize, minSize) {
+    var size = startSize;
+    while (size > minSize) {
+      ctx.font = font(size);
+      var widest = 0;
+      for (var i = 0; i < lines.length; i++) {
+        widest = Math.max(widest, ctx.measureText(lines[i]).width);
+      }
+      if (widest <= maxWidth) break;
+      size -= 4;
+    }
+    return size;
+  }
+
+  function drawTitle(lines, x, bottomY, maxWidth, startSize, color) {
+    var size = fitSize(lines, maxWidth, startSize, 24);
+    var lineHeight = size * 1.04;
+    ctx.font = font(size);
+    ctx.fillStyle = color;
+    ctx.textBaseline = 'alphabetic';
+    for (var i = 0; i < lines.length; i++) {
+      var y = bottomY - (lines.length - 1 - i) * lineHeight;
+      ctx.fillText(lines[i], x, y);
+    }
+    return { size: size, lineHeight: lineHeight };
+  }
+
+  function tracked(text, x, y, spacing, color, size, weight, align) {
+    ctx.font = font(size, weight);
+    ctx.fillStyle = color;
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = align || 'left';
+    if ('letterSpacing' in ctx) {
+      ctx.letterSpacing = spacing + 'px';
+      ctx.fillText(text, x, y);
+      ctx.letterSpacing = '0px';
+      ctx.textAlign = 'left';
+      return;
+    }
+    var cursor = x;
+    var widths = [];
+    var total = 0;
+    for (var i = 0; i < text.length; i++) {
+      var w = ctx.measureText(text[i]).width;
+      widths.push(w);
+      total += w + (i ? spacing : 0);
+    }
+    if (align === 'right') cursor = x - total;
+    for (var j = 0; j < text.length; j++) {
+      ctx.fillText(text[j], cursor, y);
+      cursor += widths[j] + spacing;
+    }
+    ctx.textAlign = 'left';
+  }
+
+  function layoutStack(p, lines) {
+    ctx.fillStyle = p.bg;
+    ctx.fillRect(0, 0, W, H);
+
+    tracked('POSTER LAB', M, M + 8, 3, p.ink, 20, 600);
+    tracked(today(), W - M, M + 8, 3, p.soft, 20, 500, 'right');
+
+    // A single accent square anchors the composition.
+    ctx.fillStyle = p.accent;
+    ctx.fillRect(W - M - 96, M + 44, 96, 96);
+
+    var maxWidth = W - M * 2;
+    drawTitle(lines, M, H - M - 200, maxWidth, 300, p.ink);
+
+    ctx.strokeStyle = p.ink;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(M, H - M - 150);
+    ctx.lineTo(W - M, H - M - 150);
+    ctx.stroke();
+
+    tracked('TYPOGRAPHY / GENERATED IN BROWSER', M, H - M - 108, 2.4, p.soft, 18, 500);
+    tracked('NO. 001', W - M, H - M - 108, 2.4, p.ink, 18, 600, 'right');
+    tracked('奇点空间 · SINGULARITY SPACE', M, H - M - 60, 2.4, p.ink, 18, 600);
+  }
+
+  function layoutSplit(p, lines) {
+    ctx.fillStyle = p.bg;
+    ctx.fillRect(0, 0, W, H);
+
+    var splitY = Math.round(H * 0.58);
+    ctx.fillStyle = p.accent;
+    ctx.fillRect(0, splitY, W, H - splitY);
+
+    tracked('POSTER LAB / SPLIT', M, M + 8, 3, p.ink, 20, 600);
+    tracked(today(), W - M, M + 8, 3, p.soft, 20, 500, 'right');
+
+    var maxWidth = W - M * 2;
+    drawTitle(lines, M, splitY - 120, maxWidth, 260, p.ink);
+
+    ctx.strokeStyle = p.bg;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(M, splitY + 92);
+    ctx.lineTo(W - M, splitY + 92);
+    ctx.stroke();
+
+    tracked('TYPOGRAPHY / H5 POSTER', M, H - M - 30, 2.4, p.bg, 18, 600);
+    tracked('NO. 001', W - M, H - M - 30, 2.4, p.bg, 18, 600, 'right');
+
+    // One oversized glyph in the colour block, cropped by the canvas edge.
+    var glyph = Array.from(lines[0])[0] || 'A';
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    ctx.font = font(520);
+    ctx.fillStyle = p.bg;
+    ctx.textBaseline = 'top';
+    ctx.fillText(glyph, W - M - 300, splitY + 40);
+    ctx.restore();
+  }
+
+  function layoutConcrete(p, lines) {
+    ctx.fillStyle = p.bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Baseline grid, drawn only as ticks on the margin.
+    ctx.fillStyle = p.soft;
+    for (var i = 0; i <= 12; i++) {
+      var y = M + i * ((H - M * 2) / 12);
+      ctx.fillRect(0, y, 26, 1);
+    }
+
+    var first = Array.from(lines[0])[0] || 'A';
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.font = font(760);
+    ctx.fillStyle = p.accent;
+    ctx.textBaseline = 'top';
+    ctx.fillText(first, M - 30, H * 0.18);
+    ctx.restore();
+
+    tracked('POSTER LAB / CONCRETE', M + 46, M + 8, 3, p.ink, 20, 600);
+    tracked(today(), W - M, M + 8, 3, p.soft, 20, 500, 'right');
+
+    var half = Math.ceil(lines.length / 2);
+    var left = lines.slice(0, half);
+    var right = lines.slice(half);
+    var colWidth = (W - M * 2 - 40) / 2;
+
+    drawTitle(left, M + 46, H - M - 210, colWidth, 150, p.ink);
+    if (right.length) {
+      drawTitle(right, M + 46 + colWidth + 40, H - M - 210, colWidth, 150, p.accent);
+    }
+
+    ctx.strokeStyle = p.ink;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(M + 46, H - M - 150);
+    ctx.lineTo(W - M, H - M - 150);
+    ctx.stroke();
+
+    tracked('SINGULARITY SPACE', M + 46, H - M - 106, 2.4, p.ink, 18, 600);
+    tracked('NO. 001', W - M, H - M - 106, 2.4, p.ink, 18, 600, 'right');
+  }
+
+  function render() {
+    var p = PALETTES[state.palette];
+    var maxLines = state.layout === 'concrete' ? 4 : 3;
+    var lines = splitLines(textInput.value, maxLines);
+
+    if (state.layout === 'split') layoutSplit(p, lines);
+    else if (state.layout === 'concrete') layoutConcrete(p, lines);
+    else layoutStack(p, lines);
+
+    captionEl.textContent = '1080 × 1350 · ' + p.name + ' · 点击海报换一张';
+  }
+
+  function buildPalettes() {
+    PALETTES.forEach(function (p, index) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.title = p.name;
+      btn.setAttribute('aria-label', '配色 ' + p.name);
+      btn.setAttribute('aria-pressed', String(index === state.palette));
+      btn.style.background = 'linear-gradient(135deg,' + p.accent + ' 0 50%,' + p.bg + ' 50% 100%)';
+      btn.addEventListener('click', function () {
+        state.palette = index;
+        Array.prototype.forEach.call(paletteWrap.children, function (child, i) {
+          child.setAttribute('aria-pressed', String(i === index));
+        });
+        render();
+      });
+      paletteWrap.appendChild(btn);
+    });
+  }
+
+  document.querySelectorAll('[data-layout]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state.layout = btn.dataset.layout;
+      document.querySelectorAll('[data-layout]').forEach(function (other) {
+        other.setAttribute('aria-pressed', String(other === btn));
+      });
+      render();
+    });
+  });
+
+  textInput.addEventListener('input', render);
+  textInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') { event.preventDefault(); render(); }
+  });
+
+  document.getElementById('shuffle').addEventListener('click', function () {
+    state.palette = (state.palette + 1 + Math.floor(Math.random() * (PALETTES.length - 1))) % PALETTES.length;
+    state.layout = LAYOUTS[Math.floor(Math.random() * LAYOUTS.length)];
+    Array.prototype.forEach.call(paletteWrap.children, function (child, i) {
+      child.setAttribute('aria-pressed', String(i === state.palette));
+    });
+    document.querySelectorAll('[data-layout]').forEach(function (other) {
+      other.setAttribute('aria-pressed', String(other.dataset.layout === state.layout));
+    });
+    render();
+  });
+
+  canvas.addEventListener('click', function () {
+    state.layout = LAYOUTS[(LAYOUTS.indexOf(state.layout) + 1) % LAYOUTS.length];
+    document.querySelectorAll('[data-layout]').forEach(function (other) {
+      other.setAttribute('aria-pressed', String(other.dataset.layout === state.layout));
+    });
+    render();
+  });
+
+  document.getElementById('export').addEventListener('click', function () {
+    var link = document.createElement('a');
+    var name = (textInput.value.trim() || 'poster').slice(0, 16).replace(/[\\/:*?"<>|\s]+/g, '-');
+    link.download = 'poster-' + name + '.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  });
+
+  window.addEventListener('keydown', function (event) {
+    var typing = document.activeElement === textInput;
+    if ((event.key === 'r' || event.key === 'R') && !typing) document.getElementById('shuffle').click();
+  });
+
+  buildPalettes();
+  render();
+})();
+</script>
+</body>
+</html>

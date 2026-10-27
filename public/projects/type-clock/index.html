@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN" data-tags="tools">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f4">
+<meta name="description" content="一只只有时间本身的时钟：巨大会呼吸的数字、一条走完当天的细线。">
+<title>TYPE CLOCK · 排版时钟</title>
+<style>
+  :root{
+    color-scheme:light;
+    --bg:#f7f7f4;
+    --ink:#131413;
+    --muted:#9a9b96;
+    --line:#e4e4de;
+    --tint:#7fb0d8;
+    --accent:#c9503a;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+    overflow:hidden;
+  }
+  /* A whisper of colour behind the numbers, keyed to the hour of the day. */
+  body::before{
+    content:"";position:fixed;inset:-30% -10% auto -10%;height:70vh;
+    background:radial-gradient(60% 60% at 50% 0%,color-mix(in srgb,var(--tint) 16%,transparent),transparent 72%);
+    transition:background 2.4s ease;
+    pointer-events:none;
+  }
+
+  .frame{
+    position:relative;height:100%;
+    display:flex;flex-direction:column;
+    padding:clamp(20px,4vw,44px) clamp(20px,5vw,56px);
+  }
+
+  .meta{
+    display:flex;justify-content:space-between;gap:16px;
+    font-size:10px;letter-spacing:2.6px;text-transform:uppercase;color:var(--muted);
+  }
+  .meta b{font-weight:500;color:#6f716c}
+
+  .center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+
+  .clock{
+    display:flex;align-items:baseline;justify-content:center;gap:.06em;
+    font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
+    letter-spacing:-.045em;line-height:.86;
+  }
+  #time{font-size:clamp(72px,19vw,190px);font-weight:300}
+  #sec{
+    font-size:clamp(20px,4.4vw,40px);font-weight:300;color:var(--muted);
+    letter-spacing:-.02em;transition:opacity .3s;
+  }
+  #sec.hidden{opacity:0}
+
+  .date{
+    margin:clamp(14px,3vw,26px) 0 0;
+    font-size:clamp(12px,1.7vw,15px);letter-spacing:.22em;color:#6f716c;
+  }
+
+  .bottom{padding-bottom:2px}
+  .dayline{
+    position:relative;height:1px;background:var(--line);overflow:hidden;
+  }
+  .dayline i{
+    position:absolute;inset:0 auto 0 0;width:0;background:var(--ink);
+    transition:width .9s cubic-bezier(.2,.8,.2,1);
+  }
+  .daymeta{
+    display:flex;justify-content:space-between;gap:12px;margin:10px 0 0;
+    font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+    font-variant-numeric:tabular-nums;
+  }
+
+  .controls{
+    display:flex;gap:6px;margin-top:clamp(18px,3vw,26px);
+    opacity:.35;transition:opacity .3s;
+  }
+  .frame:hover .controls,.controls:focus-within{opacity:1}
+  .controls button{
+    appearance:none;cursor:pointer;font:inherit;font-size:10.5px;letter-spacing:1.6px;
+    text-transform:uppercase;color:#7d7f7a;background:none;
+    border:1px solid transparent;border-radius:999px;padding:6px 12px;
+    transition:border-color .2s,color .2s;
+  }
+  .controls button:hover{color:var(--ink);border-color:var(--line)}
+  .controls button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .controls button[aria-pressed="true"]{color:var(--ink);border-color:var(--line)}
+
+  @media(max-width:560px){
+    .meta b{display:none}
+    .clock{gap:.02em}
+    #sec{font-size:20px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    body::before{transition:none}
+    .dayline i{transition:none}
+    .controls{opacity:1}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <p class="meta">
+    <span>Local time</span>
+    <b id="zone">Hangzhou · UTC+8</b>
+  </p>
+
+  <div class="center">
+    <div class="clock" role="timer" aria-live="off" aria-atomic="true">
+      <span id="time">--:--</span>
+      <span id="sec">--</span>
+    </div>
+    <p class="date" id="date">—</p>
+  </div>
+
+  <div class="bottom">
+    <div class="dayline"><i id="fill"></i></div>
+    <div class="daymeta">
+      <span id="pct">今日进度 0%</span>
+      <span id="countdown">距明日 00:00 —</span>
+    </div>
+    <div class="controls">
+      <button id="format" aria-pressed="false">24 小时制</button>
+      <button id="seconds" aria-pressed="true">显示秒</button>
+      <button id="full">全屏</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+(function () {
+  var timeEl = document.getElementById('time');
+  var secEl = document.getElementById('sec');
+  var dateEl = document.getElementById('date');
+  var fillEl = document.getElementById('fill');
+  var pctEl = document.getElementById('pct');
+  var countdownEl = document.getElementById('countdown');
+  var zoneEl = document.getElementById('zone');
+  var formatBtn = document.getElementById('format');
+  var secondsBtn = document.getElementById('seconds');
+
+  var WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  var showSeconds = true;
+  var use24 = true;
+  var lastHour = -1;
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  // Warm at dawn, cool at midday, violet at night — the only colour in here.
+  function tintFor(hour) {
+    if (hour >= 5 && hour < 9) return '#e8965e';
+    if (hour >= 9 && hour < 16) return '#7fb0d8';
+    if (hour >= 16 && hour < 19) return '#c98a6a';
+    return '#6b7fb0';
+  }
+
+  function tick() {
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    var s = now.getSeconds();
+
+    var displayHour = h;
+    if (!use24) {
+      displayHour = h % 12;
+      if (displayHour === 0) displayHour = 12;
+    }
+    timeEl.textContent = (use24 ? pad(displayHour) : displayHour) + ':' + pad(m);
+    secEl.textContent = pad(s);
+
+    if (h !== lastHour) {
+      lastHour = h;
+      document.documentElement.style.setProperty('--tint', tintFor(h));
+    }
+
+    dateEl.textContent =
+      now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日　' +
+      WEEKDAYS[now.getDay()];
+
+    var secondsOfDay = h * 3600 + m * 60 + s;
+    var ratio = secondsOfDay / 86400;
+    fillEl.style.width = (ratio * 100).toFixed(3) + '%';
+    pctEl.textContent = '今日进度 ' + Math.floor(ratio * 100) + '%';
+
+    var remaining = 86400 - secondsOfDay;
+    var rh = Math.floor(remaining / 3600);
+    var rm = Math.floor((remaining % 3600) / 60);
+    countdownEl.textContent = '距明日 00:00 ' + rh + ' 小时 ' + rm + ' 分';
+
+    document.title = pad(h) + ':' + pad(m) + ' · ' + WEEKDAYS[now.getDay()];
+  }
+
+  formatBtn.addEventListener('click', function () {
+    use24 = !use24;
+    formatBtn.textContent = use24 ? '24 小时制' : '12 小时制';
+    formatBtn.setAttribute('aria-pressed', String(!use24));
+    tick();
+  });
+
+  secondsBtn.addEventListener('click', function () {
+    showSeconds = !showSeconds;
+    secEl.classList.toggle('hidden', !showSeconds);
+    secondsBtn.setAttribute('aria-pressed', String(showSeconds));
+    secondsBtn.textContent = showSeconds ? '显示秒' : '隐藏秒';
+  });
+
+  document.getElementById('full').addEventListener('click', function () {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+  });
+
+  window.addEventListener('keydown', function (event) {
+    if (event.key === 's' || event.key === 'S') secondsBtn.click();
+    if (event.key === 't' || event.key === 'T') formatBtn.click();
+  });
+
+  try {
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (tz) zoneEl.textContent = tz.replace('_', ' ');
+  } catch {
+    /* Intl is optional; the static label is fine. */
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

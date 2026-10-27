@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="zh-CN" data-tags="interactive,audio">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c0d10">
+<meta name="description" content="一台跑在浏览器里的 16 步鼓机：合成鼓组、可调速度与摆动，点格子就能编出一段节奏。">
+<title>BEAT FORGE · 16 步鼓机</title>
+<style>
+  :root{
+    color-scheme:dark;
+    --bg:#0c0d10;
+    --panel:#14161b;
+    --cell:#1b1e25;
+    --cell-hover:#262b34;
+    --line:#262a33;
+    --ink:#e9edf2;
+    --muted:#79828f;
+    --lime:#c8f560;
+    --pink:#ff6b9d;
+    --cyan:#5ad2f4;
+    --amber:#ffc663;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;min-height:100svh;background:var(--bg);color:var(--ink);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+    display:flex;flex-direction:column;
+    background-image:radial-gradient(120% 80% at 50% -20%,#171b23 0%,transparent 60%);
+  }
+  .wrap{width:100%;max-width:920px;margin:0 auto;padding:clamp(18px,4vw,38px) clamp(14px,3.4vw,30px) 34px;flex:1;display:flex;flex-direction:column;justify-content:center}
+
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:clamp(20px,3.4vw,34px);flex-wrap:wrap}
+  .brand{font-size:10px;letter-spacing:3.4px;color:var(--muted);text-transform:uppercase}
+  .brand h1{margin:7px 0 0;font-size:clamp(23px,4.6vw,34px);letter-spacing:-.8px;font-weight:680;color:var(--ink);text-transform:none}
+  .brand h1 span{color:var(--lime)}
+  .sub{margin:6px 0 0;color:var(--muted);font-size:12.5px}
+
+  .transport{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .btn{
+    appearance:none;cursor:pointer;font:inherit;font-size:12.5px;
+    border:1px solid var(--line);background:var(--panel);color:#c2cad6;
+    border-radius:9px;padding:10px 15px;transition:border-color .15s,color .15s,background .15s,transform .08s;
+  }
+  .btn:hover{border-color:#3b424f;color:var(--ink)}
+  .btn:active{transform:scale(.97)}
+  .btn:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+  .btn.play{background:var(--lime);border-color:var(--lime);color:#12180a;font-weight:680;min-width:88px}
+  .btn.play:hover{background:#d5ff7a;border-color:#d5ff7a}
+  .btn.play[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#1a0710}
+
+  .controls{display:flex;gap:clamp(10px,2vw,22px);flex-wrap:wrap;align-items:center;margin-bottom:clamp(16px,2.6vw,24px)}
+  .knob{display:flex;align-items:center;gap:9px;font-size:11px;letter-spacing:1.4px;color:var(--muted);text-transform:uppercase}
+  .knob output{font-variant-numeric:tabular-nums;color:var(--ink);font-size:13px;min-width:3.6em;letter-spacing:0;text-transform:none}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:clamp(88px,16vw,150px);height:3px;border-radius:3px;
+    background:var(--line);outline-offset:6px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+    background:var(--lime);cursor:pointer;border:2px solid var(--bg);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:14px;height:14px;border-radius:50%;background:var(--lime);cursor:pointer;border:2px solid var(--bg);
+  }
+
+  .sequencer{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:clamp(10px,2vw,16px);overflow:hidden}
+  .ruler,.row{display:grid;grid-template-columns:74px repeat(16,minmax(0,1fr));gap:clamp(3px,.8vw,6px)}
+  .ruler{margin-bottom:6px}
+  .ruler i{font-style:normal;font-size:9.5px;color:#4d5563;text-align:center;font-variant-numeric:tabular-nums}
+  .ruler i:nth-child(4n+2){color:#7f8a99}
+
+  .row{margin-bottom:clamp(3px,.8vw,6px)}
+  .row:last-child{margin-bottom:0}
+
+  .track{
+    display:flex;align-items:center;gap:6px;
+    border:0;background:none;color:#9aa4b2;font:inherit;font-size:11px;letter-spacing:1.2px;
+    padding:0 6px 0 2px;cursor:pointer;border-radius:6px;text-align:left;
+    transition:color .15s,background .15s;
+  }
+  .track:hover{color:var(--ink);background:#1b1f27}
+  .track:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+  .track .dot{width:6px;height:6px;border-radius:50%;background:var(--c);flex:none;transition:opacity .15s,box-shadow .15s}
+  .track[aria-pressed="false"] .dot{opacity:.25;box-shadow:none}
+  .track[aria-pressed="false"]{color:#4e5765}
+  .track .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .cell{
+    position:relative;height:clamp(28px,5.2vw,38px);border:0;border-radius:5px;
+    background:var(--cell);cursor:pointer;padding:0;
+    transition:background .1s,box-shadow .1s,transform .06s;
+  }
+  .cell:hover:not(.on){background:var(--cell-hover)}
+  .cell:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+  .cell.on{background:var(--c);box-shadow:0 0 14px -2px var(--c)}
+  .cell.on::after{content:"";position:absolute;inset:0;border-radius:5px;box-shadow:inset 0 0 0 1px #ffffff26}
+  .cell.beat-1{background:#20242c}
+  .cell.beat-1.on{background:var(--c)}
+  .cell.playing::before{
+    content:"";position:absolute;inset:-3px;border-radius:7px;
+    border:1px solid #ffffff2e;pointer-events:none;
+  }
+  .cell.hit{animation:hit .18s ease-out}
+  @keyframes hit{
+    from{transform:scale(1.16);filter:brightness(1.7)}
+    to{transform:scale(1);filter:brightness(1)}
+  }
+
+  .presets{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:clamp(12px,2vw,18px)}
+  .presets span{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#586171;margin-right:2px}
+  .presets button{
+    appearance:none;cursor:pointer;font:inherit;font-size:11.5px;
+    border:1px solid var(--line);background:transparent;color:#8d97a5;
+    border-radius:999px;padding:6px 13px;transition:border-color .15s,color .15s;
+  }
+  .presets button:hover{border-color:#3b424f;color:var(--ink)}
+  .presets button:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+
+  footer{margin-top:clamp(16px,3vw,26px);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11.5px}
+  footer kbd{font:inherit;font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:#9aa4b2}
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+    background:#1d222b;border:1px solid #313845;color:var(--ink);
+    padding:9px 16px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;
+    transition:opacity .2s,transform .2s;z-index:9;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  @media(max-width:620px){
+    .ruler,.row{grid-template-columns:52px repeat(16,minmax(0,1fr));gap:3px}
+    .track{font-size:9.5px;letter-spacing:.4px;padding-right:2px}
+    .track .dot{display:none}
+    .cell{height:30px;border-radius:4px}
+    .controls{justify-content:space-between}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .cell,.btn{transition:none}
+    .cell.hit{animation:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      Beat Forge
+      <h1>十六步<span>鼓机</span></h1>
+      <p class="sub">全部声音由 Web Audio 实时合成，没有采样文件。</p>
+    </div>
+    <div class="transport">
+      <button class="btn play" id="play" aria-pressed="false">播放</button>
+      <button class="btn" id="random">随机</button>
+      <button class="btn" id="clear">清空</button>
+    </div>
+  </header>
+
+  <div class="controls">
+    <label class="knob">BPM <input type="range" id="bpm" min="70" max="168" value="104" step="1"><output id="bpmOut">104</output></label>
+    <label class="knob">摆动 <input type="range" id="swing" min="0" max="60" value="0" step="2"><output id="swingOut">0%</output></label>
+    <label class="knob">音量 <input type="range" id="volume" min="0" max="100" value="78" step="1"><output id="volumeOut">78</output></label>
+  </div>
+
+  <div class="presets" id="presets" role="group" aria-label="预设节奏">
+    <span>预设</span>
+    <button data-preset="boom bap">Boom Bap</button>
+    <button data-preset="techno">Techno</button>
+    <button data-preset="half time">Half Time</button>
+  </div>
+
+  <div class="sequencer" id="sequencer" aria-label="节奏编辑器"></div>
+
+  <footer>
+    <span>点击格子编排 · 点左侧轨道名静音</span>
+    <span><kbd>空格</kbd> 播放 / 停止 · <kbd>R</kbd> 随机 · <kbd>C</kbd> 清空</span>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+(function () {
+  var STEPS = 16;
+
+  var TRACKS = [
+    { id: 'kick',  name: 'KICK',  color: '#ff6b9d', gain: 1.0 },
+    { id: 'snare', name: 'SNARE', color: '#ffc663', gain: 0.72 },
+    { id: 'hat',   name: 'HAT',   color: '#5ad2f4', gain: 0.42 },
+    { id: 'clap',  name: 'CLAP',  color: '#c8f560', gain: 0.6 }
+  ];
+
+  var PRESETS = {
+    'boom bap': {
+      kick:  [1,0,0,0, 0,0,1,0, 0,0,1,0, 0,0,0,0],
+      snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1],
+      hat:   [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,1],
+      clap:  [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,1,0]
+    },
+    'techno': {
+      kick:  [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
+      snare: [0,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+      hat:   [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,1],
+      clap:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0]
+    },
+    'half time': {
+      kick:  [1,0,0,1, 0,0,0,0, 1,0,0,0, 0,0,1,0],
+      snare: [0,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+      hat:   [1,1,1,0, 1,1,1,0, 1,1,1,0, 1,1,1,0],
+      clap:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 0,0,0,0]
+    }
+  };
+
+  var pattern = {};
+  var muted = {};
+  TRACKS.forEach(function (t) { pattern[t.id] = new Array(STEPS).fill(0); muted[t.id] = false; });
+
+  var bpm = 104;
+  var swing = 0;
+  var volume = 78;
+
+  var ctx = null;
+  var master = null;
+  var noiseBuffer = null;
+  var playing = false;
+  var currentStep = 0;
+  var nextNoteTime = 0;
+  var timer = null;
+  var queue = [];
+
+  var sequencer = document.getElementById('sequencer');
+  var playBtn = document.getElementById('play');
+  var toastEl = document.getElementById('toast');
+  var toastTimer = null;
+
+  var cells = {};
+
+  /* ---------- audio ---------- */
+
+  function ensureAudio() {
+    if (ctx) return;
+    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+    ctx = new AudioCtx();
+    master = ctx.createGain();
+    master.gain.value = volume / 100;
+    var comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -16;
+    comp.ratio.value = 6;
+    master.connect(comp).connect(ctx.destination);
+
+    var length = Math.floor(ctx.sampleRate * 1.2);
+    noiseBuffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    var data = noiseBuffer.getChannelData(0);
+    for (var i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
+  }
+
+  function noiseSource(when, duration) {
+    var src = ctx.createBufferSource();
+    src.buffer = noiseBuffer;
+    src.loop = true;
+    src.start(when);
+    src.stop(when + duration);
+    return src;
+  }
+
+  function playKick(when, gain) {
+    var osc = ctx.createOscillator();
+    var amp = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, when);
+    osc.frequency.exponentialRampToValueAtTime(44, when + 0.13);
+    amp.gain.setValueAtTime(0.0001, when);
+    amp.gain.exponentialRampToValueAtTime(gain, when + 0.006);
+    amp.gain.exponentialRampToValueAtTime(0.0001, when + 0.42);
+    osc.connect(amp).connect(master);
+    osc.start(when);
+    osc.stop(when + 0.45);
+  }
+
+  function playSnare(when, gain) {
+    var src = noiseSource(when, 0.22);
+    var bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 1900;
+    bp.Q.value = 0.9;
+    var amp = ctx.createGain();
+    amp.gain.setValueAtTime(0.0001, when);
+    amp.gain.exponentialRampToValueAtTime(gain, when + 0.004);
+    amp.gain.exponentialRampToValueAtTime(0.0001, when + 0.2);
+    src.connect(bp).connect(amp).connect(master);
+
+    var body = ctx.createOscillator();
+    var bodyAmp = ctx.createGain();
+    body.type = 'triangle';
+    body.frequency.setValueAtTime(186, when);
+    bodyAmp.gain.setValueAtTime(0.0001, when);
+    bodyAmp.gain.exponentialRampToValueAtTime(gain * 0.42, when + 0.005);
+    bodyAmp.gain.exponentialRampToValueAtTime(0.0001, when + 0.11);
+    body.connect(bodyAmp).connect(master);
+    body.start(when);
+    body.stop(when + 0.13);
+  }
+
+  function playHat(when, gain, open) {
+    var duration = open ? 0.26 : 0.055;
+    var src = noiseSource(when, duration + 0.02);
+    var hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 7600;
+    var amp = ctx.createGain();
+    amp.gain.setValueAtTime(0.0001, when);
+    amp.gain.exponentialRampToValueAtTime(gain, when + 0.002);
+    amp.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+    src.connect(hp).connect(amp).connect(master);
+  }
+
+  function playClap(when, gain) {
+    // Three tight noise bursts read as a clap rather than a snare.
+    [0, 0.011, 0.022].forEach(function (offset, index) {
+      var src = noiseSource(when + offset, 0.13);
+      var bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 1250;
+      bp.Q.value = 1.6;
+      var amp = ctx.createGain();
+      var peak = gain * (index === 2 ? 1 : 0.62);
+      amp.gain.setValueAtTime(0.0001, when + offset);
+      amp.gain.exponentialRampToValueAtTime(peak, when + offset + 0.003);
+      amp.gain.exponentialRampToValueAtTime(0.0001, when + offset + 0.1);
+      src.connect(bp).connect(amp).connect(master);
+    });
+  }
+
+  function trigger(trackId, when, gain) {
+    if (trackId === 'kick') playKick(when, gain);
+    else if (trackId === 'snare') playSnare(when, gain);
+    else if (trackId === 'hat') playHat(when, gain, false);
+    else if (trackId === 'clap') playClap(when, gain);
+  }
+
+  /* ---------- transport ---------- */
+
+  function stepDuration() { return 60 / bpm / 4; }
+
+  function scheduleStep(step, when) {
+    var offset = (step % 2 === 1) ? stepDuration() * (swing / 100) * 0.5 : 0;
+    for (var i = 0; i < TRACKS.length; i++) {
+      var track = TRACKS[i];
+      if (!pattern[track.id][step] || muted[track.id]) continue;
+      trigger(track.id, when + offset, track.gain);
+    }
+    queue.push({ step: step, time: when });
+  }
+
+  function scheduler() {
+    while (nextNoteTime < ctx.currentTime + 0.12) {
+      scheduleStep(currentStep, nextNoteTime);
+      nextNoteTime += stepDuration();
+      currentStep = (currentStep + 1) % STEPS;
+    }
+  }
+
+  function paint() {
+    while (queue.length && queue[0].time <= ctx.currentTime) {
+      var item = queue.shift();
+      highlight(item.step);
+    }
+    if (playing) requestAnimationFrame(paint);
+  }
+
+  function highlight(step) {
+    for (var i = 0; i < TRACKS.length; i++) {
+      var track = TRACKS[i];
+      var cell = cells[track.id][step];
+      if (!cell) continue;
+      cell.classList.add('playing');
+      if (pattern[track.id][step] && !muted[track.id]) {
+        cell.classList.remove('hit');
+        void cell.offsetWidth;
+        cell.classList.add('hit');
+      }
+      var previous = cells[track.id][(step + STEPS - 1) % STEPS];
+      if (previous) previous.classList.remove('playing');
+    }
+  }
+
+  function start() {
+    ensureAudio();
+    if (ctx.state === 'suspended') ctx.resume();
+    playing = true;
+    playBtn.setAttribute('aria-pressed', 'true');
+    playBtn.textContent = '停止';
+    currentStep = 0;
+    queue = [];
+    nextNoteTime = ctx.currentTime + 0.06;
+    scheduler();
+    timer = setInterval(scheduler, 25);
+    requestAnimationFrame(paint);
+  }
+
+  function stop() {
+    playing = false;
+    playBtn.setAttribute('aria-pressed', 'false');
+    playBtn.textContent = '播放';
+    clearInterval(timer);
+    timer = null;
+    queue = [];
+    Object.keys(cells).forEach(function (id) {
+      cells[id].forEach(function (cell) { cell.classList.remove('playing', 'hit'); });
+    });
+  }
+
+  /* ---------- rendering ---------- */
+
+  function buildSequencer() {
+    var ruler = document.createElement('div');
+    ruler.className = 'ruler';
+    ruler.innerHTML = '<span></span>' + Array.from({ length: STEPS }, function (_, i) {
+      return '<i>' + (i % 4 === 0 ? (i / 4 + 1) : '·') + '</i>';
+    }).join('');
+    sequencer.appendChild(ruler);
+
+    TRACKS.forEach(function (track) {
+      var row = document.createElement('div');
+      row.className = 'row';
+      row.style.setProperty('--c', track.color);
+
+      var label = document.createElement('button');
+      label.className = 'track';
+      label.type = 'button';
+      label.setAttribute('aria-pressed', 'true');
+      label.setAttribute('aria-label', track.name + '（点击静音）');
+      label.innerHTML = '<span class="dot"></span><span class="name">' + track.name + '</span>';
+      label.addEventListener('click', function () {
+        muted[track.id] = !muted[track.id];
+        label.setAttribute('aria-pressed', String(!muted[track.id]));
+        toast(track.name + (muted[track.id] ? ' 已静音' : ' 已开启'));
+      });
+      row.appendChild(label);
+
+      cells[track.id] = [];
+      for (var s = 0; s < STEPS; s++) {
+        var cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = 'cell' + (s % 4 === 0 ? ' beat-1' : '');
+        cell.dataset.track = track.id;
+        cell.dataset.step = String(s);
+        cell.setAttribute('aria-label', track.name + ' 第 ' + (s + 1) + ' 步');
+        cell.setAttribute('aria-pressed', 'false');
+        cell.style.setProperty('--c', track.color);
+        cell.addEventListener('click', onCellClick);
+        cells[track.id].push(cell);
+        row.appendChild(cell);
+      }
+      sequencer.appendChild(row);
+    });
+    syncedPaint();
+  }
+
+  function onCellClick(event) {
+    var cell = event.currentTarget;
+    var track = cell.dataset.track;
+    var step = Number(cell.dataset.step);
+    pattern[track][step] = pattern[track][step] ? 0 : 1;
+    cell.classList.toggle('on', Boolean(pattern[track][step]));
+    cell.setAttribute('aria-pressed', String(Boolean(pattern[track][step])));
+    if (pattern[track][step] && !playing) {
+      // Auditioning a single cell still needs an audio graph.
+      ensureAudio();
+      if (ctx.state === 'suspended') ctx.resume();
+      var meta = TRACKS.filter(function (t) { return t.id === track; })[0];
+      trigger(track, ctx.currentTime + 0.01, meta.gain);
+    }
+  }
+
+  function syncedPaint() {
+    TRACKS.forEach(function (track) {
+      cells[track.id].forEach(function (cell, index) {
+        var on = Boolean(pattern[track.id][index]);
+        cell.classList.toggle('on', on);
+        cell.setAttribute('aria-pressed', String(on));
+      });
+    });
+  }
+
+  function toast(message) {
+    toastEl.textContent = message;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1800);
+  }
+
+  /* ---------- presets ---------- */
+
+  function loadPreset(name, announce) {
+    var preset = PRESETS[name];
+    TRACKS.forEach(function (track) {
+      pattern[track.id] = preset[track.id].slice();
+    });
+    syncedPaint();
+    if (announce !== false) toast('已载入 ' + name);
+  }
+
+  function randomize() {
+    TRACKS.forEach(function (track) {
+      var density = track.id === 'kick' ? 0.28 : track.id === 'hat' ? 0.45 : 0.18;
+      pattern[track.id] = pattern[track.id].map(function () {
+        return Math.random() < density ? 1 : 0;
+      });
+    });
+    pattern.kick[0] = 1;
+    syncedPaint();
+    if (!playing) toast('随机节奏已生成');
+  }
+
+  function clearAll() {
+    TRACKS.forEach(function (track) { pattern[track.id] = new Array(STEPS).fill(0); });
+    syncedPaint();
+    toast('已清空');
+  }
+
+  /* ---------- wiring ---------- */
+
+  document.querySelectorAll('[data-preset]').forEach(function (btn) {
+    btn.addEventListener('click', function () { loadPreset(btn.dataset.preset); });
+  });
+
+  playBtn.addEventListener('click', function () { playing ? stop() : start(); });
+  document.getElementById('random').addEventListener('click', randomize);
+  document.getElementById('clear').addEventListener('click', clearAll);
+
+  var bpmInput = document.getElementById('bpm');
+  var bpmOut = document.getElementById('bpmOut');
+  bpmInput.addEventListener('input', function () {
+    bpm = Number(bpmInput.value);
+    bpmOut.textContent = String(bpm);
+  });
+
+  var swingInput = document.getElementById('swing');
+  var swingOut = document.getElementById('swingOut');
+  swingInput.addEventListener('input', function () {
+    swing = Number(swingInput.value);
+    swingOut.textContent = swing + '%';
+  });
+
+  var volumeInput = document.getElementById('volume');
+  var volumeOut = document.getElementById('volumeOut');
+  volumeInput.addEventListener('input', function () {
+    volume = Number(volumeInput.value);
+    volumeOut.textContent = String(volume);
+    if (master) master.gain.value = volume / 100;
+  });
+
+  window.addEventListener('keydown', function (event) {
+    var tag = (event.target.tagName || '').toLowerCase();
+    var onControl = tag === 'input' || tag === 'textarea' || Boolean(event.target.closest && event.target.closest('button'));
+    // Space belongs to the focused control when one is focused, otherwise it is
+    // the transport toggle.
+    if (event.code === 'Space' && !onControl) { event.preventDefault(); playing ? stop() : start(); }
+    if (event.key === 'r' || event.key === 'R') randomize();
+    if (event.key === 'c' || event.key === 'C') clearAll();
+  });
+
+  buildSequencer();
+  loadPreset('boom bap', false);
+})();
+</script>
+</body>
+</html>

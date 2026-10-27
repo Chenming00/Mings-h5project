@@ -71,7 +71,7 @@ public/projects/my-awesome-project/
 <html lang="zh-CN" data-tags="data,map">
 ```
 
-可用的标签 id：`data` `map` `interactive` `game` `motion` `animation` `tools` `calculator` `finance` `personal` `portfolio` `resume` `quiz`。
+可用的标签 id：`data` `map` `interactive` `game` `motion` `animation` `tools` `calculator` `finance` `personal` `portfolio` `resume` `quiz` `audio` `generative`。
 
 > 构建时若发现项目没有标签，会在终端给出明确告警并列出目录名。
 
@@ -185,7 +185,7 @@ public/projects/my-awesome-project/
 │   ├── _redirects            # 手写 301 规则
 │   ├── og-cover.jpg          # 1200×630 分享图
 │   ├── projects.json         # 构建产物，已 gitignore
-│   └── projects/             # 9 个独立 H5 作品
+│   └── projects/             # 14 个独立 H5 作品
 ├── scripts/
 │   └── generate-projects.js  # 扫描目录 → projects.json
 ├── src/
@@ -242,7 +242,7 @@ public/projects/my-awesome-project/
 
 `public/_headers` 会随构建进入 `dist/`，为全站加上 `nosniff`、`Referrer-Policy`、`Permissions-Policy`、`X-Frame-Options` 与 CSP，并给 `/assets/*` 打上一年期 `immutable` 缓存。
 
-CSP 目前允许 `'unsafe-inline'`，因为九个作品各自内联了 `<style>`/`<script>`；同时为 `cdn.jsdelivr.net`（中国版地图字体）与 `fonts.googleapis.com`（motion-reel 字体）开了白名单。收紧 CSP 需要先把内联块改成带 nonce 的构建产物。
+CSP 目前允许 `'unsafe-inline'`，因为每个作品都内联了自己的 `<style>`/`<script>`；同时为 `cdn.jsdelivr.net`（中国版地图字体）与 `fonts.googleapis.com`（motion-reel 字体）开了白名单。收紧 CSP 需要先把内联块改成带 nonce 的构建产物。
 
 ### 其他平台
 
