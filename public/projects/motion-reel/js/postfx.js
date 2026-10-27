@@ -7,8 +7,8 @@
    ============================================================= */
 (function (root) {
   'use strict';
-  var REEL = root.REEL, M = REEL.M, K = REEL.K;
-  var rgba = M.rgba, clamp01 = M.clamp01, TAU = M.TAU;
+  var REEL = root.REEL, M = REEL.M;
+  var rgba = M.rgba, clamp01 = M.clamp01;
 
   function makeCanvas(w, h) {
     var c = document.createElement('canvas');

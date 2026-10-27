@@ -1,0 +1,33 @@
+# Cloudflare Pages response headers.
+#
+# CSP notes: every project ships its own inline <style>/<script>, and two of them
+# pull fonts from a CDN (coca-cola-cn → cdn.jsdelivr.net, motion-reel →
+# fonts.googleapis.com/gstatic.com). 'unsafe-inline' is therefore unavoidable
+# without rewriting nine independent pages; external font hosts are allowlisted
+# explicitly. No page uses eval/new Function, so 'unsafe-eval' is not granted.
+#
+# To tighten later: drop 'unsafe-inline' once the inline blocks carry nonces,
+# which requires the projects to be built through a template step instead of
+# being hand-maintained single files.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+
+# Vite fingerprints everything in /assets, so it can be cached forever.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Project covers and images change only on deploy; a day of caching is a safe
+# middle ground between repeat visits and freshness.
+/projects/*/*.webp
+  Cache-Control: public, max-age=86400
+
+/projects/*/*.jpg
+  Cache-Control: public, max-age=86400
+
+/projects/*/*.png
+  Cache-Control: public, max-age=86400

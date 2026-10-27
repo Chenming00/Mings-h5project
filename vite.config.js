@@ -16,14 +16,22 @@ export default defineConfig({
       name: 'projects-directory-index',
       apply: 'serve',
       configureServer(server) {
-        server.middlewares.use((req, _res, next) => {
-          const url = (req.url || '').split('?')[0];
-          if (!/^\/projects\/[^/]+\/?$/.test(url)) return next();
+        const publicDir = path.resolve(server.config.publicDir);
 
-          const projectDir = path.join(server.config.publicDir, url.replace(/^\//, ''));
+        server.middlewares.use((req, _res, next) => {
+          // Split the query off but keep it: dropping it silently broke
+          // `?p=slug` style params during local previews.
+          const [pathname, search] = (req.url || '').split('?');
+          if (!/^\/projects\/[^/]+\/?$/.test(pathname)) return next();
+
+          const projectDir = path.resolve(publicDir, pathname.replace(/^\//, ''));
+          // `[^/]+` happily matches `..`, which would walk out of publicDir.
+          if (!projectDir.startsWith(publicDir + path.sep)) return next();
+
           for (const entry of ['index.html', 'index.htm']) {
             if (fs.existsSync(path.join(projectDir, entry))) {
-              req.url = `${url.replace(/\/?$/, '/')}${entry}`;
+              const dirUrl = `${pathname.replace(/\/?$/, '/')}${entry}`;
+              req.url = search ? `${dirUrl}?${search}` : dirUrl;
               return next();
             }
           }
