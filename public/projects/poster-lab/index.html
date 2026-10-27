@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f2f2ee">
-<meta name="description" content="输入一句话，即时排成一张瑞士风海报：自动断行、自动适配字号，可导出 PNG。">
+<meta name="description" content="输入一句话，即时排成一张瑞士风海报：自动断行、自动适配字号、印刷质感、多尺寸导出 PNG。">
 <title>POSTER LAB · 海报实验室</title>
 <style>
   :root{
@@ -19,29 +19,47 @@
   *{box-sizing:border-box}
   body{
     margin:0;min-height:100svh;background:var(--bg);color:var(--ink);
-    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
     -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
   }
   .wrap{
-    max-width:1120px;margin:0 auto;padding:clamp(18px,3.6vw,40px) clamp(16px,3.4vw,32px) 36px;
-    display:grid;grid-template-columns:1fr minmax(300px,352px);gap:clamp(20px,4vw,46px);align-items:start;
+    max-width:1180px;margin:0 auto;padding:clamp(18px,3.6vw,40px) clamp(16px,3.4vw,32px) 36px;
+    display:grid;grid-template-columns:1fr minmax(300px,368px);gap:clamp(20px,4vw,46px);align-items:start;
   }
 
-  .panel{position:sticky;top:clamp(18px,3.6vw,40px)}
+  .panel{position:sticky;top:18px}
+  @media(min-width:861px){
+    /* The control column grew long; a sticky panel taller than the viewport
+       would trap its lower half off-screen, so it scrolls internally. */
+    .panel{max-height:calc(100svh - 36px);overflow-y:auto;padding-right:6px;scrollbar-width:thin}
+  }
   .eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:0}
   h1{margin:9px 0 0;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.8px;font-weight:700;line-height:1.2}
   h1 em{font-style:normal;color:var(--accent)}
-  .lede{margin:10px 0 22px;color:#6e6f6a;font-size:13px}
+  .lede{margin:10px 0 20px;color:#6e6f6a;font-size:13px}
 
-  label.field{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  label.field{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:16px 0 7px}
+  label.field:first-of-type{margin-top:0}
+  .input-wrap{position:relative}
   input[type=text]{
     width:100%;font:inherit;font-size:15px;color:var(--ink);
     background:var(--paper);border:1px solid var(--line);border-radius:10px;
-    padding:12px 14px;transition:border-color .18s,box-shadow .18s;
+    padding:11px 44px 11px 14px;transition:border-color .18s,box-shadow .18s;
   }
   input[type=text]:focus{outline:none;border-color:#a9aaa2;box-shadow:0 0 0 3px #15161a0d}
+  .clear{
+    position:absolute;right:5px;top:50%;transform:translateY(-50%);
+    appearance:none;border:0;background:none;cursor:pointer;
+    width:34px;height:34px;border-radius:8px;color:var(--muted);
+    font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;
+    transition:color .15s,background .15s;
+  }
+  .clear:hover{color:var(--ink);background:#15161a0a}
+  .clear:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .clear[hidden]{display:none}
+  .count{position:absolute;right:44px;top:50%;transform:translateY(-50%);font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums;pointer-events:none}
 
-  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:18px}
+  .styles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .styles button{
     appearance:none;cursor:pointer;font:inherit;font-size:12px;
     border:1px solid var(--line);background:var(--paper);color:#5d5e59;
@@ -51,15 +69,54 @@
   .styles button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#f7f7f3}
   .styles button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-  .palettes{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .palettes{display:flex;gap:8px;flex-wrap:wrap}
   .palettes button{
-    appearance:none;cursor:pointer;width:34px;height:34px;border-radius:50%;
+    appearance:none;cursor:pointer;width:30px;height:30px;border-radius:50%;
     border:2px solid transparent;padding:0;position:relative;
     box-shadow:inset 0 0 0 1px #00000014;transition:transform .12s,border-color .15s;
   }
   .palettes button:hover{transform:scale(1.08)}
   .palettes button[aria-pressed="true"]{border-color:var(--ink)}
   .palettes button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  .ratio-group{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .ratio-group button{
+    appearance:none;cursor:pointer;font:inherit;font-size:12px;
+    border:1px solid var(--line);background:var(--paper);color:#5d5e59;
+    border-radius:8px;padding:9px 4px;transition:border-color .15s,color .15s,background .15s;
+  }
+  .ratio-group button:hover{border-color:#bfc0b7;color:var(--ink)}
+  .ratio-group button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#f7f7f3}
+  .ratio-group button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .toggle{display:flex;align-items:center;gap:10px;font-size:13px;color:#5d5e59;cursor:pointer;user-select:none}
+  .toggle input{position:absolute;opacity:0;width:0;height:0}
+  .toggle .pill{
+    width:36px;height:21px;border-radius:11px;background:#d4d5cd;position:relative;
+    transition:background .2s;flex:none;
+  }
+  .toggle .pill::after{
+    content:"";position:absolute;top:2.5px;left:2.5px;width:16px;height:16px;border-radius:50%;
+    background:#fff;transition:transform .2s;box-shadow:0 1px 3px #0003;
+  }
+  .toggle input:checked + .pill{background:var(--ink)}
+  .toggle input:checked + .pill::after{transform:translateX(15px)}
+  .toggle input:focus-visible + .pill{outline:2px solid var(--accent);outline-offset:2px}
+
+  .position-row{display:flex;align-items:center;gap:10px}
+  .position-row label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;flex:1;height:22px;background:none;cursor:pointer;min-width:40px;
+  }
+  input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--line);border-radius:2px}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;
+    background:var(--ink);margin-top:-7px;border:0;transition:transform .1s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+  input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+  input[type=range]::-moz-range-track{height:2px;background:var(--line);border-radius:2px}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);border:0}
 
   .actions{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
   .actions button{
@@ -71,29 +128,41 @@
   .actions button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
   .actions .primary{background:var(--ink);border-color:var(--ink);color:#f7f7f3;font-weight:600}
   .actions .primary:hover{background:#2b2d33;border-color:#2b2d33}
+  .actions button[disabled]{opacity:.55;cursor:default}
 
-  .tip{margin-top:18px;font-size:11.5px;color:var(--muted);line-height:1.9}
+  .status{
+    margin:12px 0 0;font-size:11.5px;color:var(--accent);min-height:18px;
+    transition:opacity .25s;opacity:0;
+  }
+  .status.show{opacity:1}
+
+  .tip{margin-top:12px;font-size:11.5px;color:var(--muted);line-height:1.9}
   .tip kbd{font:inherit;font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 5px;background:var(--paper)}
 
   .stage{
     background:#e8e8e2;border-radius:16px;padding:clamp(14px,2.6vw,28px);
     display:flex;align-items:center;justify-content:center;min-height:40vh;
   }
+  .frame{position:relative;margin:0 auto}
   canvas{
-    display:block;width:100%;max-width:560px;height:auto;border-radius:2px;
+    display:block;width:100%;height:auto;border-radius:2px;
     box-shadow:0 20px 50px -28px #15161a80,0 2px 8px -4px #15161a26;
-    background:#fff;cursor:pointer;
+    background:#fff;cursor:grab;touch-action:pan-y;
+    opacity:1;transition:opacity .18s;
   }
+  canvas.fading{opacity:0}
+  canvas:active{cursor:grabbing}
   .caption{
-    max-width:560px;margin:14px auto 0;text-align:center;
+    margin:14px auto 0;text-align:center;
     font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#6f706a;
   }
 
   @media(max-width:860px){
     .wrap{grid-template-columns:1fr;gap:22px}
     .panel{position:static;order:2}
-    .stage{order:1;padding:14px}
-    .lede{margin-bottom:18px}
+    .stage{order:1;padding:12px}
+    .lede{margin-bottom:16px}
+    .actions button{flex:1;min-height:44px}
   }
   @media(prefers-reduced-motion:reduce){
     *{transition:none!important}
@@ -103,35 +172,84 @@
 <body>
 <div class="wrap">
   <div class="stage">
-    <div>
-      <canvas id="poster" width="1080" height="1350" role="img" aria-label="生成的排版海报预览" title="点击换一张"></canvas>
-      <p class="caption" id="caption">1080 × 1350 · 点击海报换一张</p>
+    <div class="frame">
+      <canvas id="poster" width="1080" height="1350" role="img" aria-label="生成的排版海报预览" title="拖拽调整标题位置 · 点击切换版式"></canvas>
+      <p class="caption" id="caption">1080 × 1350</p>
     </div>
   </div>
 
   <div class="panel">
-    <p class="eyebrow">Poster Lab / 001</p>
+    <p class="eyebrow">Poster Lab / 002</p>
     <h1>海报<em>实验室</em></h1>
-    <p class="lede">写一句话，它会自动断行、缩放到刚好撑满版心，再配一套克制的配色。</p>
+    <p class="lede">写一句话，自动断行、缩放到刚好撑满版心，再配印刷质感与克制配色。</p>
 
     <label class="field" for="text">海报标题</label>
-    <input id="text" type="text" value="把好奇心写成代码" maxlength="40" autocomplete="off" spellcheck="false">
-
-    <div class="styles" role="group" aria-label="版式">
-      <button data-layout="stack" aria-pressed="true">堆叠</button>
-      <button data-layout="split" aria-pressed="false">分割</button>
-      <button data-layout="concrete" aria-pressed="false">具象</button>
+    <div class="input-wrap">
+      <input id="text" type="text" value="把好奇心写成代码" maxlength="40" autocomplete="off" spellcheck="false">
+      <span class="count" id="count" aria-hidden="true"></span>
+      <button class="clear" id="clear-text" type="button" aria-label="清空标题" title="清空" hidden>×</button>
     </div>
 
+    <label class="field" for="sub">副标题（可选）</label>
+    <div class="input-wrap">
+      <input id="sub" type="text" maxlength="60" placeholder="一行小字，放在标题下方" autocomplete="off" spellcheck="false">
+      <span class="count" id="sub-count" aria-hidden="true"></span>
+      <button class="clear" id="clear-sub" type="button" aria-label="清空副标题" title="清空" hidden>×</button>
+    </div>
+
+    <label class="field" for="issue">编号</label>
+    <div class="input-wrap">
+      <input id="issue" type="text" value="001" maxlength="8" autocomplete="off" spellcheck="false">
+    </div>
+
+    <label class="field" for="credit">署名（页脚左侧）</label>
+    <div class="input-wrap">
+      <input id="credit" type="text" value="奇点空间" maxlength="24" autocomplete="off" spellcheck="false">
+      <button class="clear" id="clear-credit" type="button" aria-label="清空署名" title="清空" hidden>×</button>
+    </div>
+
+    <label class="field">版式</label>
+    <div class="styles" role="group" aria-label="版式">
+      <button type="button" data-layout="stack" aria-pressed="true">堆叠</button>
+      <button type="button" data-layout="split" aria-pressed="false">分割</button>
+      <button type="button" data-layout="concrete" aria-pressed="false">具象</button>
+      <button type="button" data-layout="grid" aria-pressed="false">编辑</button>
+      <button type="button" data-layout="crop" aria-pressed="false">裁切</button>
+      <button type="button" data-layout="inverse" aria-pressed="false">反白</button>
+    </div>
+
+    <label class="field">配色</label>
     <div class="palettes" id="palettes" role="group" aria-label="配色"></div>
 
-    <div class="actions">
-      <button class="primary" id="export">导出 PNG</button>
-      <button id="shuffle">换一套</button>
+    <label class="field">标题位置</label>
+    <div class="position-row">
+      <label for="posx">水平</label>
+      <input id="posx" type="range" min="0" max="100" value="0" aria-label="标题水平位置">
+      <label for="posy">垂直</label>
+      <input id="posy" type="range" min="0" max="100" value="62" aria-label="标题垂直位置">
     </div>
 
+    <label class="field">导出尺寸</label>
+    <div class="ratio-group" role="group" aria-label="导出尺寸">
+      <button type="button" data-ratio="4:5" aria-pressed="true">4:5</button>
+      <button type="button" data-ratio="1:1" aria-pressed="false">1:1</button>
+      <button type="button" data-ratio="9:16" aria-pressed="false">9:16</button>
+    </div>
+
+    <label class="field">质感</label>
+    <label class="toggle"><input type="checkbox" id="grain" checked><span class="pill"></span>纸张颗粒 + 套色错位</label>
+
+    <div class="actions">
+      <button class="primary" id="export" type="button">导出 PNG</button>
+      <button id="copyimg" type="button">复制图片</button>
+      <button id="copylink" type="button">复制链接</button>
+      <button id="shuffle" type="button">换一套</button>
+    </div>
+
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
     <p class="tip">
-      <kbd>Enter</kbd> 重新排版 · <kbd>R</kbd> 随机配色<br>
+      <kbd>Enter</kbd> 重新排版 · <kbd>R</kbd> 随机一套 · 拖拽海报调整标题位置<br>
       海报在本机生成，不上传任何内容。
     </p>
   </div>
@@ -140,67 +258,154 @@
 <script>
 'use strict';
 (function () {
+  // ---------- dom --------------------------------------------------------
   var canvas = document.getElementById('poster');
   var ctx = canvas.getContext('2d');
-  var textInput = document.getElementById('text');
   var captionEl = document.getElementById('caption');
   var paletteWrap = document.getElementById('palettes');
-
-  var W = canvas.width;
-  var H = canvas.height;
-  var M = 84;
+  var statusEl = document.getElementById('status');
+  var exportBtn = document.getElementById('export');
+  var copyImgBtn = document.getElementById('copyimg');
+  var copyLinkBtn = document.getElementById('copylink');
+  var shuffleBtn = document.getElementById('shuffle');
+  var textInput = document.getElementById('text');
+  var subInput = document.getElementById('sub');
+  var issueInput = document.getElementById('issue');
+  var creditInput = document.getElementById('credit');
+  var posXInput = document.getElementById('posx');
+  var posYInput = document.getElementById('posy');
+  var grainInput = document.getElementById('grain');
 
   var FAMILY = '-apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif';
 
+  var RATIOS = {
+    '4:5': { w: 1080, h: 1350, label: '1080 × 1350' },
+    '1:1': { w: 1080, h: 1080, label: '1080 × 1080' },
+    '9:16': { w: 1080, h: 1920, label: '1080 × 1920' }
+  };
+
+  // 12 curated palettes: Swiss / Bauhaus / risograph / zine / minimal / neon.
   var PALETTES = [
     { name: 'Risograph', bg: '#f4efe6', ink: '#1c1b19', accent: '#e4572e', soft: '#2f6f6a' },
     { name: 'Noir', bg: '#141414', ink: '#f2f0ec', accent: '#ff4d3d', soft: '#8f8f8a' },
     { name: 'Klein', bg: '#0f2a9e', ink: '#fdfcf7', accent: '#ffd400', soft: '#9fb0ff' },
     { name: 'Sage', bg: '#dfe5d8', ink: '#22301f', accent: '#c4553a', soft: '#6f8468' },
-    { name: 'Paper', bg: '#faf7f0', ink: '#14140f', accent: '#1f6feb', soft: '#b8a68c' }
+    { name: 'Paper', bg: '#faf7f0', ink: '#14140f', accent: '#1f6feb', soft: '#b8a68c' },
+    { name: 'Bauhaus', bg: '#f5f0e6', ink: '#1a1a1a', accent: '#d8342c', soft: '#f0b429' },
+    { name: 'Museum', bg: '#efece4', ink: '#211f1a', accent: '#8a3324', soft: '#a39f93' },
+    { name: 'Kvadrat', bg: '#233028', ink: '#f2efe6', accent: '#e8a33d', soft: '#93a898' },
+    { name: 'Zine Pink', bg: '#f7e8e2', ink: '#26160f', accent: '#e64b8b', soft: '#7d6a8f' },
+    { name: 'Yohji', bg: '#1b1b1e', ink: '#e8e6e0', accent: '#c9c7be', soft: '#77787c' },
+    { name: 'Norron', bg: '#0e1626', ink: '#e9eef5', accent: '#4fd2c2', soft: '#5d7fa3' },
+    { name: 'Riso Blue', bg: '#0f3054', ink: '#f4f1e8', accent: '#ff6b4a', soft: '#7fa8d9' }
   ];
 
-  var LAYOUTS = ['stack', 'split', 'concrete'];
+  var LAYOUTS = ['stack', 'split', 'concrete', 'grid', 'crop', 'inverse'];
+  // Per-layout grammar: concrete reads better with 4 short lines, crop is a
+  // two-line display treatment.
+  var LAYOUT_MAX_LINES = { stack: 3, split: 3, concrete: 4, grid: 3, crop: 2, inverse: 3 };
 
-  var state = { palette: 0, layout: 'stack' };
+  var DEFAULTS = {
+    text: '把好奇心写成代码',
+    sub: '',
+    issue: '001',
+    credit: '奇点空间',
+    layout: 'stack',
+    palette: 0,
+    ratio: '4:5',
+    grain: true,
+    pos: { x: 0, y: 0.62 }
+  };
 
+  var state = JSON.parse(JSON.stringify(DEFAULTS));
+  var statusTimer = null;
+
+  // ---------- small helpers ----------------------------------------------
   function font(size, weight) {
     return (weight || 700) + ' ' + size + 'px ' + FAMILY;
   }
 
   function today() {
     var now = new Date();
-    var months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-    return now.getFullYear() + '.' + months[now.getMonth()] + '.' + (now.getDate() < 10 ? '0' : '') + now.getDate();
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    return now.getFullYear() + '.' + pad(now.getMonth() + 1) + '.' + pad(now.getDate());
+  }
+
+  // ---------- line breaking ----------------------------------------------
+  function isCJK(ch) {
+    var code = ch.charCodeAt(0);
+    return (code >= 0x2e80 && code <= 0x9fff) ||
+           (code >= 0xac00 && code <= 0xd7af) ||
+           (code >= 0xf900 && code <= 0xfaff);
+  }
+
+  function isBreakable(before, after) {
+    if (!before || !after) return false;
+    var noLead = ',.!?;:、。，．！？；：」』）】》”’…%\'"';
+    var noTail = '「『（【《“‘';
+    if (noLead.indexOf(after) > -1) return false;
+    if (noTail.indexOf(before) > -1) return false;
+    return true;
+  }
+
+  function balanceChars(chars, maxLines) {
+    var per = Math.ceil(chars.length / maxLines);
+    var lines = [];
+    for (var i = 0; i < chars.length; i += per) {
+      lines.push(chars.slice(i, i + per).join(''));
+    }
+    for (var k = lines.length - 1; k > 0; k--) {
+      while (lines[k].length <= 1 && lines[k - 1].length > lines[k].length + 1) {
+        lines[k] = lines[k - 1].slice(-1) + lines[k];
+        lines[k - 1] = lines[k - 1].slice(0, -1);
+      }
+    }
+    for (var s = 1; s < lines.length; s++) {
+      var guard = 0;
+      while (guard++ < 10 && lines[s] && !isBreakable(lines[s - 1].slice(-1), lines[s][0]) && lines[s - 1].length > 1) {
+        lines[s] = lines[s - 1].slice(-1) + lines[s];
+        lines[s - 1] = lines[s - 1].slice(0, -1);
+      }
+    }
+    return lines;
+  }
+
+  function balanceWords(words, maxLines) {
+    if (words.length <= maxLines) return words;
+    var lines = [];
+    var per = Math.ceil(words.length / maxLines);
+    for (var i = 0; i < words.length; i += per) {
+      lines.push(words.slice(i, i + per).join(' '));
+    }
+    return lines;
   }
 
   function splitLines(text, maxLines) {
     var clean = text.trim().replace(/\s+/g, ' ');
     if (!clean) return ['—'];
     var chars = Array.from(clean);
-
     if (chars.length <= maxLines) return chars;
 
-    // Latin phrases read better broken on spaces than mid-word.
-    if (clean.indexOf(' ') > -1 && chars.length < 30) {
-      var words = clean.split(' ');
-      var groups = Math.min(maxLines, words.length);
-      var lines = [];
-      var per = Math.ceil(words.length / groups);
-      for (var i = 0; i < words.length; i += per) {
-        lines.push(words.slice(i, i + per).join(' '));
-      }
-      return lines;
-    }
+    var cjkCount = 0;
+    for (var i = 0; i < chars.length; i++) if (isCJK(chars[i])) cjkCount++;
+    var mostlyCJK = cjkCount >= chars.length * 0.4;
+    var hasSpaces = clean.indexOf(' ') > -1;
 
-    var perChar = Math.ceil(chars.length / maxLines);
-    var out = [];
-    for (var j = 0; j < chars.length; j += perChar) {
-      out.push(chars.slice(j, j + perChar).join(''));
+    if (!mostlyCJK && hasSpaces) return balanceWords(clean.split(' '), maxLines);
+    if (!hasSpaces) return balanceChars(chars, maxLines);
+
+    var words = clean.split(' ');
+    var groups = Math.min(maxLines, words.length);
+    if (words.length <= groups) return words;
+    var per = Math.ceil(words.length / groups);
+    var lines = [];
+    for (var j = 0; j < words.length; j += per) {
+      lines.push(words.slice(j, j + per).join(' '));
     }
-    return out;
+    return lines;
   }
 
+  // ---------- measuring ---------------------------------------------------
   function fitSize(lines, maxWidth, startSize, minSize) {
     var size = startSize;
     while (size > minSize) {
@@ -215,17 +420,13 @@
     return size;
   }
 
-  function drawTitle(lines, x, bottomY, maxWidth, startSize, color) {
-    var size = fitSize(lines, maxWidth, startSize, 24);
-    var lineHeight = size * 1.04;
-    ctx.font = font(size);
-    ctx.fillStyle = color;
-    ctx.textBaseline = 'alphabetic';
-    for (var i = 0; i < lines.length; i++) {
-      var y = bottomY - (lines.length - 1 - i) * lineHeight;
-      ctx.fillText(lines[i], x, y);
-    }
-    return { size: size, lineHeight: lineHeight };
+  // Fit to width AND the vertical room the block is allowed to occupy.
+  // `reserve` is extra space to keep free below (e.g. for the subtitle).
+  function fitBoth(lines, maxWidth, availHeight, startSize, reserve) {
+    var byWidth = fitSize(lines, maxWidth, startSize, 24);
+    if (lines.length <= 1) return byWidth;
+    var byHeight = Math.floor((availHeight - (reserve || 20)) / (1.04 * (lines.length - 1)));
+    return Math.max(24, Math.min(byWidth, byHeight));
   }
 
   function tracked(text, x, y, spacing, color, size, weight, align) {
@@ -256,121 +457,534 @@
     ctx.textAlign = 'left';
   }
 
-  function layoutStack(p, lines) {
-    ctx.fillStyle = p.bg;
-    ctx.fillRect(0, 0, W, H);
-
-    tracked('POSTER LAB', M, M + 8, 3, p.ink, 20, 600);
-    tracked(today(), W - M, M + 8, 3, p.soft, 20, 500, 'right');
-
-    // A single accent square anchors the composition.
-    ctx.fillStyle = p.accent;
-    ctx.fillRect(W - M - 96, M + 44, 96, 96);
-
-    var maxWidth = W - M * 2;
-    drawTitle(lines, M, H - M - 200, maxWidth, 300, p.ink);
-
-    ctx.strokeStyle = p.ink;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(M, H - M - 150);
-    ctx.lineTo(W - M, H - M - 150);
-    ctx.stroke();
-
-    tracked('TYPOGRAPHY / GENERATED IN BROWSER', M, H - M - 108, 2.4, p.soft, 18, 500);
-    tracked('NO. 001', W - M, H - M - 108, 2.4, p.ink, 18, 600, 'right');
-    tracked('奇点空间 · SINGULARITY SPACE', M, H - M - 60, 2.4, p.ink, 18, 600);
+  function wrapSub(text, maxWidth, size) {
+    var clean = String(text || '').trim();
+    if (!clean) return [];
+    ctx.font = font(size, 400);
+    var chars = Array.from(clean);
+    var lines = [];
+    var current = '';
+    for (var i = 0; i < chars.length; i++) {
+      var test = current + chars[i];
+      if (current && ctx.measureText(test).width > maxWidth) {
+        lines.push(current);
+        current = chars[i];
+      } else {
+        current = test;
+      }
+    }
+    if (current) lines.push(current);
+    return lines;
   }
 
-  function layoutSplit(p, lines) {
+  function drawSubLines(subLines, x, startY, limitY, color) {
+    var y = startY;
+    for (var i = 0; i < subLines.length; i++) {
+      if (y > limitY) break;
+      tracked(subLines[i], x, y, 1.5, color, 21, 400);
+      y += 30;
+    }
+  }
+
+  // ---------- print texture ----------------------------------------------
+  // Seeded PRNG so preview and export are pixel-identical, and re-renders of
+  // the same state do not shimmer.
+  var grainSeed = 1234567;
+  function seedRand() { grainSeed = 1234567; }
+  function rand() {
+    grainSeed = (grainSeed * 1103515245 + 12345) & 0x7fffffff;
+    return grainSeed / 0x7fffffff;
+  }
+
+  function drawGrain(W, H) {
+    var count = Math.round(W * H / 900);
+    for (var i = 0; i < count; i++) {
+      var x = rand() * W;
+      var y = rand() * H;
+      var a = rand() * 0.05;
+      ctx.fillStyle = rand() > 0.5
+        ? 'rgba(0,0,0,' + a.toFixed(3) + ')'
+        : 'rgba(255,255,255,' + (a * 1.2).toFixed(3) + ')';
+      ctx.fillRect(x, y, 1.4, 1.4);
+    }
+  }
+
+  // ---------- shared poster furniture ------------------------------------
+  function header(p, env) {
+    tracked('POSTER LAB', env.M, env.M + 8, 3, p.ink, 20, 600);
+    tracked(today(), env.W - env.M, env.M + 8, 3, p.soft, 20, 500, 'right');
+  }
+
+  // Footer with explicit colours so inverted layouts stay legible.
+  function footerBlock(env, footerY, label, ruleColor, softColor, inkColor, xLeft) {
+    var x = xLeft == null ? env.M : xLeft;
+    ctx.strokeStyle = ruleColor;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, footerY);
+    ctx.lineTo(env.W - env.M, footerY);
+    ctx.stroke();
+    tracked(label, x, footerY + 44, 2.4, softColor, 18, 500);
+    tracked('NO. ' + env.issue, env.W - env.M, footerY + 44, 2.4, inkColor, 18, 600, 'right');
+    if (env.credit) {
+      tracked(env.credit, x, footerY + 86, 2.4, inkColor, 18, 600);
+    }
+  }
+
+  function titleArea(env) {
+    var top = env.M + 60;
+    var bottom = env.H - env.M - 170;
+    return { top: top, height: bottom - top, width: env.W - env.M * 2 };
+  }
+
+  // Horizontal anchor from the drag position. Capped at half the area so the
+  // remaining width (and thus the fitted size) never degenerates.
+  function titleX(env, area) {
+    return env.M + state.pos.x * Math.max(0, area.width * 0.5);
+  }
+
+  // ---------- layouts ----------------------------------------------------
+  function layoutStack(p, env) {
     ctx.fillStyle = p.bg;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, env.W, env.H);
+    header(p, env);
 
-    var splitY = Math.round(H * 0.58);
+    var sq = Math.round(env.W / 1080 * 96);
     ctx.fillStyle = p.accent;
-    ctx.fillRect(0, splitY, W, H - splitY);
+    ctx.fillRect(env.W - env.M - sq, env.M + 44, sq, sq);
 
-    tracked('POSTER LAB / SPLIT', M, M + 8, 3, p.ink, 20, 600);
-    tracked(today(), W - M, M + 8, 3, p.soft, 20, 500, 'right');
+    var area = titleArea(env);
+    var x = titleX(env, area);
+    var maxWidth = (env.W - env.M) - x;
+    var size = fitBoth(env.lines, maxWidth, area.height, 300, env.subLines.length ? 110 : 20);
+    var lh = size * 1.04;
+    var blockH = (env.lines.length - 1) * lh;
+    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 60);
 
-    var maxWidth = W - M * 2;
-    drawTitle(lines, M, splitY - 120, maxWidth, 260, p.ink);
+    var ghost = function (color, alpha, dx, dy) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(dx, dy);
+      ctx.font = font(size);
+      ctx.fillStyle = color;
+      for (var i = 0; i < env.lines.length; i++) ctx.fillText(env.lines[i], x, y + i * lh);
+      ctx.restore();
+    };
+    if (state.grain) ghost(p.accent, 0.35, 5, -3);
+    ghost(p.ink, 1, 0, 0);
+    var titleBottom = y + blockH;
+
+    drawSubLines(env.subLines, env.M, titleBottom + 54, env.H - env.M - 178, p.soft);
+    footerBlock(env, env.H - env.M - 150, 'TYPOGRAPHY / GENERATED IN BROWSER', p.ink, p.soft, p.ink);
+  }
+
+  function layoutSplit(p, env) {
+    ctx.fillStyle = p.bg;
+    ctx.fillRect(0, 0, env.W, env.H);
+
+    var splitY = Math.round(env.H * 0.58);
+    ctx.fillStyle = p.accent;
+    ctx.fillRect(0, splitY, env.W, env.H - splitY);
+
+    header(p, env);
+
+    var area = titleArea(env);
+    var x = titleX(env, area);
+    var maxWidth = (env.W - env.M) - x;
+    var availH = (splitY - 40) - area.top;
+    var size = fitBoth(env.lines, maxWidth, availH, 260, env.subLines.length ? 100 : 20);
+    var lh = size * 1.04;
+    var blockH = (env.lines.length - 1) * lh;
+    var y = area.top + state.pos.y * Math.max(0, availH - blockH - 30);
+    // Hard clamp: the block must never cross into the colour field.
+    y = Math.min(y + blockH, splitY - 44) - blockH;
+    y = Math.max(y, area.top);
+
+    ctx.font = font(size);
+    ctx.fillStyle = p.ink;
+    for (var i = 0; i < env.lines.length; i++) ctx.fillText(env.lines[i], x, y + i * lh);
+    var titleBottom = y + blockH;
+
+    drawSubLines(env.subLines, env.M, titleBottom + 46, splitY - 30, p.soft);
 
     ctx.strokeStyle = p.bg;
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(M, splitY + 92);
-    ctx.lineTo(W - M, splitY + 92);
+    ctx.moveTo(env.M, splitY + 92);
+    ctx.lineTo(env.W - env.M, splitY + 92);
     ctx.stroke();
 
-    tracked('TYPOGRAPHY / H5 POSTER', M, H - M - 30, 2.4, p.bg, 18, 600);
-    tracked('NO. 001', W - M, H - M - 30, 2.4, p.bg, 18, 600, 'right');
+    var footerY = env.H - env.M - 116;
+    footerBlock(env, footerY, 'TYPOGRAPHY / H5 POSTER', p.bg, p.bg, p.bg);
 
-    // One oversized glyph in the colour block, cropped by the canvas edge.
-    var glyph = Array.from(lines[0])[0] || 'A';
+    // Oversized glyph inside the colour field, cropped by the canvas edge.
+    var glyph = Array.from(env.lines[0])[0] || 'A';
     ctx.save();
     ctx.globalAlpha = 0.16;
     ctx.font = font(520);
     ctx.fillStyle = p.bg;
     ctx.textBaseline = 'top';
-    ctx.fillText(glyph, W - M - 300, splitY + 40);
+    ctx.fillText(glyph, env.W - env.M - 300, splitY + 40);
     ctx.restore();
   }
 
-  function layoutConcrete(p, lines) {
+  function layoutConcrete(p, env) {
     ctx.fillStyle = p.bg;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, env.W, env.H);
 
-    // Baseline grid, drawn only as ticks on the margin.
+    // Baseline grid ticks on the margin.
     ctx.fillStyle = p.soft;
-    for (var i = 0; i <= 12; i++) {
-      var y = M + i * ((H - M * 2) / 12);
+    var cells = 12;
+    for (var i = 0; i <= cells; i++) {
+      var y = env.M + i * ((env.H - env.M * 2) / cells);
       ctx.fillRect(0, y, 26, 1);
     }
 
-    var first = Array.from(lines[0])[0] || 'A';
+    // Oversized ghost glyph.
+    var first = Array.from(env.lines[0])[0] || 'A';
     ctx.save();
     ctx.globalAlpha = 0.1;
     ctx.font = font(760);
     ctx.fillStyle = p.accent;
     ctx.textBaseline = 'top';
-    ctx.fillText(first, M - 30, H * 0.18);
+    ctx.fillText(first, env.M - 30, env.H * 0.18);
     ctx.restore();
 
-    tracked('POSTER LAB / CONCRETE', M + 46, M + 8, 3, p.ink, 20, 600);
-    tracked(today(), W - M, M + 8, 3, p.soft, 20, 500, 'right');
+    var x0 = env.M + 46;
+    tracked('POSTER LAB / CONCRETE', x0, env.M + 8, 3, p.ink, 20, 600);
+    tracked(today(), env.W - env.M, env.M + 8, 3, p.soft, 20, 500, 'right');
 
-    var half = Math.ceil(lines.length / 2);
-    var left = lines.slice(0, half);
-    var right = lines.slice(half);
-    var colWidth = (W - M * 2 - 40) / 2;
+    var half = Math.ceil(env.lines.length / 2);
+    var left = env.lines.slice(0, half);
+    var right = env.lines.slice(half);
+    var colWidth = (env.W - env.M * 2 - 40 - 46) / 2;
+    var leftX = env.M + 46;
+    var rightX = env.W - env.M - colWidth;
 
-    drawTitle(left, M + 46, H - M - 210, colWidth, 150, p.ink);
-    if (right.length) {
-      drawTitle(right, M + 46 + colWidth + 40, H - M - 210, colWidth, 150, p.accent);
-    }
+    var leftFit = fitSize(left, colWidth, 150, 24);
+    var rightFit = right.length ? fitSize(right, colWidth, 150, 24) : leftFit;
+    var size = Math.min(leftFit, rightFit);
+    var lh = size * 1.04;
+    var rows = Math.max(left.length, right.length);
+    var blockH = (rows - 1) * lh;
 
-    ctx.strokeStyle = p.ink;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(M + 46, H - M - 150);
-    ctx.lineTo(W - M, H - M - 150);
-    ctx.stroke();
+    var area = titleArea(env);
+    var baseY = area.top + state.pos.y * Math.max(0, area.height - blockH - 60);
 
-    tracked('SINGULARITY SPACE', M + 46, H - M - 106, 2.4, p.ink, 18, 600);
-    tracked('NO. 001', W - M, H - M - 106, 2.4, p.ink, 18, 600, 'right');
+    var drawCols = function (dx, dy, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(dx, dy);
+      ctx.font = font(size);
+      ctx.fillStyle = p.ink;
+      for (var i = 0; i < left.length; i++) ctx.fillText(left[i], leftX, baseY + i * lh);
+      ctx.fillStyle = p.accent;
+      for (var j = 0; j < right.length; j++) ctx.fillText(right[j], rightX, baseY + j * lh);
+      ctx.restore();
+    };
+    if (state.grain) drawCols(4, -3, 0.18);
+    drawCols(0, 0, 1);
+    var titleBottom = baseY + blockH;
+
+    drawSubLines(env.subLines, leftX, titleBottom + 52, env.H - env.M - 178, p.soft);
+    footerBlock(env, env.H - env.M - 150, 'SINGULARITY SPACE', p.ink, p.soft, p.ink, x0);
   }
 
+  // Editorial: masthead band + display headline + right data rail.
+  function layoutGrid(p, env) {
+    ctx.fillStyle = p.bg;
+    ctx.fillRect(0, 0, env.W, env.H);
+
+    var bandH = Math.round(env.H * 0.12);
+    ctx.fillStyle = p.accent;
+    ctx.fillRect(0, 0, env.W, bandH);
+    tracked('POSTER LAB', env.M, bandH - 34, 3, p.bg, 22, 700);
+    tracked(today() + '  ·  NO. ' + env.issue, env.W - env.M, bandH - 34, 2.6, p.bg, 20, 600, 'right');
+
+    var railW = Math.round(env.W * 0.24);
+    var railX = env.W - env.M - railW;
+    var railLeft = railX - 48;
+    var contentW = railLeft - env.M;
+
+    ctx.strokeStyle = p.soft;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(railLeft, bandH + 44);
+    ctx.lineTo(railLeft, env.H - env.M - 160);
+    ctx.stroke();
+
+    var area = {
+      top: bandH + 70,
+      height: (env.H - env.M - 170) - (bandH + 70),
+      width: contentW
+    };
+    var x = env.M + state.pos.x * Math.max(0, contentW * 0.4);
+    var maxWidth = railLeft - x;
+    var size = fitBoth(env.lines, maxWidth, area.height, 230, env.subLines.length ? 110 : 20);
+    var lh = size * 1.04;
+    var blockH = (env.lines.length - 1) * lh;
+    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 40);
+
+    var ghost = function (dx, dy, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(dx, dy);
+      ctx.font = font(size);
+      ctx.fillStyle = p.ink;
+      for (var i = 0; i < env.lines.length; i++) ctx.fillText(env.lines[i], x, y + i * lh);
+      ctx.restore();
+    };
+    if (state.grain) { ghost(5, -3, 0.2); ghost(-4, 3, 0.2); }
+    ghost(0, 0, 1);
+    var titleBottom = y + blockH;
+
+    drawSubLines(env.subLines, env.M, titleBottom + 54, env.H - env.M - 178, p.soft);
+
+    // Right rail: issue number, credit, accent mark.
+    var railTop = bandH + 70;
+    tracked('ISSUE', railX, railTop, 2.6, p.soft, 17, 600);
+    tracked(env.issue, railX, railTop + 46, 2, p.ink, 40, 700);
+    if (env.credit) {
+      tracked('BY', railX, railTop + 110, 2.6, p.soft, 17, 600);
+      var creditLines = wrapSub(env.credit, railW, 22);
+      for (var c = 0; c < creditLines.length && c < 2; c++) {
+        tracked(creditLines[c], railX, railTop + 146 + c * 30, 1.5, p.ink, 22, 600);
+      }
+    }
+    ctx.fillStyle = p.accent;
+    ctx.fillRect(railX, railTop + 210, 44, 44);
+
+    footerBlock(env, env.H - env.M - 150, 'EDITORIAL GRID', p.ink, p.soft, p.ink);
+  }
+
+  // Crop: one glyph blown up past the top edge; headline reversed on an ink slab.
+  function layoutCrop(p, env) {
+    ctx.fillStyle = p.accent;
+    ctx.fillRect(0, 0, env.W, env.H);
+
+    tracked('POSTER LAB / CROP', env.M, env.M + 8, 3, p.bg, 20, 600);
+    tracked(today(), env.W - env.M, env.M + 8, 3, p.bg, 20, 500, 'right');
+
+    var first = Array.from(env.lines[0])[0] || 'A';
+    var glyphSize = Math.round(env.W * 1.15);
+    ctx.save();
+    ctx.font = font(glyphSize);
+    ctx.fillStyle = p.ink;
+    ctx.textBaseline = 'top';
+    ctx.fillText(first, -env.W * 0.08, -glyphSize * 0.3);
+    ctx.restore();
+
+    var areaTop = env.H * 0.52;
+    ctx.fillStyle = p.ink;
+    ctx.fillRect(0, areaTop - 50, env.W, env.H - areaTop + 50);
+
+    var area = {
+      top: areaTop,
+      height: (env.H - env.M - 170) - areaTop,
+      width: env.W - env.M * 2
+    };
+    var x = titleX(env, area);
+    var maxWidth = (env.W - env.M) - x;
+    var size = fitBoth(env.lines, maxWidth, area.height, 250, env.subLines.length ? 100 : 20);
+    var lh = size * 1.04;
+    var blockH = (env.lines.length - 1) * lh;
+    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 40);
+
+    ctx.font = font(size);
+    ctx.fillStyle = p.bg;
+    for (var i = 0; i < env.lines.length; i++) ctx.fillText(env.lines[i], x, y + i * lh);
+    var titleBottom = y + blockH;
+
+    drawSubLines(env.subLines, env.M, titleBottom + 50, env.H - env.M - 178, p.accent);
+    footerBlock(env, env.H - env.M - 150, 'CROPPED TYPE', p.bg, p.bg, p.bg);
+  }
+
+  // Inverse: ink field, headline in paper colour, accent corner slash.
+  function layoutInverse(p, env) {
+    ctx.fillStyle = p.ink;
+    ctx.fillRect(0, 0, env.W, env.H);
+
+    tracked('POSTER LAB', env.M, env.M + 8, 3, p.bg, 20, 600);
+    tracked(today(), env.W - env.M, env.M + 8, 3, p.soft, 20, 500, 'right');
+
+    ctx.save();
+    ctx.fillStyle = p.accent;
+    ctx.beginPath();
+    ctx.moveTo(env.W * 0.72, 0);
+    ctx.lineTo(env.W, 0);
+    ctx.lineTo(env.W, env.H * 0.34);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    var area = titleArea(env);
+    var x = titleX(env, area);
+    var maxWidth = (env.W - env.M) - x;
+    var size = fitBoth(env.lines, maxWidth, area.height, 300, env.subLines.length ? 110 : 20);
+    var lh = size * 1.04;
+    var blockH = (env.lines.length - 1) * lh;
+    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 60);
+
+    var ghost = function (dx, dy, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(dx, dy);
+      ctx.font = font(size);
+      ctx.fillStyle = p.bg;
+      for (var i = 0; i < env.lines.length; i++) ctx.fillText(env.lines[i], x, y + i * lh);
+      ctx.restore();
+    };
+    if (state.grain) ghost(6, -4, 0.3);
+    ghost(0, 0, 1);
+    var titleBottom = y + blockH;
+
+    drawSubLines(env.subLines, env.M, titleBottom + 54, env.H - env.M - 178, p.soft);
+    footerBlock(env, env.H - env.M - 150, 'INVERSE / SWISS TYPE', p.bg, p.soft, p.bg);
+  }
+
+  var LAYOUT_FNS = {
+    stack: layoutStack,
+    split: layoutSplit,
+    concrete: layoutConcrete,
+    grid: layoutGrid,
+    crop: layoutCrop,
+    inverse: layoutInverse
+  };
+
+  // ---------- render ------------------------------------------------------
   function render() {
-    var p = PALETTES[state.palette];
-    var maxLines = state.layout === 'concrete' ? 4 : 3;
-    var lines = splitLines(textInput.value, maxLines);
+    var ratio = RATIOS[state.ratio] || RATIOS['4:5'];
+    if (canvas.width !== ratio.w || canvas.height !== ratio.h) {
+      canvas.width = ratio.w;
+      canvas.height = ratio.h;
+    }
+    var M = 84;
+    var p = PALETTES[state.palette] || PALETTES[0];
+    var maxLines = LAYOUT_MAX_LINES[state.layout] || 3;
 
-    if (state.layout === 'split') layoutSplit(p, lines);
-    else if (state.layout === 'concrete') layoutConcrete(p, lines);
-    else layoutStack(p, lines);
+    var env = {
+      W: ratio.w,
+      H: ratio.h,
+      M: M,
+      lines: splitLines(state.text, maxLines),
+      subLines: wrapSub(state.sub, ratio.w - M * 2, 21),
+      issue: String(state.issue || '').trim(),
+      credit: String(state.credit || '').trim()
+    };
 
-    captionEl.textContent = '1080 × 1350 · ' + p.name + ' · 点击海报换一张';
+    seedRand();
+    (LAYOUT_FNS[state.layout] || layoutStack)(p, env);
+    if (state.grain) drawGrain(env.W, env.H);
+
+    captionEl.textContent = ratio.label + ' · ' + p.name;
+  }
+
+  function renderWithFade() {
+    canvas.classList.add('fading');
+    window.setTimeout(function () {
+      render();
+      canvas.classList.remove('fading');
+    }, 160);
+  }
+
+  // ---------- URL + storage ----------------------------------------------
+  var STORE_KEY = 'poster-lab:v2';
+
+  function stateToParams() {
+    var params = new URLSearchParams();
+    if (state.text) params.set('text', state.text);
+    if (state.sub) params.set('sub', state.sub);
+    if (state.issue && state.issue !== DEFAULTS.issue) params.set('issue', state.issue);
+    if (state.credit) params.set('credit', state.credit);
+    params.set('layout', state.layout);
+    params.set('palette', String(state.palette));
+    params.set('ratio', state.ratio);
+    if (!state.grain) params.set('grain', '0');
+    if (state.pos.x !== DEFAULTS.pos.x || state.pos.y !== DEFAULTS.pos.y) {
+      params.set('posx', Math.round(state.pos.x * 100));
+      params.set('posy', Math.round(state.pos.y * 100));
+    }
+    return params;
+  }
+
+  function paramsToState(params) {
+    var next = {};
+    if (params.has('text')) next.text = String(params.get('text')).slice(0, 40);
+    if (params.has('sub')) next.sub = String(params.get('sub')).slice(0, 60);
+    if (params.has('issue')) next.issue = String(params.get('issue')).slice(0, 8);
+    if (params.has('credit')) next.credit = String(params.get('credit')).slice(0, 24);
+    var layout = params.get('layout');
+    if (LAYOUTS.indexOf(layout) > -1) next.layout = layout;
+    var palette = parseInt(params.get('palette'), 10);
+    if (palette >= 0 && palette < PALETTES.length) next.palette = palette;
+    var ratio = params.get('ratio');
+    if (RATIOS[ratio]) next.ratio = ratio;
+    if (params.has('grain')) next.grain = params.get('grain') !== '0';
+    var px = parseInt(params.get('posx'), 10);
+    var py = parseInt(params.get('posy'), 10);
+    if (px >= 0 && px <= 100 && py >= 0 && py <= 100) next.pos = { x: px / 100, y: py / 100 };
+    return next;
+  }
+
+  var urlWriteTimer = null;
+  function writeShareUrl() {
+    window.clearTimeout(urlWriteTimer);
+    urlWriteTimer = window.setTimeout(function () {
+      var search = stateToParams().toString();
+      var url = window.location.pathname + (search ? '?' + search : '');
+      try { window.history.replaceState(null, '', url); } catch (err) { /* ignore */ }
+    }, 120);
+  }
+
+  function persist() {
+    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (err) { /* ignore */ }
+  }
+
+  // ---------- UI plumbing -------------------------------------------------
+  function setStatus(message) {
+    window.clearTimeout(statusTimer);
+    statusEl.textContent = message;
+    statusEl.classList.add('show');
+    statusTimer = window.setTimeout(function () { statusEl.classList.remove('show'); }, 2200);
+  }
+
+  function syncCount(input, countEl, clearEl) {
+    var length = Array.from(input.value).length;
+    var max = Number(input.getAttribute('maxlength')) || 40;
+    countEl.textContent = length ? length + '/' + max : '';
+    if (clearEl) clearEl.hidden = !input.value;
+  }
+
+  function syncAllInputs() {
+    textInput.value = state.text;
+    subInput.value = state.sub;
+    issueInput.value = state.issue;
+    creditInput.value = state.credit;
+    posXInput.value = Math.round(state.pos.x * 100);
+    posYInput.value = Math.round(state.pos.y * 100);
+    grainInput.checked = !!state.grain;
+
+    Array.prototype.forEach.call(paletteWrap.children, function (child, i) {
+      child.setAttribute('aria-pressed', String(i === state.palette));
+    });
+    document.querySelectorAll('[data-layout]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.layout === state.layout));
+    });
+    document.querySelectorAll('[data-ratio]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.ratio === state.ratio));
+    });
+    syncCount(textInput, document.getElementById('count'), document.getElementById('clear-text'));
+    syncCount(subInput, document.getElementById('sub-count'), document.getElementById('clear-sub'));
+    document.getElementById('clear-credit').hidden = !creditInput.value;
+  }
+
+  function apply(patch, options) {
+    var opts = options || {};
+    state = Object.assign({}, state, patch);
+    if (!opts.noRender) render();
+    if (!opts.noSync) syncAllInputs();
+    writeShareUrl();
+    persist();
   }
 
   function buildPalettes() {
@@ -381,69 +995,252 @@
       btn.setAttribute('aria-label', '配色 ' + p.name);
       btn.setAttribute('aria-pressed', String(index === state.palette));
       btn.style.background = 'linear-gradient(135deg,' + p.accent + ' 0 50%,' + p.bg + ' 50% 100%)';
-      btn.addEventListener('click', function () {
-        state.palette = index;
-        Array.prototype.forEach.call(paletteWrap.children, function (child, i) {
-          child.setAttribute('aria-pressed', String(i === index));
-        });
-        render();
-      });
+      btn.addEventListener('click', function () { apply({ palette: index }); });
       paletteWrap.appendChild(btn);
     });
   }
 
+  // ---------- wiring ------------------------------------------------------
+  textInput.addEventListener('input', function () { apply({ text: textInput.value }); });
+  subInput.addEventListener('input', function () { apply({ sub: subInput.value }); });
+  issueInput.addEventListener('input', function () { apply({ issue: issueInput.value }); });
+  creditInput.addEventListener('input', function () { apply({ credit: creditInput.value }); });
+
+  [textInput, subInput, issueInput, creditInput].forEach(function (input) {
+    input.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        render();
+        setStatus('已重新排版');
+      }
+    });
+  });
+
+  function wireClear(id, input, key) {
+    document.getElementById(id).addEventListener('click', function () {
+      var patch = {};
+      patch[key] = '';
+      apply(patch);
+      input.focus();
+    });
+  }
+  wireClear('clear-text', textInput, 'text');
+  wireClear('clear-sub', subInput, 'sub');
+  wireClear('clear-credit', creditInput, 'credit');
+
+  posXInput.addEventListener('input', function () {
+    apply({ pos: { x: posXInput.value / 100, y: state.pos.y } }, { noSync: true });
+  });
+  posYInput.addEventListener('input', function () {
+    apply({ pos: { x: state.pos.x, y: posYInput.value / 100 } }, { noSync: true });
+  });
+
+  grainInput.addEventListener('change', function () {
+    apply({ grain: grainInput.checked });
+  });
+
   document.querySelectorAll('[data-layout]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      state.layout = btn.dataset.layout;
-      document.querySelectorAll('[data-layout]').forEach(function (other) {
-        other.setAttribute('aria-pressed', String(other === btn));
-      });
-      render();
+      apply({ layout: btn.dataset.layout }, { noRender: true });
+      renderWithFade();
     });
   });
 
-  textInput.addEventListener('input', render);
-  textInput.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') { event.preventDefault(); render(); }
+  document.querySelectorAll('[data-ratio]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      apply({ ratio: btn.dataset.ratio });
+      fitCanvasToStage();
+    });
   });
 
-  document.getElementById('shuffle').addEventListener('click', function () {
-    state.palette = (state.palette + 1 + Math.floor(Math.random() * (PALETTES.length - 1))) % PALETTES.length;
-    state.layout = LAYOUTS[Math.floor(Math.random() * LAYOUTS.length)];
-    Array.prototype.forEach.call(paletteWrap.children, function (child, i) {
-      child.setAttribute('aria-pressed', String(i === state.palette));
-    });
-    document.querySelectorAll('[data-layout]').forEach(function (other) {
-      other.setAttribute('aria-pressed', String(other.dataset.layout === state.layout));
-    });
+  shuffleBtn.addEventListener('click', function () {
+    apply({
+      palette: (state.palette + 1 + Math.floor(Math.random() * (PALETTES.length - 1))) % PALETTES.length,
+      layout: LAYOUTS[Math.floor(Math.random() * LAYOUTS.length)]
+    }, { noRender: true });
+    renderWithFade();
+  });
+
+  // Canvas: click cycles layout; drag moves the title. A drag that moved a few
+  // pixels must not count as a click, so the flag survives until click fires.
+  var dragStart = null;
+  var dragging = false;
+  var suppressClick = false;
+
+  canvas.addEventListener('pointerdown', function (event) {
+    dragStart = { x: event.clientX, y: event.clientY, pos: { x: state.pos.x, y: state.pos.y } };
+    dragging = false;
+    suppressClick = false;
+    if (canvas.setPointerCapture) {
+      try { canvas.setPointerCapture(event.pointerId); } catch (err) { /* ignore */ }
+    }
+  });
+
+  canvas.addEventListener('pointermove', function (event) {
+    if (!dragStart) return;
+    var rect = canvas.getBoundingClientRect();
+    var dxPx = event.clientX - dragStart.x;
+    var dyPx = event.clientY - dragStart.y;
+    if (!dragging && Math.abs(dxPx) + Math.abs(dyPx) < 6) return;
+    dragging = true;
+    var nx = Math.min(1, Math.max(0, dragStart.pos.x + (dxPx / rect.width) * 1.6));
+    var ny = Math.min(1, Math.max(0, dragStart.pos.y + (dyPx / rect.height) * 1.6));
+    state.pos = { x: nx, y: ny };
     render();
+    posXInput.value = Math.round(nx * 100);
+    posYInput.value = Math.round(ny * 100);
   });
+
+  function endDrag() {
+    if (dragging) {
+      suppressClick = true;
+      writeShareUrl();
+      persist();
+    }
+    dragging = false;
+    dragStart = null;
+    // If no click follows (e.g. pointer cancelled), clear the latch.
+    window.setTimeout(function () { suppressClick = false; }, 300);
+  }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
 
   canvas.addEventListener('click', function () {
+    if (suppressClick || dragging) return;
     state.layout = LAYOUTS[(LAYOUTS.indexOf(state.layout) + 1) % LAYOUTS.length];
-    document.querySelectorAll('[data-layout]').forEach(function (other) {
-      other.setAttribute('aria-pressed', String(other.dataset.layout === state.layout));
-    });
-    render();
+    syncAllInputs();
+    renderWithFade();
+    writeShareUrl();
+    persist();
   });
 
-  document.getElementById('export').addEventListener('click', function () {
+  // ---------- export / share ---------------------------------------------
+  function triggerDownload(url) {
     var link = document.createElement('a');
-    var name = (textInput.value.trim() || 'poster').slice(0, 16).replace(/[\\/:*?"<>|\s]+/g, '-');
+    var name = (state.text.trim() || 'poster').slice(0, 16).replace(/[\\/:*?"<>|\s]+/g, '-');
     link.download = 'poster-' + name + '.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = url;
     document.body.appendChild(link);
     link.click();
     link.remove();
+  }
+
+  // Series numbering: a numeric issue auto-advances after each export, so a
+  // run of posters reads as a numbered set.
+  function advanceIssue() {
+    var raw = String(state.issue || '').trim();
+    if (!/^\d+$/.test(raw)) return;
+    var width = raw.length;
+    var next = String(parseInt(raw, 10) + 1);
+    while (next.length < width) next = '0' + next;
+    state.issue = next;
+    syncAllInputs();
+    render();
+    persist();
+    writeShareUrl();
+  }
+
+  exportBtn.addEventListener('click', function () {
+    exportBtn.disabled = true;
+    var done = function (message) {
+      exportBtn.disabled = false;
+      setStatus(message);
+    };
+    if (canvas.toBlob) {
+      canvas.toBlob(function (blob) {
+        if (!blob) { done('导出失败，请重试'); return; }
+        var url = URL.createObjectURL(blob);
+        triggerDownload(url);
+        window.setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        advanceIssue();
+        done('已导出 PNG · NO. ' + state.issue);
+      }, 'image/png');
+    } else {
+      try {
+        triggerDownload(canvas.toDataURL('image/png'));
+        advanceIssue();
+        done('已导出 PNG');
+      } catch (err) {
+        done('导出失败，请重试');
+      }
+    }
+  });
+
+  copyImgBtn.addEventListener('click', function () {
+    copyImgBtn.disabled = true;
+    var done = function (message) {
+      copyImgBtn.disabled = false;
+      setStatus(message);
+    };
+    if (canvas.toBlob && navigator.clipboard && window.ClipboardItem) {
+      canvas.toBlob(function (blob) {
+        if (!blob) { done('复制失败，请重试'); return; }
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+          .then(function () { done('图片已复制，可直接粘贴'); },
+                function () { done('当前浏览器不支持复制图片'); });
+      }, 'image/png');
+    } else {
+      done('当前浏览器不支持复制图片');
+    }
+  });
+
+  copyLinkBtn.addEventListener('click', function () {
+    var url = window.location.origin + window.location.pathname + '?' + stateToParams().toString();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () {
+        setStatus('链接已复制');
+      }, function () {
+        window.prompt('复制分享链接：', url);
+      });
+    } else {
+      window.prompt('复制分享链接：', url);
+    }
+  });
+
+  // ---------- stage sizing ------------------------------------------------
+  function fitCanvasToStage() {
+    var ratio = RATIOS[state.ratio] || RATIOS['4:5'];
+    var stage = document.querySelector('.stage');
+    var frame = document.querySelector('.frame');
+    if (!stage || !frame) return;
+    var style = window.getComputedStyle(stage);
+    var padX = (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
+    var maxW = Math.max(160, stage.clientWidth - padX);
+    var maxH = Math.max(240, Math.min(window.innerHeight * 0.72, 760));
+    var scale = Math.min(maxW / ratio.w, maxH / ratio.h);
+    frame.style.width = Math.round(ratio.w * scale) + 'px';
+  }
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(fitCanvasToStage, 120);
   });
 
   window.addEventListener('keydown', function (event) {
-    var typing = document.activeElement === textInput;
-    if ((event.key === 'r' || event.key === 'R') && !typing) document.getElementById('shuffle').click();
+    var el = document.activeElement;
+    var typing = el && ['INPUT', 'TEXTAREA'].indexOf(el.tagName) > -1;
+    if ((event.key === 'r' || event.key === 'R') && !typing) shuffleBtn.click();
   });
 
-  buildPalettes();
-  render();
+  // ---------- boot: URL params > localStorage > defaults ------------------
+  (function boot() {
+    var params = new URLSearchParams(window.location.search);
+    var patch = paramsToState(params);
+    var fromUrl = Object.keys(patch).length > 0;
+    if (fromUrl) {
+      state = Object.assign({}, state, patch);
+    } else {
+      try {
+        var stored = window.localStorage.getItem(STORE_KEY);
+        if (stored) state = Object.assign({}, state, JSON.parse(stored));
+      } catch (err) { /* ignore */ }
+    }
+    buildPalettes();
+    syncAllInputs();
+    render();
+    fitCanvasToStage();
+  })();
 })();
 </script>
 </body>
