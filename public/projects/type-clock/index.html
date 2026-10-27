@@ -3,141 +3,208 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f4">
-<meta name="description" content="一只只有时间本身的时钟：巨大会呼吸的数字、一条走完当天的细线。">
+<meta name="theme-color" content="#f5f5f0">
+<meta name="description" content="一只只有时间本身的时钟：巨大的数字、一条走完当天的细线，以及恰到好处的留白。">
 <title>TYPE CLOCK · 排版时钟</title>
 <style>
   :root{
     color-scheme:light;
-    --bg:#f7f7f4;
-    --ink:#131413;
-    --muted:#9a9b96;
-    --line:#e4e4de;
+    --bg:#f5f5f0;
+    --surface:rgba(255,255,255,.62);
+    --ink:#171915;
+    --muted:#686d64;
+    --line:#dcded5;
     --tint:#7fb0d8;
-    --accent:#c9503a;
+    --accent:#ad4d38;
+    --page-x:clamp(20px,5vw,64px);
   }
   *{box-sizing:border-box}
+  [hidden]{display:none!important}
   html,body{height:100%}
   body{
-    margin:0;background:var(--bg);color:var(--ink);
+    margin:0;min-width:280px;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
     -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
     overflow:hidden;
   }
-  /* A whisper of colour behind the numbers, keyed to the hour of the day. */
+  button{font:inherit}
   body::before{
-    content:"";position:fixed;inset:-30% -10% auto -10%;height:70vh;
-    background:radial-gradient(60% 60% at 50% 0%,color-mix(in srgb,var(--tint) 16%,transparent),transparent 72%);
-    transition:background 2.4s ease;
-    pointer-events:none;
+    content:"";position:fixed;inset:-28% -12% auto;height:76vh;
+    background:radial-gradient(58% 62% at 50% 0%,color-mix(in srgb,var(--tint) 19%,transparent),transparent 74%);
+    transition:background 2.4s ease;pointer-events:none;
   }
-
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,transparent 65%,rgba(255,255,255,.2));
+  }
   .frame{
-    position:relative;height:100%;
+    position:relative;isolation:isolate;height:100vh;height:100svh;
     display:flex;flex-direction:column;
-    padding:clamp(20px,4vw,44px) clamp(20px,5vw,56px);
+    padding:max(clamp(20px,4vw,42px),env(safe-area-inset-top))
+      max(var(--page-x),env(safe-area-inset-right))
+      max(clamp(20px,4vw,42px),env(safe-area-inset-bottom))
+      max(var(--page-x),env(safe-area-inset-left));
   }
-
   .meta{
-    display:flex;justify-content:space-between;gap:16px;
-    font-size:10px;letter-spacing:2.6px;text-transform:uppercase;color:var(--muted);
+    display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0;
+    font-size:10px;line-height:1;letter-spacing:2.6px;text-transform:uppercase;color:var(--muted);
   }
-  .meta b{font-weight:500;color:#6f716c}
-
-  .center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-
+  .local-label{display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
+  .live-dot{
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 10%,transparent);
+    animation:breathe 3.2s ease-in-out infinite;
+  }
+  .meta b{
+    max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    padding:7px 10px;border:1px solid color-mix(in srgb,var(--line) 76%,transparent);
+    border-radius:999px;font-weight:500;letter-spacing:1.1px;color:var(--muted);
+    background:rgba(255,255,255,.24);
+  }
+  .center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:0}
   .clock{
-    display:flex;align-items:baseline;justify-content:center;gap:.06em;
+    display:flex;align-items:baseline;justify-content:center;gap:.06em;max-width:100%;
     font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
-    letter-spacing:-.045em;line-height:.86;
+    letter-spacing:-.045em;line-height:.86;white-space:nowrap;
   }
-  #time{font-size:clamp(72px,19vw,190px);font-weight:300}
+  #time{font-size:clamp(64px,min(18vw,30vh),196px);font-weight:300}
   #sec{
-    font-size:clamp(20px,4.4vw,40px);font-weight:300;color:var(--muted);
-    letter-spacing:-.02em;transition:opacity .3s;
+    min-width:1.8ch;font-size:clamp(20px,4.2vw,40px);font-weight:300;color:var(--muted);
+    letter-spacing:-.02em;transition:opacity .25s,transform .25s;
   }
-  #sec.hidden{opacity:0}
-
+  #sec.is-hidden{opacity:0;transform:translateY(4px)}
+  #meridiem{
+    margin-left:.7em;font-size:clamp(10px,1.5vw,14px);font-weight:600;
+    letter-spacing:.18em;color:var(--accent);
+  }
   .date{
-    margin:clamp(14px,3vw,26px) 0 0;
-    font-size:clamp(12px,1.7vw,15px);letter-spacing:.22em;color:#6f716c;
+    margin:clamp(18px,3vw,28px) 0 0;
+    font-size:clamp(12px,1.6vw,15px);font-weight:450;letter-spacing:.22em;color:var(--muted);
   }
-
-  .bottom{padding-bottom:2px}
-  .dayline{
-    position:relative;height:1px;background:var(--line);overflow:hidden;
-  }
+  .bottom{width:min(100%,1180px);margin:0 auto}
+  .dayline{position:relative;height:2px;background:var(--line)}
   .dayline i{
     position:absolute;inset:0 auto 0 0;width:0;background:var(--ink);
     transition:width .9s cubic-bezier(.2,.8,.2,1);
   }
+  .dayline i::after{
+    content:"";position:absolute;right:-3px;top:50%;width:7px;height:7px;
+    border-radius:50%;background:var(--ink);transform:translateY(-50%);
+  }
   .daymeta{
-    display:flex;justify-content:space-between;gap:12px;margin:10px 0 0;
-    font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+    display:flex;justify-content:space-between;gap:12px;margin:11px 0 0;
+    font-size:10.5px;line-height:1.4;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);
     font-variant-numeric:tabular-nums;
   }
-
+  .controlbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:clamp(20px,3vw,30px)}
   .controls{
-    display:flex;gap:6px;margin-top:clamp(18px,3vw,26px);
-    opacity:.35;transition:opacity .3s;
+    display:inline-flex;align-items:center;gap:3px;padding:4px;
+    border:1px solid rgba(210,213,202,.82);border-radius:18px;background:var(--surface);
+    box-shadow:0 12px 36px rgba(36,42,31,.06),inset 0 1px 0 rgba(255,255,255,.7);
+    -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
   }
-  .frame:hover .controls,.controls:focus-within{opacity:1}
   .controls button{
-    appearance:none;cursor:pointer;font:inherit;font-size:10.5px;letter-spacing:1.6px;
-    text-transform:uppercase;color:#7d7f7a;background:none;
-    border:1px solid transparent;border-radius:999px;padding:6px 12px;
-    transition:border-color .2s,color .2s;
+    appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    min-height:44px;padding:0 14px;cursor:pointer;border:1px solid transparent;border-radius:13px;
+    background:transparent;color:var(--muted);font-size:10.5px;letter-spacing:1.2px;white-space:nowrap;
+    transition:background .2s,color .2s,border-color .2s,box-shadow .2s;
   }
-  .controls button:hover{color:var(--ink);border-color:var(--line)}
-  .controls button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  .controls button[aria-pressed="true"]{color:var(--ink);border-color:var(--line)}
-
+  .controls button[aria-pressed="true"]{
+    color:var(--ink);border-color:rgba(218,220,211,.9);background:rgba(255,255,255,.7);
+    box-shadow:0 2px 8px rgba(36,42,31,.04);
+  }
+  .controls button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .controls button:disabled{cursor:not-allowed;opacity:.48}
+  .key{
+    display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 4px;
+    border:1px solid var(--line);border-radius:5px;font-family:inherit;font-size:9px;line-height:1;letter-spacing:0;color:var(--muted);
+  }
+  .hint{margin:0;font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
+  .notice{
+    position:fixed;z-index:5;left:50%;bottom:max(104px,calc(env(safe-area-inset-bottom) + 88px));
+    max-width:calc(100% - 40px);margin:0;padding:10px 16px;border:1px solid var(--line);border-radius:999px;
+    background:rgba(255,255,255,.9);box-shadow:0 8px 28px rgba(36,42,31,.08);
+    color:var(--ink);font-size:12px;letter-spacing:.04em;text-align:center;
+    opacity:0;transform:translate(-50%,8px);pointer-events:none;transition:opacity .2s,transform .2s;
+  }
+  .notice.show{opacity:1;transform:translate(-50%,0)}
+  @keyframes breathe{50%{opacity:.48;box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 6%,transparent)}}
+  @media(hover:hover){
+    .controls button:hover:not(:disabled){color:var(--ink);background:rgba(255,255,255,.62)}
+  }
   @media(max-width:560px){
-    .meta b{display:none}
-    .clock{gap:.02em}
+    .meta{letter-spacing:2px}
+    .meta b{padding:6px 8px;font-size:9px;letter-spacing:.6px}
+    .clock{gap:.03em}
     #sec{font-size:20px}
+    #meridiem{margin-left:.5em;font-size:10px}
+    .date{letter-spacing:.16em}
+    .daymeta{letter-spacing:1.1px}
+    .controlbar{justify-content:center;margin-top:22px}
+    .controls{display:flex;width:100%;gap:2px;border-radius:17px}
+    .controls button{flex:1;padding:0 7px;font-size:10px;letter-spacing:.6px}
+    .key,.hint{display:none}
+  }
+  @media(max-height:560px){
+    .frame{padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(14px,env(safe-area-inset-bottom))}
+    #time{font-size:clamp(56px,min(16vw,32vh),120px)}
+    .date{margin-top:12px}
+    .controlbar{margin-top:14px}
+    .daymeta{margin-top:7px}
+    .meta b{padding-top:4px;padding-bottom:4px}
   }
   @media(prefers-reduced-motion:reduce){
-    body::before{transition:none}
-    .dayline i{transition:none}
-    .controls{opacity:1}
+    body::before,.dayline i,#sec,.controls button,.notice{transition:none}
+    .live-dot{animation:none}
   }
 </style>
 </head>
 <body>
 <div class="frame">
   <p class="meta">
-    <span>Local time</span>
-    <b id="zone">Hangzhou · UTC+8</b>
+    <span class="local-label"><i class="live-dot" aria-hidden="true"></i>Local time</span>
+    <b id="zone">Detecting timezone</b>
   </p>
 
-  <div class="center">
-    <div class="clock" role="timer" aria-live="off" aria-atomic="true">
+  <main class="center">
+    <div class="clock" role="timer" aria-label="当前时间" aria-live="off" aria-atomic="true">
+      <span id="meridiem" hidden>AM</span>
       <span id="time">--:--</span>
       <span id="sec">--</span>
     </div>
     <p class="date" id="date">—</p>
-  </div>
+  </main>
 
-  <div class="bottom">
-    <div class="dayline"><i id="fill"></i></div>
+  <footer class="bottom">
+    <div class="dayline" aria-hidden="true"><i id="fill"></i></div>
     <div class="daymeta">
       <span id="pct">今日进度 0%</span>
       <span id="countdown">距明日 00:00 —</span>
     </div>
-    <div class="controls">
-      <button id="format" aria-pressed="false">24 小时制</button>
-      <button id="seconds" aria-pressed="true">显示秒</button>
-      <button id="full">全屏</button>
+    <div class="controlbar">
+      <div class="controls" aria-label="时钟设置">
+        <button id="format" type="button" aria-pressed="true" title="切换 12/24 小时制（T）">
+          <span id="formatLabel">24 小时制</span><kbd class="key" aria-hidden="true">T</kbd>
+        </button>
+        <button id="seconds" type="button" aria-pressed="true" title="显示或隐藏秒（S）">
+          <span id="secondsLabel">显示秒</span><kbd class="key" aria-hidden="true">S</kbd>
+        </button>
+        <button id="full" type="button" aria-pressed="false" title="进入或退出全屏（F）">
+          <span id="fullLabel">全屏</span><kbd class="key" aria-hidden="true">F</kbd>
+        </button>
+      </div>
+      <p class="hint">A quiet measure of the day</p>
     </div>
-  </div>
+  </footer>
 </div>
+<p class="notice" id="notice" role="status" aria-live="polite"></p>
 
 <script>
 'use strict';
 (function () {
   var timeEl = document.getElementById('time');
   var secEl = document.getElementById('sec');
+  var meridiemEl = document.getElementById('meridiem');
   var dateEl = document.getElementById('date');
   var fillEl = document.getElementById('fill');
   var pctEl = document.getElementById('pct');
@@ -145,15 +212,44 @@
   var zoneEl = document.getElementById('zone');
   var formatBtn = document.getElementById('format');
   var secondsBtn = document.getElementById('seconds');
+  var fullBtn = document.getElementById('full');
+  var formatLabel = document.getElementById('formatLabel');
+  var secondsLabel = document.getElementById('secondsLabel');
+  var fullLabel = document.getElementById('fullLabel');
+  var noticeEl = document.getElementById('notice');
 
   var WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  var STORAGE_KEY = 'type-clock:preferences:v1';
   var showSeconds = true;
   var use24 = true;
-  var lastHour = -1;
+  var timerId = null;
+  var noticeTimer = null;
+  var last = Object.create(null);
+
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (saved && typeof saved.showSeconds === 'boolean') showSeconds = saved.showSeconds;
+    if (saved && typeof saved.use24 === 'boolean') use24 = saved.use24;
+  } catch (error) {
+    /* Storage may be unavailable in private or embedded contexts. */
+  }
 
   function pad(n) { return n < 10 ? '0' + n : String(n); }
 
-  // Warm at dawn, cool at midday, violet at night — the only colour in here.
+  function setText(el, key, value) {
+    if (last[key] === value) return;
+    last[key] = value;
+    el.textContent = value;
+  }
+
+  function savePreferences() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ showSeconds: showSeconds, use24: use24 }));
+    } catch (error) {
+      /* The clock still works when preferences cannot be persisted. */
+    }
+  }
+
   function tintFor(hour) {
     if (hour >= 5 && hour < 9) return '#e8965e';
     if (hour >= 9 && hour < 16) return '#7fb0d8';
@@ -161,75 +257,173 @@
     return '#6b7fb0';
   }
 
-  function tick() {
+  function timezoneLabel(now) {
+    var zone = 'Local';
+    try {
+      zone = Intl.DateTimeFormat().resolvedOptions().timeZone || zone;
+    } catch (error) {
+      /* Intl timezone detection is optional. */
+    }
+    var offset = -now.getTimezoneOffset();
+    var sign = offset < 0 ? '-' : '+';
+    var absolute = Math.abs(offset);
+    var utc = 'UTC' + sign + pad(Math.floor(absolute / 60)) + ':' + pad(absolute % 60);
+    return zone.replace(/_/g, ' ') + ' · ' + utc;
+  }
+
+  function render() {
     var now = new Date();
     var h = now.getHours();
     var m = now.getMinutes();
     var s = now.getSeconds();
+    var displayHour = use24 ? pad(h) : (h % 12 || 12);
+    var meridiem = h < 12 ? 'AM' : 'PM';
 
-    var displayHour = h;
-    if (!use24) {
-      displayHour = h % 12;
-      if (displayHour === 0) displayHour = 12;
+    setText(timeEl, 'time', displayHour + ':' + pad(m));
+    setText(secEl, 'seconds', pad(s));
+    meridiemEl.hidden = use24;
+    setText(meridiemEl, 'meridiem', meridiem);
+
+    var dateKey = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate();
+    var dateChanged = last.dateKey !== dateKey;
+    if (dateChanged) {
+      last.dateKey = dateKey;
+      dateEl.textContent = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日　' + WEEKDAYS[now.getDay()];
     }
-    timeEl.textContent = (use24 ? pad(displayHour) : displayHour) + ':' + pad(m);
-    secEl.textContent = pad(s);
 
-    if (h !== lastHour) {
-      lastHour = h;
+    if (last.hour !== h || dateChanged) {
+      last.hour = h;
       document.documentElement.style.setProperty('--tint', tintFor(h));
+      setText(zoneEl, 'zone', timezoneLabel(now));
     }
-
-    dateEl.textContent =
-      now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日　' +
-      WEEKDAYS[now.getDay()];
 
     var secondsOfDay = h * 3600 + m * 60 + s;
     var ratio = secondsOfDay / 86400;
-    fillEl.style.width = (ratio * 100).toFixed(3) + '%';
-    pctEl.textContent = '今日进度 ' + Math.floor(ratio * 100) + '%';
+    var width = (ratio * 100).toFixed(showSeconds ? 3 : 2) + '%';
+    if (last.width !== width) {
+      last.width = width;
+      fillEl.style.width = width;
+    }
+    setText(pctEl, 'percent', '今日进度 ' + Math.floor(ratio * 100) + '%');
 
     var remaining = 86400 - secondsOfDay;
     var rh = Math.floor(remaining / 3600);
     var rm = Math.floor((remaining % 3600) / 60);
-    countdownEl.textContent = '距明日 00:00 ' + rh + ' 小时 ' + rm + ' 分';
+    setText(countdownEl, 'countdown', '距明日 00:00 ' + rh + ' 小时 ' + rm + ' 分');
 
-    document.title = pad(h) + ':' + pad(m) + ' · ' + WEEKDAYS[now.getDay()];
+    var title = displayHour + ':' + pad(m) + (use24 ? '' : ' ' + meridiem) + ' · ' + WEEKDAYS[now.getDay()];
+    if (last.title !== title) {
+      last.title = title;
+      document.title = title;
+    }
+  }
+
+  function clearTimer() {
+    if (timerId !== null) clearTimeout(timerId);
+    timerId = null;
+  }
+
+  function scheduleNext() {
+    clearTimer();
+    if (document.hidden) return;
+    var interval = showSeconds ? 1000 : 60000;
+    var delay = interval - (Date.now() % interval) + 12;
+    timerId = setTimeout(function () {
+      timerId = null;
+      render();
+      scheduleNext();
+    }, delay);
+  }
+
+  function updateControls() {
+    formatLabel.textContent = use24 ? '24 小时制' : '12 小时制';
+    formatBtn.setAttribute('aria-pressed', String(use24));
+    secondsLabel.textContent = showSeconds ? '显示秒' : '隐藏秒';
+    secondsBtn.setAttribute('aria-pressed', String(showSeconds));
+    secEl.classList.toggle('is-hidden', !showSeconds);
+    secEl.setAttribute('aria-hidden', String(!showSeconds));
+  }
+
+  function announce(message) {
+    if (noticeTimer !== null) clearTimeout(noticeTimer);
+    noticeEl.textContent = message;
+    noticeEl.classList.add('show');
+    noticeTimer = setTimeout(function () {
+      noticeEl.classList.remove('show');
+      noticeTimer = null;
+    }, 2400);
+  }
+
+  function updateFullscreen() {
+    var active = Boolean(document.fullscreenElement);
+    fullBtn.setAttribute('aria-pressed', String(active));
+    fullLabel.textContent = active ? '退出全屏' : '全屏';
+    fullBtn.title = (active ? '退出' : '进入') + '全屏（F）';
+  }
+
+  function toggleFullscreen() {
+    function failed() { announce('当前浏览器无法切换全屏'); }
+    try {
+      var operation = document.fullscreenElement
+        ? document.exitFullscreen()
+        : document.documentElement.requestFullscreen();
+      if (operation && typeof operation.catch === 'function') operation.catch(failed);
+    } catch (error) {
+      failed();
+    }
   }
 
   formatBtn.addEventListener('click', function () {
     use24 = !use24;
-    formatBtn.textContent = use24 ? '24 小时制' : '12 小时制';
-    formatBtn.setAttribute('aria-pressed', String(!use24));
-    tick();
+    updateControls();
+    render();
+    savePreferences();
   });
 
   secondsBtn.addEventListener('click', function () {
     showSeconds = !showSeconds;
-    secEl.classList.toggle('hidden', !showSeconds);
-    secondsBtn.setAttribute('aria-pressed', String(showSeconds));
-    secondsBtn.textContent = showSeconds ? '显示秒' : '隐藏秒';
+    updateControls();
+    render();
+    savePreferences();
+    scheduleNext();
   });
 
-  document.getElementById('full').addEventListener('click', function () {
-    if (document.fullscreenElement) document.exitFullscreen();
-    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-  });
+  fullBtn.addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', updateFullscreen);
 
   window.addEventListener('keydown', function (event) {
-    if (event.key === 's' || event.key === 'S') secondsBtn.click();
-    if (event.key === 't' || event.key === 'T') formatBtn.click();
+    if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
+    var key = event.key.toLowerCase();
+    if (key !== 's' && key !== 't' && key !== 'f') return;
+    event.preventDefault();
+    if (key === 's') secondsBtn.click();
+    if (key === 't') formatBtn.click();
+    if (key === 'f' && !fullBtn.disabled) fullBtn.click();
   });
 
-  try {
-    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    if (tz) zoneEl.textContent = tz.replace('_', ' ');
-  } catch {
-    /* Intl is optional; the static label is fine. */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      clearTimer();
+    } else {
+      render();
+      scheduleNext();
+    }
+  });
+  window.addEventListener('pagehide', clearTimer);
+  window.addEventListener('pageshow', function () {
+    render();
+    scheduleNext();
+  });
+
+  if (typeof document.documentElement.requestFullscreen !== 'function' || typeof document.exitFullscreen !== 'function') {
+    fullBtn.disabled = true;
+    fullLabel.textContent = '全屏不可用';
+    fullBtn.title = '当前浏览器不支持网页全屏';
   }
 
-  tick();
-  setInterval(tick, 1000);
+  updateControls();
+  render();
+  scheduleNext();
 })();
 </script>
 </body>
