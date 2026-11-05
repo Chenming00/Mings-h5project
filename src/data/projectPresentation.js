@@ -44,6 +44,20 @@ export const tagLabels = {
  * }>}
  */
 const presentations = {
+  'stellar-passport': {
+    displayTitle: 'STELLAR PASSPORT · 星际漫游计划',
+    description: '选择目的地，领取一张通往星际的登船证。',
+    artwork: 'gravity',
+    displayOrder: -2,
+    label: 'SPACE / INTERACTIVE JOURNEY',
+  },
+  'neon-drift': {
+    displayTitle: 'NEON DRIFT · 午夜电台',
+    description: '驶入霓虹夜色，在合成器节奏中切换午夜频率。',
+    artwork: 'beat',
+    displayOrder: -1,
+    label: 'SYNTHWAVE / MIDNIGHT RADIO',
+  },
   'coca-cola-cn': {
     displayTitle: '可口可乐 · 中国供应版图',
     description: '一张地图，看见中国装瓶网络的全貌。',
