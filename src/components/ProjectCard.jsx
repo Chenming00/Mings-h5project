@@ -57,9 +57,9 @@ export default function ProjectCard({ project, index = 0, onClick, onOpenNew, on
               </button>
             ))}
           </div>
-          <button className="card-arrow" onClick={open} tabIndex={-1} aria-hidden="true">
+          <span className="card-arrow" aria-hidden="true">
             <ArrowUpRight size={18} />
-          </button>
+          </span>
         </div>
       </div>
     </article>

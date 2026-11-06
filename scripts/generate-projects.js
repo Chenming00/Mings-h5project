@@ -65,7 +65,31 @@ function readProjectMeta(itemPath) {
   }
 }
 
+function warnMissingRedirectTargets() {
+  const redirectsFile = path.join(rootDir, 'public', '_redirects');
+  if (!fs.existsSync(redirectsFile)) return;
+
+  const lines = fs.readFileSync(redirectsFile, 'utf-8').split(/\r?\n/);
+  lines.forEach((line, index) => {
+    const rule = line.trim();
+    if (!rule || rule.startsWith('#')) return;
+
+    const target = rule.split(/\s+/)[1] || '';
+    const slug = target.match(/^\/projects\/([^/?#]+)/)?.[1];
+    // Only the literal project directory matters: /projects/foo/:splat is
+    // checkable, while /projects/:slug/ (or /projects/:splat) is dynamic.
+    if (!slug || /[:*]/.test(slug)) return;
+
+    if (!fs.statSync(path.join(projectsDir, slug), { throwIfNoEntry: false })?.isDirectory()) {
+      console.warn(
+        `public/_redirects:${index + 1}: target "${target}" points to missing project directory "${slug}".`
+      );
+    }
+  });
+}
+
 function generateProjectsData() {
+  warnMissingRedirectTargets();
   const projects = [];
 
   if (!fs.existsSync(projectsDir)) {

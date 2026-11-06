@@ -13,7 +13,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . && node scripts/lint-inline.js",
-    "verify": "node tools/motion-reel/check-reel.cjs && node tools/motion-reel/check-audio.cjs && node tools/motion-reel/check-boot.cjs && node tools/sbti/check-timers.cjs && node tools/poster-lab/check-poster.cjs",
+    "verify": "node tools/motion-reel/check-reel.cjs && node tools/motion-reel/check-audio.cjs && node tools/motion-reel/check-boot.cjs && node tools/sbti/check-timers.cjs && node tools/poster-lab/check-poster.cjs && node tools/smoke/check-new-projects.cjs",
     "check": "npm run lint && npm run verify && npm run smoke",
     "assets": "python3 tools/optimize-images.py",
     "smoke": "node tools/smoke/audit.cjs"

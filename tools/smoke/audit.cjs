@@ -191,6 +191,21 @@ async function auditPage(client, { url, width, height, shotPath }) {
   const { result } = await client.send('Runtime.evaluate', {
     expression: `(() => {
       const doc = document.documentElement;
+      // Exercise the ticket, not just its initially hidden markup. This also
+      // runs at short/landscape viewport sizes supplied on the command line.
+      if (document.getElementById('ticket-title')) {
+        const errors = window.__auditErrors || (window.__auditErrors = []);
+        document.getElementById('launch').click();
+        const ticket = document.querySelector('.ticket');
+        const close = document.getElementById('close');
+        const rect = ticket.getBoundingClientRect();
+        if (rect.top < 0 || rect.bottom > innerHeight + 1) errors.push('Ticket exceeds viewport');
+        if (ticket.scrollHeight > ticket.clientHeight && getComputedStyle(ticket).overflowY !== 'auto') errors.push('Ticket cannot scroll');
+        if (!document.querySelector('main').inert || document.activeElement !== close) errors.push('Ticket does not isolate focus');
+        const escape = new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true});
+        close.dispatchEvent(escape);
+        if (!document.getElementById('overlay').hidden || document.querySelector('main').inert) errors.push('Ticket Escape did not restore page');
+      }
       const wide = [].slice.call(document.querySelectorAll('body *')).filter(function (el) {
         const rect = el.getBoundingClientRect();
         return rect.right > window.innerWidth + 2 && getComputedStyle(el).position !== 'fixed';

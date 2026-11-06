@@ -26,5 +26,14 @@ jobs:
       - name: Project regressions
         run: npm run verify
 
+      # audit.cjs detects Chrome at this standard Ubuntu runner path; fail
+      # explicitly if it disappears rather than silently skipping the audit.
+      - name: Browser smoke
+        run: |
+          test -x /usr/bin/google-chrome
+          npm run smoke
+          node tools/smoke/audit.cjs --only stellar-passport,neon-drift --width 844 --height 390
+          node tools/smoke/audit.cjs --only stellar-passport,neon-drift --width 320 --height 568
+
       - name: Build
         run: npm run build
