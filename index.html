@@ -33,6 +33,32 @@
     />
     <meta name="twitter:image" content="https://h5.ming.fi/og-cover.jpg" />
 
+    <!-- 百度移动友好判定需要明确「同页适配 PC 与移动端」，此 url 是响应式的。 -->
+    <meta name="applicable-device" content="pc,mobile" />
+    <!-- Google Discover 与图片搜索默认可能缩小预览图，显式放开。 -->
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+
+    <!-- WebSite 结构化数据：名字、语言，以及 ?q= 站内搜索的 SearchAction。 -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "奇点空间 Singularity Space",
+        "alternateName": "Ming 的 H5 创意项目展厅",
+        "url": "https://h5.ming.fi/",
+        "inLanguage": "zh-CN",
+        "description": "把好奇心写成代码，把灵感变成作品。探索 Ming 的数据可视化、创意交互、动态设计与实用工具。",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://h5.ming.fi/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
     <meta name="theme-color" content="#fafaf7" />
 
     <!--
@@ -58,7 +84,35 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- seo-fallback:start build 脚本维护区间（scripts/generate-projects.js 会在 predev/prebuild 重写），勿手改 -->
+    <section class="seo-fallback">
+      <style>:where(.seo-fallback){max-width:40rem;margin:0 auto;padding:48px 24px;line-height:1.8}:where(.seo-fallback ul){margin:0 0 24px;padding:0;list-style:none}:where(.seo-fallback li){margin:0 0 12px}</style>
+      <h1>奇点空间 · Singularity Space — H5 创意项目展厅</h1>
+      <p>把好奇心写成代码，把灵感变成作品。收录 Ming 的数据可视化、创意交互、动态设计与实用工具，共 17 个作品。</p>
+      <ul>
+            <li><a href="https://h5.ming.fi/projects/beat-forge/">BEAT FORGE · 十六步鼓机</a> — 在浏览器里合成一整套鼓组，编一段属于你的节奏。</li>
+            <li><a href="https://h5.ming.fi/projects/coca-cola-cn/">可口可乐 · 中国供应版图</a> — 一张地图，看见中国装瓶网络的全貌。</li>
+            <li><a href="https://h5.ming.fi/projects/coca-cola-us/">可口可乐 · 美国供应版图</a> — 探索美国装瓶体系，连接数据与地理。</li>
+            <li><a href="https://h5.ming.fi/projects/coin-flip/">FLIP · 硬币实验室</a> — 一半是概率，一半是惊喜。立体抛掷、批量模拟，随时加速或跳过。由 GPT-6 Astra 生成。</li>
+            <li><a href="https://h5.ming.fi/projects/gravity-well/">GRAVITY WELL · 引力沙盒</a> — 用手指搅动一片星云：引力、排斥、漩涡三种力场。</li>
+            <li><a href="https://h5.ming.fi/projects/maze-weave/">MAZE WEAVE · 迷宫编织</a> — 递归回溯实时开凿，广度优先把解法走给你看。</li>
+            <li><a href="https://h5.ming.fi/projects/motion-reel/">MOTION REEL · 动态设计实验</a> — 用 30 秒，把想象力变成流动的视觉语言。</li>
+            <li><a href="https://h5.ming.fi/projects/neon-drift/">NEON DRIFT · 午夜电台</a> — 驶入霓虹夜色，在合成器节奏中切换午夜频率。</li>
+            <li><a href="https://h5.ming.fi/projects/neon-pulse/">NEON PULSE · 反应竞技场</a> — 跟随霓虹的节奏，挑战你的反应极限。</li>
+            <li><a href="https://h5.ming.fi/projects/pet-load-planner/">PET 装柜计算器</a> — 让每一寸空间，都有更高效的装载方案。</li>
+            <li><a href="https://h5.ming.fi/projects/pet-spread-calculator/">PET 三腿价差计算器</a> — 聚合关键价格，直观分析聚酯产业链价差。</li>
+            <li><a href="https://h5.ming.fi/projects/portfolio/">Ming Chen · 个人主页</a> — 关于市场研究、产品构建，以及更多可能。</li>
+            <li><a href="https://h5.ming.fi/projects/poster-lab/">POSTER LAB · 海报实验室</a> — 写一句话，自动排成一张瑞士风海报，可导出 PNG。</li>
+            <li><a href="https://h5.ming.fi/projects/resume/">俞可宁 · 在线简历</a> — 以简洁的方式，呈现经历与专业能力。</li>
+            <li><a href="https://h5.ming.fi/projects/sbti/">SBTI · 赛博人格测试</a> — 一次不太正经、但也许很懂你的性格探索。</li>
+            <li><a href="https://h5.ming.fi/projects/stellar-passport/">STELLAR PASSPORT · 星际漫游计划</a> — 选择目的地，领取一张通往星际的登船证。</li>
+            <li><a href="https://h5.ming.fi/projects/type-clock/">TYPE CLOCK · 排版时钟</a> — 只有时间本身：巨大的数字，和一条走完当天的细线。</li>
+      </ul>
+      <p>在 <a href="https://h5.ming.fi/">奇点空间</a> 主页可搜索、分类筛选并直接预览全部作品。</p>
+    </section>
+    <!-- seo-fallback:end -->
+    </div>
     <noscript>
       <p style="margin: 64px auto; max-width: 32em; font: 16px/1.8 sans-serif; color: #30362f">
         这个展厅需要 JavaScript 才能运行。请在浏览器设置中启用后刷新页面。

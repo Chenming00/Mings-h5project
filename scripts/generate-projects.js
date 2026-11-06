@@ -1,12 +1,24 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+// Descriptions/titles live beside the app so the UI keeps one source of truth;
+// the build script reuses them for sitemap.xml and the #root SEO fallback.
+import { presentations } from '../src/data/projectPresentation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const projectsDir = path.join(rootDir, 'public', 'projects');
 const outputFile = path.join(rootDir, 'public', 'projects.json');
+const sitemapFile = path.join(rootDir, 'public', 'sitemap.xml');
+const indexFile = path.join(rootDir, 'index.html');
+const siteUrl = 'https://h5.ming.fi';
+
+// Fallback region markers in index.html: everything between them is owned by
+// this script and rewritten on every predev/prebuild run. Both markers carry
+// a trailing human note inside the comment, hence the loose middle.
+const FALLBACK_START = /<!--\s*seo-fallback:start[\s\S]*?-->/;
+const FALLBACK_END = /<!--\s*seo-fallback:end[\s\S]*?-->/;
 
 const ENTRY_FILES = ['index.html', 'index.htm'];
 // Order matters when several covers exist: WebP is served by preference.
@@ -88,13 +100,101 @@ function warnMissingRedirectTargets() {
   });
 }
 
+function toIsoTime(mtimeMs) {
+  return new Date(mtimeMs).toISOString().replace(/\.\d+Z$/, 'Z');
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
+// `presentations` falls back the same way enrichProject() does in the app:
+// unregistered slugs get the default display title / tagline instead of
+// disappearing.
+function presentationFor(slug, name) {
+  const presentation = presentations[slug] || {};
+  return {
+    displayTitle: presentation.displayTitle || name,
+    description: presentation.description || '一个关于代码与灵感的小小实验。',
+  };
+}
+
+function generateSitemap(sitemapEntries) {
+  const urls = [
+    { loc: `${siteUrl}/`, lastmod: toIsoTime(fs.statSync(indexFile).mtimeMs) },
+    ...sitemapEntries,
+  ];
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...urls.map(entry => [
+      '  <url>',
+      `    <loc>${escapeHtml(entry.loc)}</loc>`,
+      `    <lastmod>${entry.lastmod}</lastmod>`,
+      '  </url>',
+    ].join('\n')),
+    '</urlset>',
+  ].join('\n');
+  fs.writeFileSync(sitemapFile, `${xml}\n`);
+  console.log(`Successfully generated sitemap.xml with ${urls.length} URLs.`);
+}
+
+// Baidu ("百度") crawlers barely render JavaScript while Googlebot does, so
+// index.html ships the real project list as DOM inside #root. React wipes it
+// the moment the app mounts; crawlers that read the raw HTML (Baidu, Sogou,
+// 360) still index every work without executing a single script. Kept as a
+// script-owned block so adding a project never requires editing index.html.
+function updateSeoFallback(projects) {
+  const html = fs.readFileSync(indexFile, 'utf-8');
+  if (!FALLBACK_START.test(html) || !FALLBACK_END.test(html)) {
+    console.warn(`index.html is missing the seo-fallback markers; skipping SEO fallback update.`);
+    return;
+  }
+
+  const items = projects
+    .map(project => {
+      const { displayTitle, description } = presentationFor(project.slug, project.name);
+      return `        <li><a href="${siteUrl}${project.path}">${escapeHtml(displayTitle)}</a> — ${escapeHtml(description)}</li>`;
+    })
+    .join('\n');
+
+  const block = [
+    `<section class="seo-fallback">`,
+    `  <style>:where(.seo-fallback){max-width:40rem;margin:0 auto;padding:48px 24px;line-height:1.8}:where(.seo-fallback ul){margin:0 0 24px;padding:0;list-style:none}:where(.seo-fallback li){margin:0 0 12px}</style>`,
+    `  <h1>奇点空间 · Singularity Space — H5 创意项目展厅</h1>`,
+    `  <p>把好奇心写成代码，把灵感变成作品。收录 Ming 的数据可视化、创意交互、动态设计与实用工具，共 ${projects.length} 个作品。</p>`,
+    `  <ul>`,
+    items,
+    `  </ul>`,
+    `  <p>在 <a href="${siteUrl}/">奇点空间</a> 主页可搜索、分类筛选并直接预览全部作品。</p>`,
+    `</section>`,
+  ].join('\n');
+
+  const updated = html
+    .replace(
+      new RegExp(`(${FALLBACK_START.source})[\\s\\S]*(${FALLBACK_END.source})`),
+      `$1\n    ${block.replace(/\n/g, '\n    ')}\n    $2`
+    );
+  fs.writeFileSync(indexFile, updated);
+  console.log(`Successfully refreshed the SEO fallback in index.html (${projects.length} links).`);
+}
+
 function generateProjectsData() {
   warnMissingRedirectTargets();
   const projects = [];
+  // Kept separate so projects.json (the app's contract) stays untouched; the
+  // sitemap additionally wants each entry's lastmod from the file on disk.
+  const sitemapEntries = [];
 
   if (!fs.existsSync(projectsDir)) {
     console.warn('Projects directory does not exist or is empty.');
     fs.writeFileSync(outputFile, JSON.stringify([], null, 2));
+    generateSitemap(sitemapEntries);
+    updateSeoFallback(projects);
     return;
   }
 
@@ -137,6 +237,12 @@ function generateProjectsData() {
 
     const cover = findCover(dirFiles, meta.cover);
 
+    const entryDiskFile = path.join(itemPath, entryFile);
+    sitemapEntries.push({
+      loc: `${siteUrl}${entryPath}`,
+      lastmod: toIsoTime(fs.statSync(entryDiskFile).mtimeMs),
+    });
+
     projects.push({
       name,
       slug,
@@ -167,6 +273,9 @@ function generateProjectsData() {
         '\n  Add `<html data-tags="data,map">` to each entry file, or a "tags" array in project.json.\n'
     );
   }
+
+  generateSitemap(sitemapEntries);
+  updateSeoFallback(projects);
 }
 
 generateProjectsData();

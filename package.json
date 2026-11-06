@@ -11,6 +11,7 @@
     "dev": "vite",
     "prebuild": "node scripts/generate-projects.js",
     "build": "vite build",
+    "postbuild": "node scripts/enhance-seo.js",
     "preview": "vite preview",
     "lint": "eslint . && node scripts/lint-inline.js",
     "verify": "node tools/motion-reel/check-reel.cjs && node tools/motion-reel/check-audio.cjs && node tools/motion-reel/check-boot.cjs && node tools/sbti/check-timers.cjs && node tools/poster-lab/check-poster.cjs && node tools/smoke/check-new-projects.cjs",

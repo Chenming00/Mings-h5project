@@ -1,0 +1,25 @@
+# https://h5.ming.fi/robots.txt
+#
+# 所有作品页都是静态 HTML，天然可直接抓取；主站是 React SPA，
+# 但 #root 里有 SEO 兜底内容（scripts/generate-projects.js 生成），
+# 不依赖 JavaScript 渲染。请勿在这里 Disallow 任何 /projects/ 路径。
+
+User-agent: *
+Allow: /
+
+# "*" 已覆盖下面这些引擎，但为百度/搜狗/360 站长平台的「抓取诊断」显式
+# 写出各组，方便逐个验证。
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Sogou web spider
+Allow: /
+
+User-agent: 360Spider
+Allow: /
+
+User-agent: YisouSpider
+Allow: /
+
+Sitemap: https://h5.ming.fi/sitemap.xml

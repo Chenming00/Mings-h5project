@@ -43,7 +43,10 @@ export const tagLabels = {
  *   featured?: boolean,
  * }>}
  */
-const presentations = {
+// Exported so scripts/generate-projects.js can reuse the descriptions for
+// sitemap / SEO fallback / page metadata — a single source of truth, same
+// reasoning as the tags split documented below.
+export const presentations = {
   'coin-flip': {
     displayTitle: 'FLIP · 硬币实验室',
     description: '一半是概率，一半是惊喜。立体抛掷、批量模拟，随时加速或跳过。由 GPT-6 Astra 生成。',
