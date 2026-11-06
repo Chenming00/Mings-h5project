@@ -12,30 +12,42 @@
   --grid:rgba(32,30,25,.05);
   --serif:"Songti SC","STSong","SimSun",Georgia,serif;
   --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-  --size:clamp(96px,26vw,138px);
+  --size:clamp(70px,15vmin,128px);
+  --gap:clamp(8px,1.4vmin,14px);
 }
-html,body{margin:0}
+html,body{margin:0;height:100%}
 body{
   background-color:var(--paper);color:var(--ink);
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:24px 24px;
   font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  min-height:100svh;
+  overflow:hidden;overscroll-behavior:none;
 }
 button{font:inherit}
-main{max-width:560px;margin:auto;min-height:100svh;padding:20px 16px calc(28px + env(safe-area-inset-bottom))}
+main{
+  height:100svh;max-width:1280px;margin:auto;overflow:hidden;
+  padding:clamp(10px,2vmin,20px) clamp(12px,3vw,28px);
+  padding-bottom:calc(clamp(10px,2vmin,20px) + env(safe-area-inset-bottom));
+  padding-top:calc(clamp(10px,2vmin,20px) + env(safe-area-inset-top));
+  display:flex;flex-direction:column;gap:var(--gap);
+}
 
 /* ---- 报头 ---- */
-.masthead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px double var(--ink);padding-bottom:9px;font:700 10px/1.4 var(--mono);letter-spacing:.18em;color:var(--soft)}
+.masthead{flex:none;display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:3px double var(--ink);padding-bottom:clamp(5px,1vmin,9px);font:700 clamp(8.5px,1.3vmin,10px)/1.4 var(--mono);letter-spacing:.18em;color:var(--soft);white-space:nowrap}
 .masthead b{color:var(--ink)}
-h1{margin:20px 0 6px;font-size:clamp(36px,10vw,52px);font-weight:900;letter-spacing:-.015em;line-height:1}
+
+/* ---- 布局：默认纵向，宽屏双栏 ---- */
+.layout{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--gap)}
+.left{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--gap)}
+.brand{flex:none}
+h1{margin:clamp(4px,1vmin,10px) 0 4px;font-size:clamp(24px,5.4vmin,46px);font-weight:900;letter-spacing:-.015em;line-height:1}
 h1 em{font-style:normal;color:var(--red)}
-.subtitle{margin:0 0 18px;font:700 10.5px var(--mono);letter-spacing:.34em;color:var(--soft)}
+.subtitle{margin:0;font:700 clamp(8.5px,1.4vmin,10.5px) var(--mono);letter-spacing:.34em;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ---- 舞台 ---- */
-.stage{border:2px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 rgba(32,30,25,.1);position:relative}
-.scene{position:relative;height:clamp(250px,42svh,360px);perspective:760px;overflow:hidden}
-.rays{position:absolute;left:50%;top:46%;width:min(460px,130%);aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(32,30,25,.055) 0deg 1.6deg,transparent 1.6deg 11deg);animation:spin 44s linear infinite;pointer-events:none}
+.stage{flex:1;min-height:0;border:2px solid var(--ink);background:var(--card);box-shadow:5px 5px 0 rgba(32,30,25,.1);position:relative;display:flex;overflow:hidden}
+.scene{flex:1;min-height:120px;position:relative;perspective:760px;overflow:hidden}
+.rays{position:absolute;left:50%;top:46%;width:min(560px,150%);aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(32,30,25,.055) 0deg 1.6deg,transparent 1.6deg 11deg);animation:spin 44s linear infinite;pointer-events:none}
 @keyframes spin{to{rotate:360deg}}
 .floor{position:absolute;left:6%;right:6%;bottom:12%;border-bottom:2px dashed rgba(32,30,25,.28)}
 .wrap{position:absolute;left:50%;bottom:15%;z-index:2;will-change:transform}
@@ -44,7 +56,7 @@ h1 em{font-style:normal;color:var(--red)}
 .face{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .face:after{content:"";position:absolute;inset:7%;border-radius:50%;border:2px solid currentColor;opacity:.55}
 .face b{font-family:var(--serif);font-size:calc(var(--size)*.44);line-height:1;font-weight:900}
-.face i{position:absolute;bottom:14%;font-style:normal;font:800 8px var(--mono);letter-spacing:.3em;opacity:.75}
+.face i{position:absolute;bottom:14%;font-style:normal;font:800 clamp(6px,1vmin,8px) var(--mono);letter-spacing:.3em;opacity:.75}
 .front{background:var(--red);color:#f6ead9;box-shadow:inset 0 0 0 4px var(--red),inset 0 0 0 6px rgba(246,234,217,.85),6px 8px 0 rgba(32,30,25,.12)}
 .back{background:var(--ink);color:var(--paper);box-shadow:inset 0 0 0 4px var(--ink),inset 0 0 0 6px rgba(242,238,226,.8),6px 8px 0 rgba(32,30,25,.12);transform:rotateY(180deg)}
 .coin.squash{animation:squash .3s ease-out}
@@ -52,143 +64,180 @@ h1 em{font-style:normal;color:var(--red)}
 .shadow{position:absolute;left:50%;bottom:10%;width:calc(var(--size)*1.05);height:14px;translate:-50% 0;border-radius:50%;background:radial-gradient(ellipse at center,rgba(32,30,25,.5) 0%,rgba(32,30,25,0) 70%);z-index:1;pointer-events:none}
 .spark{position:absolute;left:50%;bottom:calc(15% + 4px);width:5px;height:5px;background:var(--c);z-index:3;pointer-events:none;animation:spark .6s ease-out forwards}
 @keyframes spark{from{transform:translate(0,0) rotate(0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(140deg) scale(.3);opacity:0}}
-.callout{position:absolute;left:50%;top:13%;translate:-50% 0;z-index:4;font-family:var(--serif);font-weight:900;font-size:48px;line-height:1;padding:8px 24px;border:4px double currentColor;rotate:-7deg;background:rgba(250,247,238,.88);animation:stamp .85s ease-out forwards;pointer-events:none}
+.callout{position:absolute;left:50%;top:10%;translate:-50% 0;z-index:4;font-family:var(--serif);font-weight:900;font-size:clamp(30px,7vmin,48px);line-height:1;padding:.16em .5em;border:4px double currentColor;rotate:-7deg;background:rgba(250,247,238,.88);animation:stamp .85s ease-out forwards;pointer-events:none}
 .callout.good{color:var(--red)}
 .callout.cool{color:var(--ink)}
-.callout.summary{font-family:var(--mono);font-size:15px;font-weight:800;letter-spacing:.06em;padding:9px 16px;border:2px solid currentColor}
+.callout.summary{font-family:var(--mono);font-size:clamp(11px,2.2vmin,15px);font-weight:800;letter-spacing:.06em;padding:.6em 1em;border:2px solid currentColor}
 @keyframes stamp{0%{opacity:0;transform:scale(2.3)}20%{opacity:1;transform:scale(1)}28%{transform:scale(1.05)}78%{opacity:1}100%{opacity:0;transform:scale(.97) translateY(-10px)}}
 
 /* ---- 表单面板 ---- */
-.panel{border:2px solid var(--ink);border-top:0;background:var(--card);box-shadow:6px 6px 0 rgba(32,30,25,.1);padding:16px}
-.field{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid rgba(32,30,25,.18)}
-.label{font:700 10px var(--mono);letter-spacing:.22em;color:var(--soft)}
+.panel{flex:none;border:2px solid var(--ink);background:var(--card);box-shadow:5px 5px 0 rgba(32,30,25,.1);padding:clamp(9px,1.6vmin,16px);display:flex;flex-direction:column;gap:clamp(7px,1.3vmin,13px)}
+.field{display:flex;align-items:center;gap:clamp(7px,1.4vmin,12px);flex-wrap:wrap;padding-bottom:clamp(7px,1.3vmin,13px);border-bottom:1px solid rgba(32,30,25,.18)}
+.label{font:700 clamp(8px,1.3vmin,10px) var(--mono);letter-spacing:.22em;color:var(--soft);white-space:nowrap}
 .stepper{display:flex;align-items:center}
-.stepper button{width:34px;height:40px;border:2px solid var(--ink);background:var(--card);font-size:16px;font-weight:800;cursor:pointer;padding:0}
+.stepper button{width:clamp(28px,5vmin,34px);height:clamp(32px,5.6vmin,40px);border:2px solid var(--ink);background:var(--card);font-size:15px;font-weight:800;cursor:pointer;padding:0}
 .stepper button:first-child{border-right:0}
 .stepper button:last-child{border-left:0}
 .stepper button:hover:not(:disabled){background:var(--ink);color:var(--paper)}
 .stepper button:disabled{opacity:.35;cursor:not-allowed}
-.stepper input{width:64px;height:40px;border:2px solid var(--ink);background:transparent;color:var(--ink);font:800 20px var(--mono);text-align:center;appearance:textfield;-moz-appearance:textfield;padding:0}
+.stepper input{width:clamp(48px,9vmin,64px);height:clamp(32px,5.6vmin,40px);border:2px solid var(--ink);background:transparent;color:var(--ink);font:800 clamp(15px,2.8vmin,20px) var(--mono);text-align:center;appearance:textfield;-moz-appearance:textfield;padding:0}
 .stepper input:disabled{opacity:.5}
 .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.presets{display:flex;align-items:baseline;gap:8px;margin-left:auto}
-.presets button{background:none;border:0;padding:4px 1px;font:800 12px var(--mono);color:var(--soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.presets{display:flex;align-items:baseline;gap:clamp(4px,1vmin,8px);margin-left:auto}
+.presets button{background:none;border:0;padding:4px 1px;font:800 clamp(10px,1.8vmin,12px) var(--mono);color:var(--soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
 .presets button:hover:not(:disabled){color:var(--red)}
 .presets button:disabled{opacity:.35;cursor:not-allowed}
-.speedrow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(32,30,25,.18);flex-wrap:wrap}
+.speedrow{display:flex;align-items:center;gap:clamp(7px,1.4vmin,12px);padding-bottom:clamp(7px,1.3vmin,13px);border-bottom:1px solid rgba(32,30,25,.18);flex-wrap:wrap}
 .seg{display:flex;border:2px solid var(--ink);background:var(--card);margin-left:auto}
-.seg button{padding:8px 13px;border:0;border-right:2px solid var(--ink);background:transparent;font:800 12px var(--mono);color:var(--ink);cursor:pointer}
+.seg button{padding:clamp(5px,1vmin,8px) clamp(8px,1.8vmin,13px);border:0;border-right:2px solid var(--ink);background:transparent;font:800 clamp(10px,1.7vmin,12px) var(--mono);color:var(--ink);cursor:pointer}
 .seg button:last-child{border-right:0}
 .seg button.on{background:var(--ink);color:var(--paper)}
 .seg button:hover:not(.on){background:rgba(32,30,25,.08)}
-.actions{display:flex;gap:12px;padding:14px 0;flex-wrap:wrap}
+.actions{display:flex;gap:clamp(7px,1.4vmin,12px);flex-wrap:wrap}
 .actions button{cursor:pointer;transition:none}
-#flip{flex:1.5;min-width:160px;padding:14px 10px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-size:16px;font-weight:900;letter-spacing:.14em;box-shadow:4px 4px 0 var(--red)}
+#flip{flex:1.5;min-width:130px;padding:clamp(9px,1.6vmin,14px) 8px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-size:clamp(13px,2.3vmin,16px);font-weight:900;letter-spacing:.14em;box-shadow:4px 4px 0 var(--red)}
 #flip:hover:not(:disabled){transform:translate(2px,2px);box-shadow:2px 2px 0 var(--red)}
-#skip{flex:1;padding:14px 8px;border:2px solid var(--ink);background:var(--card);color:var(--ink);font-size:13px;font-weight:800;letter-spacing:.06em;box-shadow:4px 4px 0 var(--ink)}
+#skip{flex:1;min-width:104px;padding:clamp(9px,1.6vmin,14px) 6px;border:2px solid var(--ink);background:var(--card);color:var(--ink);font-size:clamp(11px,1.9vmin,13px);font-weight:800;letter-spacing:.04em;box-shadow:4px 4px 0 var(--ink)}
 #skip:hover:not(:disabled){transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
 .actions button:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 button:focus-visible,.seg button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
-.progress{margin:0;padding:11px 0;font:700 12px var(--mono);letter-spacing:.05em;color:var(--soft);border-top:1px solid rgba(32,30,25,.18);border-bottom:1px solid rgba(32,30,25,.18);min-height:2.9em}
+.progress{margin:0;padding:clamp(6px,1.1vmin,10px) 0;font:700 clamp(10px,1.7vmin,12px) var(--mono);letter-spacing:.05em;color:var(--soft);border-top:1px solid rgba(32,30,25,.18);border-bottom:1px solid rgba(32,30,25,.18);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ---- 读数 ---- */
-.readout{display:flex;align-items:flex-end;justify-content:center;gap:20px;padding:16px 0 12px}
+.readout{display:flex;align-items:flex-end;justify-content:center;gap:clamp(10px,2.6vmin,20px);padding:clamp(4px,1vmin,10px) 0}
 .readout .side{text-align:center}
-.readout .side span{display:block;font:700 9.5px var(--mono);letter-spacing:.24em;color:var(--soft);margin-bottom:2px}
-.readout .side b{font:800 46px/1 var(--mono);font-variant-numeric:tabular-nums}
+.readout .side span{display:block;font:700 clamp(7.5px,1.2vmin,9.5px) var(--mono);letter-spacing:.24em;color:var(--soft);margin-bottom:2px}
+.readout .side b{font:800 clamp(26px,5.6vmin,46px)/1 var(--mono);font-variant-numeric:tabular-nums}
 .readout .h b{color:var(--red)}
-.readout .vs{font:400 24px var(--serif);color:var(--soft);padding-bottom:6px}
-.ratio{display:flex;height:8px;border:1.5px solid var(--ink);margin-bottom:8px;background:var(--card)}
+.readout .vs{font:400 clamp(14px,2.6vmin,24px) var(--serif);color:var(--soft);padding-bottom:4px}
+.ratio{flex:none;display:flex;height:7px;border:1.5px solid var(--ink);background:var(--card)}
 .ratio i{display:block;height:100%;transition:width .3s}
 .ratio .rh{background:var(--red)}
 .ratio .rt{background:var(--ink)}
-.meta-line{margin:0 0 14px;font:700 11px var(--mono);letter-spacing:.05em;color:var(--soft);text-align:center}
-.tally-head{display:flex;justify-content:space-between;font:700 9.5px var(--mono);letter-spacing:.22em;color:var(--soft);border-top:1px solid rgba(32,30,25,.18);padding-top:10px;margin-bottom:9px}
-.strip{display:flex;flex-wrap:wrap;gap:9px 11px;min-height:24px;align-items:center}
-.strip:empty:before{content:"— 尚无记录 —";font:700 11px var(--mono);color:rgba(32,30,25,.35);letter-spacing:.2em}
+.meta-line{margin:0;font:700 clamp(9px,1.5vmin,11px) var(--mono);letter-spacing:.05em;color:var(--soft);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tally-block{flex:none;min-height:0;display:flex;flex-direction:column}
+.tally-head{display:flex;justify-content:space-between;font:700 clamp(7.5px,1.2vmin,9.5px) var(--mono);letter-spacing:.22em;color:var(--soft);border-top:1px solid rgba(32,30,25,.18);padding-top:clamp(5px,1vmin,9px);margin-bottom:clamp(4px,.9vmin,8px)}
+.strip{flex:1;min-height:20px;max-height:46px;overflow:hidden;display:flex;flex-wrap:wrap;gap:6px 9px;align-items:flex-start;align-content:flex-start}
+.strip:empty:before{content:"— 尚无记录 —";font:700 10px var(--mono);color:rgba(32,30,25,.35);letter-spacing:.2em}
 .tgroup{position:relative;display:flex;gap:3px;padding:1px 3px}
-.tgroup i{width:3px;height:16px;background:var(--ink);display:block}
+.tgroup i{width:3px;height:14px;background:var(--ink);display:block}
 .tgroup i.h{background:var(--red)}
 .tgroup.full:after{content:"";position:absolute;left:-2px;right:-2px;top:50%;height:2.5px;margin-top:-1px;background:var(--ink);transform:rotate(-22deg)}
-.bottom-row{display:flex;justify-content:space-between;border-top:1px solid rgba(32,30,25,.18);margin-top:15px;padding-top:11px}
-.bottom-row button{background:none;border:0;padding:3px 1px;font:700 11px var(--mono);letter-spacing:.08em;color:var(--soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.bottom-row{flex:none;display:flex;justify-content:space-between;border-top:1px solid rgba(32,30,25,.18);padding-top:clamp(5px,1vmin,10px)}
+.bottom-row button{background:none;border:0;padding:2px 1px;font:700 clamp(9px,1.5vmin,11px) var(--mono);letter-spacing:.08em;color:var(--soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
 .bottom-row button:hover{color:var(--red)}
 
 /* ---- 页脚 ---- */
-footer{margin-top:18px;padding-top:10px;border-top:1px solid rgba(32,30,25,.18);font:700 9.5px var(--mono);letter-spacing:.14em;color:var(--soft);text-align:center}
-@media (max-width:400px){.presets{margin-left:0}.readout .side b{font-size:38px}}
+footer{flex:none;font:700 clamp(7.5px,1.2vmin,9.5px) var(--mono);letter-spacing:.14em;color:var(--soft);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- 宽屏（PC / Mac / iPad 横屏）：双栏 ---- */
+@media (min-width:880px){
+  .layout{flex-direction:row}
+  .left{flex:1.25}
+  .panel{width:clamp(330px,33vw,430px);min-height:0;overflow:hidden}
+  h1{font-size:clamp(34px,4.4vw,52px)}
+}
+/* ---- 矮屏（手机横屏 / 小窗口）：双栏 + 紧凑 ---- */
+@media (max-height:520px){
+  .layout{flex-direction:row}
+  .left{flex:1.1}
+  .panel{width:clamp(290px,46vw,420px);min-height:0;overflow:hidden;gap:6px}
+  .subtitle,footer{display:none}
+  .masthead{padding-bottom:4px}
+  h1{margin:4px 0 2px;font-size:clamp(18px,4vmin,26px)}
+  .tally-head span:last-child{display:none}
+  .strip{max-height:24px}
+  .readout{padding:2px 0}
+}
+/* ---- 很矮（横屏小机）再砍 ---- */
+@media (max-height:430px){
+  .tally-block{display:none}
+  .progress{padding:4px 0}
+}
+/* ---- 窄且矮的极限情况：面板内部允许兜底滚动 ---- */
+@media (max-width:340px){
+  .presets{display:none}
+}
 @media (prefers-reduced-motion:reduce){.rays{animation:none}.spark{display:none}.coin.squash{animation:none}.callout{animation-duration:.01ms}}
 </style>
 </head>
 <body>
 <main>
   <div class="masthead"><span><b>决裁局</b> · DECISION BUREAU</span><span>NO. 2026-1106 · 50/50</span></div>
-  <h1>COIN<em>·</em>FLIP</h1>
-  <p class="subtitle">命运硬币 — 正反裁决 · 童叟无欺</p>
 
-  <section class="stage">
-    <div class="scene" id="scene">
-      <div class="rays" aria-hidden="true"></div>
-      <div class="floor" aria-hidden="true"></div>
-      <div class="shadow" id="shadow" aria-hidden="true"></div>
-      <div class="wrap" id="wrap">
-        <div class="spin" id="spin">
-          <div class="coin" id="coin" role="img" aria-label="硬币">
-            <div class="face front"><b>正</b><i>HEADS</i></div>
-            <div class="face back"><b>反</b><i>TAILS</i></div>
+  <div class="layout">
+    <section class="left">
+      <div class="brand">
+        <h1>COIN<em>·</em>FLIP</h1>
+        <p class="subtitle">命运硬币 — 正反裁决 · 童叟无欺</p>
+      </div>
+      <div class="stage">
+        <div class="scene" id="scene">
+          <div class="rays" aria-hidden="true"></div>
+          <div class="floor" aria-hidden="true"></div>
+          <div class="shadow" id="shadow" aria-hidden="true"></div>
+          <div class="wrap" id="wrap">
+            <div class="spin" id="spin">
+              <div class="coin" id="coin" role="img" aria-label="硬币">
+                <div class="face front"><b>正</b><i>HEADS</i></div>
+                <div class="face back"><b>反</b><i>TAILS</i></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="panel">
-    <div class="field">
-      <span class="label" id="countLabel">回数 COUNT</span>
-      <div class="stepper">
-        <button type="button" id="minus" aria-label="减少次数">−</button>
-        <input id="count" type="number" min="1" max="999" step="1" value="1" inputmode="numeric" aria-labelledby="countLabel">
-        <button type="button" id="plus" aria-label="增加次数">＋</button>
+    <section class="panel">
+      <div class="field">
+        <span class="label" id="countLabel">回数 COUNT</span>
+        <div class="stepper">
+          <button type="button" id="minus" aria-label="减少次数">−</button>
+          <input id="count" type="number" min="1" max="999" step="1" value="1" inputmode="numeric" aria-labelledby="countLabel">
+          <button type="button" id="plus" aria-label="增加次数">＋</button>
+        </div>
+        <div class="presets" role="group" aria-label="快速选择次数">
+          <button type="button" data-n="10">10</button>
+          <button type="button" data-n="50">50</button>
+          <button type="button" data-n="100">100</button>
+        </div>
       </div>
-      <div class="presets" role="group" aria-label="快速选择次数">
-        <button type="button" data-n="10">10</button>
-        <button type="button" data-n="50">50</button>
-        <button type="button" data-n="100">100</button>
+
+      <div class="speedrow">
+        <span class="label">动画 SPEED</span>
+        <div class="seg" role="group" aria-label="动画速度">
+          <button type="button" data-s="0" class="on">×1</button>
+          <button type="button" data-s="1">×2</button>
+          <button type="button" data-s="2">×4</button>
+          <button type="button" data-s="3">跳过</button>
+        </div>
       </div>
-    </div>
 
-    <div class="speedrow">
-      <span class="label">动画 SPEED</span>
-      <div class="seg" role="group" aria-label="动画速度">
-        <button type="button" data-s="0" class="on">×1</button>
-        <button type="button" data-s="1">×2</button>
-        <button type="button" data-s="2">×4</button>
-        <button type="button" data-s="3">跳过</button>
+      <div class="actions">
+        <button type="button" id="flip">抛 硬 币</button>
+        <button type="button" id="skip" disabled>跳过动画 →</button>
       </div>
-    </div>
+      <p class="progress" id="progress" role="status">&gt;&gt; 选个回数，把命运抛向空中。</p>
 
-    <div class="actions">
-      <button type="button" id="flip">抛 硬 币</button>
-      <button type="button" id="skip" disabled>跳过动画 →</button>
-    </div>
-    <p class="progress" id="progress" role="status">&gt;&gt; 选个回数，把命运抛向空中。</p>
+      <div class="readout">
+        <div class="side h"><span>正 HEADS</span><b id="headsCount">0</b></div>
+        <div class="vs">对</div>
+        <div class="side t"><span>反 TAILS</span><b id="tailsCount">0</b></div>
+      </div>
+      <div class="ratio" aria-hidden="true"><i class="rh" id="barHeads"></i><i class="rt" id="barTails"></i></div>
+      <p class="meta-line" id="metaLine">总计 0 · 静候首抛</p>
 
-    <div class="readout">
-      <div class="side h"><span>正 HEADS</span><b id="headsCount">0</b></div>
-      <div class="vs">对</div>
-      <div class="side t"><span>反 TAILS</span><b id="tailsCount">0</b></div>
-    </div>
-    <div class="ratio" aria-hidden="true"><i class="rh" id="barHeads"></i><i class="rt" id="barTails"></i></div>
-    <p class="meta-line" id="metaLine">总计 0 · 静候首抛</p>
+      <div class="tally-block">
+        <div class="tally-head"><span>记录 TALLY SHEET</span><span>五画一组</span></div>
+        <div class="strip" id="strip" aria-hidden="true"></div>
+      </div>
 
-    <div class="tally-head"><span>记录 TALLY SHEET</span><span>五画一组</span></div>
-    <div class="strip" id="strip" aria-hidden="true"></div>
-
-    <div class="bottom-row">
-      <button type="button" id="sound" aria-pressed="true">♪ 音效 ON</button>
-      <button type="button" id="reset">清空记录 ×</button>
-    </div>
-  </section>
+      <div class="bottom-row">
+        <button type="button" id="sound" aria-pressed="true">♪ 音效 ON</button>
+        <button type="button" id="reset">清空记录 ×</button>
+      </div>
+    </section>
+  </div>
 
   <footer>CRYPTO RANDOM · 真 50/50 — 由 OPENCODE × QWEN3.8 MAX 生成</footer>
 </main>
