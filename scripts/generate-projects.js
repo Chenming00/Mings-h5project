@@ -100,10 +100,6 @@ function warnMissingRedirectTargets() {
   });
 }
 
-function toIsoTime(mtimeMs) {
-  return new Date(mtimeMs).toISOString().replace(/\.\d+Z$/, 'Z');
-}
-
 function escapeHtml(text) {
   return String(text)
     .replaceAll('&', '&amp;')
@@ -125,7 +121,7 @@ function presentationFor(slug, name) {
 
 function generateSitemap(sitemapEntries) {
   const urls = [
-    { loc: `${siteUrl}/`, lastmod: toIsoTime(fs.statSync(indexFile).mtimeMs) },
+    { loc: `${siteUrl}/` },
     ...sitemapEntries,
   ];
   const xml = [
@@ -134,7 +130,6 @@ function generateSitemap(sitemapEntries) {
     ...urls.map(entry => [
       '  <url>',
       `    <loc>${escapeHtml(entry.loc)}</loc>`,
-      `    <lastmod>${entry.lastmod}</lastmod>`,
       '  </url>',
     ].join('\n')),
     '</urlset>',
@@ -187,7 +182,7 @@ function generateProjectsData() {
   warnMissingRedirectTargets();
   const projects = [];
   // Kept separate so projects.json (the app's contract) stays untouched; the
-  // sitemap additionally wants each entry's lastmod from the file on disk.
+  // Sitemap entries use the same public paths as the project manifest.
   const sitemapEntries = [];
 
   if (!fs.existsSync(projectsDir)) {
@@ -237,11 +232,7 @@ function generateProjectsData() {
 
     const cover = findCover(dirFiles, meta.cover);
 
-    const entryDiskFile = path.join(itemPath, entryFile);
-    sitemapEntries.push({
-      loc: `${siteUrl}${entryPath}`,
-      lastmod: toIsoTime(fs.statSync(entryDiskFile).mtimeMs),
-    });
+    sitemapEntries.push({ loc: `${siteUrl}${entryPath}` });
 
     projects.push({
       name,
