@@ -44,6 +44,13 @@ export const tagLabels = {
  * }>}
  */
 const presentations = {
+  'coin-flip': {
+    displayTitle: 'FLIP · 硬币实验室',
+    description: '一半是概率，一半是惊喜。立体抛掷、批量模拟，随时加速或跳过。由 GPT-6 Astra 生成。',
+    artwork: 'gravity',
+    displayOrder: -3,
+    label: 'CHANCE / COIN FLIP EXPERIMENT',
+  },
   'stellar-passport': {
     displayTitle: 'STELLAR PASSPORT · 星际漫游计划',
     description: '选择目的地，领取一张通往星际的登船证。',

@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="zh-CN" data-tags="game,interactive,animation">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f2eee2">
+<meta name="description" content="3D 抛硬币：自定义次数、正字计数、可加速或一键跳过动画。">
+<title>COIN FLIP · 命运硬币</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  color-scheme:light;
+  --paper:#f2eee2;--card:#faf7ee;--ink:#201e19;--soft:#6b6558;--red:#c8402e;
+  --grid:rgba(32,30,25,.05);
+  --serif:"Songti SC","STSong","SimSun",Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --size:clamp(96px,26vw,138px);
+}
+html,body{margin:0}
+body{
+  background-color:var(--paper);color:var(--ink);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  min-height:100svh;
+}
+button{font:inherit}
+main{max-width:560px;margin:auto;min-height:100svh;padding:20px 16px calc(28px + env(safe-area-inset-bottom))}
+
+/* ---- 报头 ---- */
+.masthead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px double var(--ink);padding-bottom:9px;font:700 10px/1.4 var(--mono);letter-spacing:.18em;color:var(--soft)}
+.masthead b{color:var(--ink)}
+h1{margin:20px 0 6px;font-size:clamp(36px,10vw,52px);font-weight:900;letter-spacing:-.015em;line-height:1}
+h1 em{font-style:normal;color:var(--red)}
+.subtitle{margin:0 0 18px;font:700 10.5px var(--mono);letter-spacing:.34em;color:var(--soft)}
+
+/* ---- 舞台 ---- */
+.stage{border:2px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 rgba(32,30,25,.1);position:relative}
+.scene{position:relative;height:clamp(250px,42svh,360px);perspective:760px;overflow:hidden}
+.rays{position:absolute;left:50%;top:46%;width:min(460px,130%);aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(32,30,25,.055) 0deg 1.6deg,transparent 1.6deg 11deg);animation:spin 44s linear infinite;pointer-events:none}
+@keyframes spin{to{rotate:360deg}}
+.floor{position:absolute;left:6%;right:6%;bottom:12%;border-bottom:2px dashed rgba(32,30,25,.28)}
+.wrap{position:absolute;left:50%;bottom:15%;z-index:2;will-change:transform}
+.spin{position:relative;width:var(--size);height:var(--size);transform-style:preserve-3d;will-change:transform}
+.coin{position:absolute;inset:0;transform-style:preserve-3d}
+.face{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face:after{content:"";position:absolute;inset:7%;border-radius:50%;border:2px solid currentColor;opacity:.55}
+.face b{font-family:var(--serif);font-size:calc(var(--size)*.44);line-height:1;font-weight:900}
+.face i{position:absolute;bottom:14%;font-style:normal;font:800 8px var(--mono);letter-spacing:.3em;opacity:.75}
+.front{background:var(--red);color:#f6ead9;box-shadow:inset 0 0 0 4px var(--red),inset 0 0 0 6px rgba(246,234,217,.85),6px 8px 0 rgba(32,30,25,.12)}
+.back{background:var(--ink);color:var(--paper);box-shadow:inset 0 0 0 4px var(--ink),inset 0 0 0 6px rgba(242,238,226,.8),6px 8px 0 rgba(32,30,25,.12);transform:rotateY(180deg)}
+.coin.squash{animation:squash .3s ease-out}
+@keyframes squash{0%{transform:scaleY(1)}35%{transform:scaleY(.76) scaleX(1.14)}70%{transform:scaleY(1.07) scaleX(.96)}100%{transform:scaleY(1)}}
+.shadow{position:absolute;left:50%;bottom:10%;width:calc(var(--size)*1.05);height:14px;translate:-50% 0;border-radius:50%;background:radial-gradient(ellipse at center,rgba(32,30,25,.5) 0%,rgba(32,30,25,0) 70%);z-index:1;pointer-events:none}
+.spark{position:absolute;left:50%;bottom:calc(15% + 4px);width:5px;height:5px;background:var(--c);z-index:3;pointer-events:none;animation:spark .6s ease-out forwards}
+@keyframes spark{from{transform:translate(0,0) rotate(0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(140deg) scale(.3);opacity:0}}
+.callout{position:absolute;left:50%;top:13%;translate:-50% 0;z-index:4;font-family:var(--serif);font-weight:900;font-size:48px;line-height:1;padding:8px 24px;border:4px double currentColor;rotate:-7deg;background:rgba(250,247,238,.88);animation:stamp .85s ease-out forwards;pointer-events:none}
+.callout.good{color:var(--red)}
+.callout.cool{color:var(--ink)}
+.callout.summary{font-family:var(--mono);font-size:15px;font-weight:800;letter-spacing:.06em;padding:9px 16px;border:2px solid currentColor}
+@keyframes stamp{0%{opacity:0;transform:scale(2.3)}20%{opacity:1;transform:scale(1)}28%{transform:scale(1.05)}78%{opacity:1}100%{opacity:0;transform:scale(.97) translateY(-10px)}}
+
+/* ---- 表单面板 ---- */
+.panel{border:2px solid var(--ink);border-top:0;background:var(--card);box-shadow:6px 6px 0 rgba(32,30,25,.1);padding:16px}
+.field{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid rgba(32,30,25,.18)}
+.label{font:700 10px var(--mono);letter-spacing:.22em;color:var(--soft)}
+.stepper{display:flex;align-items:center}
+.stepper button{width:34px;height:40px;border:2px solid var(--ink);background:var(--card);font-size:16px;font-weight:800;cursor:pointer;padding:0}
+.stepper button:first-child{border-right:0}
+.stepper button:last-child{border-left:0}
+.stepper button:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+.stepper button:disabled{opacity:.35;cursor:not-allowed}
+.stepper input{width:64px;height:40px;border:2px solid var(--ink);background:transparent;color:var(--ink);font:800 20px var(--mono);text-align:center;appearance:textfield;-moz-appearance:textfield;padding:0}
+.stepper input:disabled{opacity:.5}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.presets{display:flex;align-items:baseline;gap:8px;margin-left:auto}
+.presets button{background:none;border:0;padding:4px 1px;font:800 12px var(--mono);color:var(--soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.presets button:hover:not(:disabled){color:var(--red)}
+.presets button:disabled{opacity:.35;cursor:not-allowed}
+.speedrow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(32,30,25,.18);flex-wrap:wrap}
+.seg{display:flex;border:2px solid var(--ink);background:var(--card);margin-left:auto}
+.seg button{padding:8px 13px;border:0;border-right:2px solid var(--ink);background:transparent;font:800 12px var(--mono);color:var(--ink);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:var(--paper)}
+.seg button:hover:not(.on){background:rgba(32,30,25,.08)}
+.actions{display:flex;gap:12px;padding:14px 0;flex-wrap:wrap}
+.actions button{cursor:pointer;transition:none}
+#flip{flex:1.5;min-width:160px;padding:14px 10px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-size:16px;font-weight:900;letter-spacing:.14em;box-shadow:4px 4px 0 var(--red)}
+#flip:hover:not(:disabled){transform:translate(2px,2px);box-shadow:2px 2px 0 var(--red)}
+#skip{flex:1;padding:14px 8px;border:2px solid var(--ink);background:var(--card);color:var(--ink);font-size:13px;font-weight:800;letter-spacing:.06em;box-shadow:4px 4px 0 var(--ink)}
+#skip:hover:not(:disabled){transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.actions button:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+button:focus-visible,.seg button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.progress{margin:0;padding:11px 0;font:700 12px var(--mono);letter-spacing:.05em;color:var(--soft);border-top:1px solid rgba(32,30,25,.18);border-bottom:1px solid rgba(32,30,25,.18);min-height:2.9em}
+
+/* ---- 读数 ---- */
+.readout{display:flex;align-items:flex-end;justify-content:center;gap:20px;padding:16px 0 12px}
+.readout .side{text-align:center}
+.readout .side span{display:block;font:700 9.5px var(--mono);letter-spacing:.24em;color:var(--soft);margin-bottom:2px}
+.readout .side b{font:800 46px/1 var(--mono);font-variant-numeric:tabular-nums}
+.readout .h b{color:var(--red)}
+.readout .vs{font:400 24px var(--serif);color:var(--soft);padding-bottom:6px}
+.ratio{display:flex;height:8px;border:1.5px solid var(--ink);margin-bottom:8px;background:var(--card)}
+.ratio i{display:block;height:100%;transition:width .3s}
+.ratio .rh{background:var(--red)}
+.ratio .rt{background:var(--ink)}
+.meta-line{margin:0 0 14px;font:700 11px var(--mono);letter-spacing:.05em;color:var(--soft);text-align:center}
+.tally-head{display:flex;justify-content:space-between;font:700 9.5px var(--mono);letter-spacing:.22em;color:var(--soft);border-top:1px solid rgba(32,30,25,.18);padding-top:10px;margin-bottom:9px}
+.strip{display:flex;flex-wrap:wrap;gap:9px 11px;min-height:24px;align-items:center}
+.strip:empty:before{content:"— 尚无记录 —";font:700 11px var(--mono);color:rgba(32,30,25,.35);letter-spacing:.2em}
+.tgroup{position:relative;display:flex;gap:3px;padding:1px 3px}
+.tgroup i{width:3px;height:16px;background:var(--ink);display:block}
+.tgroup i.h{background:var(--red)}
+.tgroup.full:after{content:"";position:absolute;left:-2px;right:-2px;top:50%;height:2.5px;margin-top:-1px;background:var(--ink);transform:rotate(-22deg)}
+.bottom-row{display:flex;justify-content:space-between;border-top:1px solid rgba(32,30,25,.18);margin-top:15px;padding-top:11px}
+.bottom-row button{background:none;border:0;padding:3px 1px;font:700 11px var(--mono);letter-spacing:.08em;color:var(--soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.bottom-row button:hover{color:var(--red)}
+
+/* ---- 页脚 ---- */
+footer{margin-top:18px;padding-top:10px;border-top:1px solid rgba(32,30,25,.18);font:700 9.5px var(--mono);letter-spacing:.14em;color:var(--soft);text-align:center}
+@media (max-width:400px){.presets{margin-left:0}.readout .side b{font-size:38px}}
+@media (prefers-reduced-motion:reduce){.rays{animation:none}.spark{display:none}.coin.squash{animation:none}.callout{animation-duration:.01ms}}
+</style>
+</head>
+<body>
+<main>
+  <div class="masthead"><span><b>决裁局</b> · DECISION BUREAU</span><span>NO. 2026-1106 · 50/50</span></div>
+  <h1>COIN<em>·</em>FLIP</h1>
+  <p class="subtitle">命运硬币 — 正反裁决 · 童叟无欺</p>
+
+  <section class="stage">
+    <div class="scene" id="scene">
+      <div class="rays" aria-hidden="true"></div>
+      <div class="floor" aria-hidden="true"></div>
+      <div class="shadow" id="shadow" aria-hidden="true"></div>
+      <div class="wrap" id="wrap">
+        <div class="spin" id="spin">
+          <div class="coin" id="coin" role="img" aria-label="硬币">
+            <div class="face front"><b>正</b><i>HEADS</i></div>
+            <div class="face back"><b>反</b><i>TAILS</i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="field">
+      <span class="label" id="countLabel">回数 COUNT</span>
+      <div class="stepper">
+        <button type="button" id="minus" aria-label="减少次数">−</button>
+        <input id="count" type="number" min="1" max="999" step="1" value="1" inputmode="numeric" aria-labelledby="countLabel">
+        <button type="button" id="plus" aria-label="增加次数">＋</button>
+      </div>
+      <div class="presets" role="group" aria-label="快速选择次数">
+        <button type="button" data-n="10">10</button>
+        <button type="button" data-n="50">50</button>
+        <button type="button" data-n="100">100</button>
+      </div>
+    </div>
+
+    <div class="speedrow">
+      <span class="label">动画 SPEED</span>
+      <div class="seg" role="group" aria-label="动画速度">
+        <button type="button" data-s="0" class="on">×1</button>
+        <button type="button" data-s="1">×2</button>
+        <button type="button" data-s="2">×4</button>
+        <button type="button" data-s="3">跳过</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="flip">抛 硬 币</button>
+      <button type="button" id="skip" disabled>跳过动画 →</button>
+    </div>
+    <p class="progress" id="progress" role="status">&gt;&gt; 选个回数，把命运抛向空中。</p>
+
+    <div class="readout">
+      <div class="side h"><span>正 HEADS</span><b id="headsCount">0</b></div>
+      <div class="vs">对</div>
+      <div class="side t"><span>反 TAILS</span><b id="tailsCount">0</b></div>
+    </div>
+    <div class="ratio" aria-hidden="true"><i class="rh" id="barHeads"></i><i class="rt" id="barTails"></i></div>
+    <p class="meta-line" id="metaLine">总计 0 · 静候首抛</p>
+
+    <div class="tally-head"><span>记录 TALLY SHEET</span><span>五画一组</span></div>
+    <div class="strip" id="strip" aria-hidden="true"></div>
+
+    <div class="bottom-row">
+      <button type="button" id="sound" aria-pressed="true">♪ 音效 ON</button>
+      <button type="button" id="reset">清空记录 ×</button>
+    </div>
+  </section>
+
+  <footer>CRYPTO RANDOM · 真 50/50 — 由 OPENCODE × QWEN3.8 MAX 生成</footer>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const sceneEl = $('scene'), wrapEl = $('wrap'), spinEl = $('spin'), coinEl = $('coin'), shadowEl = $('shadow');
+  const flipBtn = $('flip'), skipBtn = $('skip'), resetBtn = $('reset'), soundBtn = $('sound');
+  const countInput = $('count'), minusBtn = $('minus'), plusBtn = $('plus'), progressEl = $('progress');
+  const headsCountEl = $('headsCount'), tailsCountEl = $('tailsCount'), metaLineEl = $('metaLine');
+  const barHeadsEl = $('barHeads'), barTailsEl = $('barTails'), stripEl = $('strip');
+  const presetButtons = Array.from(document.querySelectorAll('.presets button'));
+  const segButtons = Array.from(document.querySelectorAll('.seg button'));
+
+  const SPEEDS = [1, 2, 4, Infinity];
+  const MAX_GROUPS = 24; // 24 组 × 5 画 = 最多展示 120 次
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let speedIdx = reducedMotion ? 3 : 0;
+  let coinRot = 0;            // 当前累计的 rotateY 角度（0 = 正，180 = 反）
+  let run = null;             // { faces, n, idx, heads, token }
+  let gen = 0;                // 动画代际令牌，用于作废进行中的帧回调
+  let rafId = 0, timerId = 0, calloutTimer = 0;
+  let soundOn = true, actx = null;
+  const stats = { heads: 0, tails: 0, total: 0, streak: 0, streakFace: null, best: 0 };
+
+  const speed = () => SPEEDS[speedIdx];
+
+  function clampCount() {
+    let n = parseInt(countInput.value, 10);
+    if (!Number.isFinite(n)) n = 1;
+    n = Math.min(999, Math.max(1, n));
+    countInput.value = String(n);
+    return n;
+  }
+
+  function randomFaces(n) {
+    const buf = new Uint32Array(n);
+    crypto.getRandomValues(buf);
+    const faces = new Array(n);
+    for (let i = 0; i < n; i++) faces[i] = (buf[i] & 1) === 0; // true = 正
+    return faces;
+  }
+
+  function flipDuration(n) {
+    if (n <= 1) return 1400;
+    if (n <= 5) return 1100;
+    if (n <= 20) return 780;
+    if (n <= 60) return 460;
+    return 280;
+  }
+
+  /* ---- 音效：浏览器实时合成，无外部资源 ---- */
+  function ping(freq) {
+    if (!soundOn || !window.AudioContext) return;
+    try {
+      actx = actx || new window.AudioContext();
+      if (actx.state === 'suspended') actx.resume();
+      const t = actx.currentTime;
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.05, t + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(t);
+      osc.stop(t + 0.24);
+    } catch {
+      soundOn = false;
+      syncSoundBtn();
+    }
+  }
+
+  /* ---- 渲染 ---- */
+  function renderCoin(rot, lift) {
+    wrapEl.style.transform = `translate(-50%, ${-lift}px)`;
+    spinEl.style.transform = `rotateX(12deg) rotateY(${rot}deg)`;
+    const maxLift = sceneEl.clientHeight * 0.42 || 140;
+    const u = Math.min(Math.max(lift / maxLift, 0), 1);
+    shadowEl.style.transform = `scale(${1 - 0.55 * u})`;
+    shadowEl.style.opacity = String(0.4 * (1 - u) + 0.08);
+  }
+
+  function burst() {
+    if (reducedMotion) return;
+    for (let i = 0; i < 12; i++) {
+      const s = document.createElement('span');
+      s.className = 'spark';
+      const ang = Math.random() * Math.PI * 2;
+      const dist = 40 + Math.random() * 100;
+      s.style.setProperty('--dx', `${Math.cos(ang) * dist}px`);
+      s.style.setProperty('--dy', `${Math.sin(ang) * dist * 0.55 - 26}px`);
+      s.style.setProperty('--c', Math.random() < 0.5 ? 'var(--red)' : 'var(--ink)');
+      sceneEl.appendChild(s);
+      s.addEventListener('animationend', () => s.remove());
+    }
+  }
+
+  function showCallout(text, klass) {
+    sceneEl.querySelectorAll('.callout').forEach(node => node.remove());
+    clearTimeout(calloutTimer);
+    const el = document.createElement('div');
+    el.className = `callout ${klass}`;
+    el.textContent = text;
+    sceneEl.appendChild(el);
+    calloutTimer = setTimeout(() => el.remove(), 900);
+  }
+
+  function landFx(faceHeads) {
+    coinEl.classList.remove('squash');
+    void coinEl.offsetWidth;
+    coinEl.classList.add('squash');
+    burst();
+    ping(faceHeads ? 988 : 740);
+    showCallout(faceHeads ? '正' : '反', faceHeads ? 'good' : 'cool');
+  }
+
+  /* ---- 统计：正字计数 ---- */
+  function addTally(faceHeads) {
+    let group = stripEl.lastElementChild;
+    if (!group || group.childElementCount >= 5) {
+      group = document.createElement('span');
+      group.className = 'tgroup';
+      stripEl.appendChild(group);
+    }
+    const mark = document.createElement('i');
+    if (faceHeads) mark.className = 'h';
+    group.appendChild(mark);
+    if (group.childElementCount === 5) group.classList.add('full');
+    while (stripEl.childElementCount > MAX_GROUPS) stripEl.firstElementChild.remove();
+  }
+
+  function record(faceHeads) {
+    stats.total += 1;
+    if (faceHeads) stats.heads += 1; else stats.tails += 1;
+    if (stats.streakFace === faceHeads) stats.streak += 1;
+    else { stats.streakFace = faceHeads; stats.streak = 1; }
+    stats.best = Math.max(stats.best, stats.streak);
+    addTally(faceHeads);
+    syncStats();
+  }
+
+  function syncStats() {
+    headsCountEl.textContent = String(stats.heads);
+    tailsCountEl.textContent = String(stats.tails);
+    const h = stats.total ? (stats.heads / stats.total) * 100 : 50;
+    barHeadsEl.style.width = `${h}%`;
+    barTailsEl.style.width = `${100 - h}%`;
+    if (!stats.total) { metaLineEl.textContent = '总计 0 · 静候首抛'; return; }
+    const face = stats.streakFace ? '正' : '反';
+    metaLineEl.textContent = `总计 ${stats.total} · 连击 ${face}×${stats.streak} · 最高 ${stats.best}`;
+  }
+
+  /* ---- 动画 ---- */
+  function animateFlip(faceHeads, duration, token, onDone) {
+    const maxLift = sceneEl.clientHeight * 0.42 || 140;
+    const spins = Math.max(2, Math.round(duration / 230));
+    const cur = ((coinRot % 360) + 360) % 360;
+    const curHeads = cur < 90 || cur >= 270;
+    const delta = spins * 360 + (faceHeads === curHeads ? 0 : 180);
+    const from = coinRot;
+    const start = performance.now();
+    cancelAnimationFrame(rafId);
+    const step = now => {
+      if (token !== gen) return;
+      const p = Math.min((now - start) / duration, 1);
+      const q = 1 - Math.pow(1 - p, 2.2);      // 旋转：先快后慢
+      const lift = 4 * maxLift * p * (1 - p);  // 高度：抛物线
+      renderCoin(from + delta * q, lift);
+      if (p < 1) { rafId = requestAnimationFrame(step); return; }
+      coinRot = (from + delta) % 360;
+      renderCoin(coinRot, 0);
+      landFx(faceHeads);
+      onDone();
+    };
+    rafId = requestAnimationFrame(step);
+  }
+
+  /* ---- 一轮抛掷 ---- */
+  function setRunningUI(isRunning) {
+    flipBtn.disabled = isRunning;
+    countInput.disabled = isRunning;
+    minusBtn.disabled = isRunning;
+    plusBtn.disabled = isRunning;
+    presetButtons.forEach(btn => { btn.disabled = isRunning; });
+    skipBtn.disabled = !isRunning;
+    flipBtn.textContent = isRunning ? '抛 掷 中 …' : '抛 硬 币';
+  }
+
+  function startRun() {
+    if (run) return;
+    const n = clampCount();
+    gen += 1;
+    run = { faces: randomFaces(n), n, idx: 0, heads: 0, token: gen };
+    setRunningUI(true);
+    nextFlip();
+  }
+
+  function applyFace(faceHeads) {
+    if (faceHeads) run.heads += 1;
+    run.idx += 1;
+    record(faceHeads);
+  }
+
+  function nextFlip() {
+    if (!run || run.token !== gen) return;
+    if (run.idx >= run.n) { finishRun(); return; }
+    const faceHeads = run.faces[run.idx];
+    progressEl.textContent = `>> 第 ${run.idx + 1} / ${run.n} 回 · 空中`;
+    if (speed() === Infinity) {
+      coinRot = faceHeads ? 0 : 180;
+      renderCoin(coinRot, 0);
+      applyFace(faceHeads);
+      timerId = setTimeout(nextFlip, run.n > 60 ? 24 : 60);
+      return;
+    }
+    animateFlip(faceHeads, flipDuration(run.n) / speed(), run.token, () => {
+      if (!run || run.token !== gen) return;
+      applyFace(faceHeads);
+      timerId = setTimeout(nextFlip, Math.max(90, 240 / speed()));
+    });
+  }
+
+  function skipRun() {
+    if (!run) return;
+    clearTimeout(timerId);
+    cancelAnimationFrame(rafId);
+    gen += 1; // 作废进行中的帧回调
+    while (run.idx < run.n) applyFace(run.faces[run.idx]);
+    coinRot = run.faces[run.n - 1] ? 0 : 180;
+    renderCoin(coinRot, 0);
+    finishRun();
+  }
+
+  function finishRun() {
+    if (!run) return;
+    const { n, heads } = run;
+    run = null;
+    setRunningUI(false);
+    progressEl.textContent = `>> 本轮 ${n} 回 · 正 ${heads} · 反 ${n - heads}`;
+    showCallout(n > 1 ? `正 ${heads} · 反 ${n - heads}` : (heads ? '正' : '反'), 'summary');
+    ping(1319);
+  }
+
+  function resetAll() {
+    gen += 1;
+    clearTimeout(timerId);
+    cancelAnimationFrame(rafId);
+    run = null;
+    stats.heads = 0; stats.tails = 0; stats.total = 0;
+    stats.streak = 0; stats.streakFace = null; stats.best = 0;
+    stripEl.replaceChildren();
+    coinRot = 0;
+    renderCoin(0, 0);
+    syncStats();
+    setRunningUI(false);
+    progressEl.textContent = '>> 记录已清空，再来一把。';
+  }
+
+  function syncSoundBtn() {
+    soundBtn.textContent = soundOn ? '♪ 音效 ON' : '♪ 音效 OFF';
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+  }
+
+  function syncSeg() {
+    segButtons.forEach((btn, i) => btn.classList.toggle('on', i === speedIdx));
+  }
+
+  /* ---- 事件 ---- */
+  flipBtn.addEventListener('click', startRun);
+  skipBtn.addEventListener('click', skipRun);
+  resetBtn.addEventListener('click', resetAll);
+  segButtons.forEach(btn => btn.addEventListener('click', () => {
+    speedIdx = Number(btn.dataset.s);
+    syncSeg();
+  }));
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    syncSoundBtn();
+    if (soundOn) ping(988);
+  });
+  minusBtn.addEventListener('click', () => {
+    if (run) return;
+    countInput.value = String(clampCount() - 1);
+    clampCount();
+  });
+  plusBtn.addEventListener('click', () => {
+    if (run) return;
+    countInput.value = String(clampCount() + 1);
+    clampCount();
+  });
+  countInput.addEventListener('change', clampCount);
+  presetButtons.forEach(btn => btn.addEventListener('click', () => {
+    if (run) return;
+    countInput.value = btn.dataset.n;
+    clampCount();
+  }));
+
+  /* ---- 初始化 ---- */
+  syncSeg();
+  syncSoundBtn();
+  syncStats();
+  setRunningUI(false);
+  renderCoin(0, 0);
+})();
+</script>
+</body>
+</html>
