@@ -64,7 +64,19 @@ export default function Sidebar({
     };
 
     window.addEventListener('keydown', onKey);
+
+    // The drawer only exists below 760px, but `isOpen` outlives the breakpoint:
+    // rotate a tablet or widen the window and the panel stayed "open" while its
+    // close button and backdrop were display:none — page scroll locked with no
+    // way out.
+    const desktop = window.matchMedia('(min-width: 761px)');
+    const handleBreakpoint = (event) => {
+      if (event.matches && isOpen) onCloseRef.current();
+    };
+    desktop.addEventListener('change', handleBreakpoint);
+
     return () => {
+      desktop.removeEventListener('change', handleBreakpoint);
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKey);
       previousFocus?.focus();

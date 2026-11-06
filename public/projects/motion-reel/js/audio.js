@@ -70,6 +70,28 @@
     if (ctx.state === 'suspended') ctx.resume();
   }
 
+  /* A fresh bus for the next stretch of sound. Voices already scheduled keep
+     playing into the old one, which is faded to silence — that is what makes a
+     pause/seek/loop actually stop the previous tail instead of letting a 3.8s
+     pad ring over the next chapter. */
+  function newBus() {
+    var g = A.ctx.createGain();
+    g.gain.value = 0.9;
+    g.connect(A.comp);
+    A.bus = g;
+    return g;
+  }
+
+  function cut() {
+    if (!A.ctx || !A.bus) return;
+    var old = A.bus;
+    var now = A.ctx.currentTime;
+    old.gain.cancelScheduledValues(now);
+    old.gain.setValueAtTime(old.gain.value, now);
+    old.gain.linearRampToValueAtTime(0.0001, now + 0.03);
+    newBus();
+  }
+
   /* ---------- voices ------------------------------------------ */
   function env(g, t, a, d, peak) {
     g.gain.setValueAtTime(0.0001, t);
@@ -320,13 +342,25 @@
   function play(t) {
     var ctx = ensure(); if (!ctx) return;
     resume();
+    // Already rolling: treat this as a seek. Re-anchoring and rescheduling from
+    // the same position duplicated every voice in flight.
+    if (A.playing) { seek(t || 0); return; }
+    // Re-arming after a pause: the old bus is already silent, so start over on
+    // a clean one and drop the expired tail.
+    cut();
     A.playing = true;
     A.anchorReel = t || 0;
     A.anchorCtx = ctx.currentTime;
     A.nextBeat = Math.floor((t || 0) / A.spb);
     if (!A.timer) A.timer = setInterval(tick, 25);
   }
-  function pause() { A.playing = false; }
+  function pause() {
+    A.playing = false;
+    // Without this the last pad kept ringing for up to ~4.5s after the picture
+    // stopped, which read as "the audio is stuck".
+    cut();
+    if (A.timer) { clearInterval(A.timer); A.timer = null; }
+  }
   /* the render loop calls this every frame while playing to keep audio
      locked to the video clock (handles drift + loop wrap) */
   function setTime(t) {
@@ -338,12 +372,14 @@
       A.anchorReel = t;
       A.anchorCtx = A.ctx.currentTime;
       A.nextBeat = Math.floor(t / A.spb);
+      cut();
     } else {
       A.anchorReel += d * 0.08;            /* slow slew toward video clock */
     }
   }
   function seek(t) {
     if (!A.ctx) return;
+    cut();
     A.anchorReel = t;
     A.anchorCtx = A.ctx.currentTime;
     A.nextBeat = Math.ceil(t / A.spb);

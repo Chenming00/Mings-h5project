@@ -5,18 +5,21 @@ export default function CollectionToolbar({
   selectedTag,
   setSelectedTag,
   projectCount,
+  loading = false,
   viewMode,
   setViewMode,
 }) {
   return (
     <div className="collection-toolbar">
-      <div className="category-tabs" aria-label="筛选项目分类">
+      {/* aria-label needs a role on a generic element, otherwise it is ignored
+          by screen readers (the view-switch next to it already does this). */}
+      <div className="category-tabs" role="group" aria-label="筛选项目分类">
         <button
           className={!selectedTag ? 'active' : ''}
           onClick={() => setSelectedTag(null)}
           aria-pressed={!selectedTag}
         >
-          全部作品 <span>{projectCount}</span>
+          全部作品 <span>{loading ? '—' : projectCount}</span>
         </button>
         {categories.map((category) => (
           <button

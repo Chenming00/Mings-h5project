@@ -25,6 +25,9 @@ function param(v, name) {
   return {
     value: v,
     setValueAtTime(x, t) { assertParam(name + '.setValueAtTime', x, 'time ' + t); assertParam('time', t, name); },
+    // Real AudioParams expose this; the page uses it to fade a bus out before
+    // replacing it, so the double has to model it too.
+    cancelScheduledValues(t) { assertParam('time', t, name + '.cancelScheduledValues'); },
     linearRampToValueAtTime(x, t) { assertParam(name + '.linearRamp', x, 'time ' + t); },
     exponentialRampToValueAtTime(x, t) {
       assertParam(name + '.expRamp', x, 'time ' + t);
@@ -158,14 +161,31 @@ nowCtx = 60; ctxMock.currentTime = 60;
 Audio.setTime(29.9);
 runSeconds(60, 60.5, 1 / 60, () => Audio.setTime(0.05 + (nowCtx - 60) * 0.2));
 
-/* 5. level() must stay finite */
+/* 5. calling play() while already playing must behave as a seek, not schedule
+      the same beats a second time */
+events.length = 0;
+nowCtx = 61; ctxMock.currentTime = 61;
+Audio.play(5.6);
+runSeconds(61, 61.4, 1 / 60, t => Audio.setTime(5.6 + (t - 61)));
+const afterSecondPlay = events.filter(e => e.kind === 'osc' || e.kind === 'buf').length;
+if (afterSecondPlay > 60) {
+  errors.push(`second play() duplicated the schedule: ${afterSecondPlay} voices in 0.4s`);
+}
+
+/* 6. pause() must silence the running section and stop scheduling */
+Audio.pause();
+events.length = 0;
+runSeconds(62, 62.5, 1 / 60);
+if (events.length) errors.push(`pause() kept scheduling: ${events.length} events after pause`);
+
+/* 7. level() must stay finite */
 const lvl = Audio.level();
 if (!Number.isFinite(lvl)) errors.push('Audio.level() returned ' + lvl);
 
 /* ---- report ---- */
 console.log(`scheduled audio events over ${D}s: ${scheduled.length}`);
 console.log(`bpm=${Audio.bpm}  events after seek window: ${afterSeek}`);
-console.log(`level=${lvl.toFixed(4)}`);
+console.log(`level=${lvl.toFixed(4)}  voices after re-play: ${afterSecondPlay}`);
 if (errors.length) {
   const uniq = [...new Set(errors)];
   console.error(`\nAUDIO FAILURES (${errors.length}, ${uniq.length} unique):`);

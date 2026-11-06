@@ -8,7 +8,11 @@
 <meta name="theme-color" content="#05060b" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+<!-- Non-blocking: a blocked font CDN must not hold the first frame. The
+     canvas falls back to system faces, which is why the boot gate also has a
+     short timeout. -->
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" /></noscript>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -31,15 +35,15 @@
         <option value="medium">画质 中</option>
         <option value="low">画质 低</option>
       </select>
-      <button id="hud" class="tgl" title="画面 HUD (H)">HUD</button>
+      <button id="hud" class="tgl" title="画面 HUD (H)" aria-pressed="true">HUD</button>
       <button id="fps" class="tgl is-off" title="性能信息">FPS</button>
-      <button id="letterbox" class="tgl is-off" title="2.39:1 遮幅">2.39</button>
+      <button id="letterbox" class="tgl is-off" title="2.39:1 遮幅" aria-pressed="false">2.39</button>
       <button id="expand" class="icon" title="全屏 (F)" aria-label="全屏"></button>
     </div>
   </header>
 
   <main id="stage">
-    <canvas id="reel" width="1920" height="1080"></canvas>
+    <canvas id="reel" width="1920" height="1080" role="img" aria-label="30 秒动态设计短片的实时渲染画面"></canvas>
 
     <div id="exportBar">
       <span class="rec"></span>
@@ -72,7 +76,7 @@
       <button id="replay" class="icon" title="重播 (R)" aria-label="重播"></button>
       <button id="mute" class="icon" title="静音 (M)" aria-label="静音"></button>
 
-      <div id="scrub" class="scrub" role="slider" aria-label="时间轴" aria-valuemin="0" aria-valuemax="30" tabindex="0"></div>
+      <div id="scrub" class="scrub" role="slider" aria-label="时间轴（秒）" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0" aria-valuetext="00:00 / 00:30" tabindex="0"></div>
       <span id="time" class="time">00:00 / 30:00</span>
 
       <button id="snap" class="icon" title="导出当前帧 PNG (S)" aria-label="截图"></button>
@@ -83,7 +87,7 @@
     <div id="chapters" class="chapters"></div>
   </footer>
 
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
 
 <script src="js/math.js"></script>

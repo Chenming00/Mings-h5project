@@ -37,6 +37,30 @@
     FX.bloomB = makeCanvas(w >> 3, h >> 3);
     FX.work = makeCanvas(w, h);
     buildGrain();
+    buildScanlines();
+    FX.vignetteGrad = null;
+    FX.vignetteKey = '';
+  }
+
+  // The scanline pass used to issue ~270 fillRect() calls per frame. The lines
+  // never move, so they are baked once per size and composited as an image.
+  function buildScanlines() {
+    var w = FX.w, h = FX.h;
+    var step = Math.max(2, Math.round(h / 620));
+    var c = makeCanvas(w, h);
+    var cx = c.getContext('2d');
+    cx.fillStyle = '#000';
+    for (var y = 0; y < h; y += step * 2) cx.fillRect(0, y, w, step);
+    FX.scanCanvas = c;
+  }
+
+  function grainPattern(ctx, index) {
+    var cache = FX.grainPat || (FX.grainPat = []);
+    if (!cache[index] || cache[index]._ctx !== ctx) {
+      cache[index] = ctx.createPattern(FX.grain[index], 'repeat');
+      cache[index]._ctx = ctx;
+    }
+    return cache[index];
   }
 
   function buildGrain() {
@@ -163,21 +187,19 @@
 
     /* ---- grain ---- */
     if (state.fx.grain !== false) {
-      var g = FX.grain[Math.floor(t * 24) % FX.grain.length];
-      var gc = FX.grain[(Math.floor(t * 24) + 2) % FX.grain.length];
       scr.save();
       scr.globalCompositeOperation = 'overlay';
       scr.globalAlpha = state.fx.grainAmt === undefined ? FX.grainAmt : state.fx.grainAmt;
       var ox = (M.hash1(Math.floor(t * 24)) * 256) | 0;
       var oy = (M.hash1(Math.floor(t * 24) + 17) * 256) | 0;
-      var pat = scr.createPattern(g, 'repeat');
+      var pat = grainPattern(scr, Math.floor(t * 24) % FX.grain.length);
       scr.translate(-ox, -oy);
       scr.fillStyle = pat;
       scr.fillRect(0, 0, W + 300, H + 300);
       scr.translate(ox, oy);
       if (FX.quality === 'high') {
         scr.globalAlpha *= 0.5;
-        scr.fillStyle = scr.createPattern(gc, 'repeat');
+        scr.fillStyle = grainPattern(scr, (Math.floor(t * 24) + 2) % FX.grain.length);
         scr.fillRect(ox, oy, W + 300, H + 300);
       }
       scr.restore();
@@ -191,9 +213,9 @@
         scr.save();
         scr.globalCompositeOperation = 'multiply';
         scr.globalAlpha = sa;
-        scr.fillStyle = '#000';
-        var step = Math.max(2, Math.round(H / 620));
-        for (var y = 0; y < H; y += step * 2) scr.fillRect(0, y, W, step);
+        if (FX.scanCanvas && FX.scanCanvas.width === W && FX.scanCanvas.height === H) {
+          scr.drawImage(FX.scanCanvas, 0, 0);
+        }
         scr.restore();
       }
     }
@@ -201,11 +223,18 @@
     /* ---- vignette ---- */
     var vg = state.fx.vignette === undefined ? FX.vignette : state.fx.vignette;
     if (vg > 0.001) {
-      var g2 = scr.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.22, W / 2, H / 2, Math.max(W, H) * 0.72);
-      g2.addColorStop(0, 'rgba(0,0,0,0)');
-      g2.addColorStop(0.62, 'rgba(0,0,0,' + (vg * 0.35).toFixed(3) + ')');
-      g2.addColorStop(1, 'rgba(0,0,0,' + vg.toFixed(3) + ')');
-      scr.fillStyle = g2;
+      // Rebuilding this gradient every frame was pure allocation; it only
+      // changes when the size or strength changes.
+      var vkey = W + 'x' + H + ':' + vg.toFixed(3) + ':' + scr._fxId;
+      if (!FX.vignetteGrad || FX.vignetteKey !== vkey) {
+        var g2 = scr.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.22, W / 2, H / 2, Math.max(W, H) * 0.72);
+        g2.addColorStop(0, 'rgba(0,0,0,0)');
+        g2.addColorStop(0.62, 'rgba(0,0,0,' + (vg * 0.35).toFixed(3) + ')');
+        g2.addColorStop(1, 'rgba(0,0,0,' + vg.toFixed(3) + ')');
+        FX.vignetteGrad = g2;
+        FX.vignetteKey = vkey;
+      }
+      scr.fillStyle = FX.vignetteGrad;
       scr.fillRect(0, 0, W, H);
     }
   }

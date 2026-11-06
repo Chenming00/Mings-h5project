@@ -30,7 +30,13 @@
   .hud{
     position:fixed;inset:0;pointer-events:none;
     display:flex;flex-direction:column;justify-content:space-between;
-    padding:clamp(16px,3.2vw,34px);
+    /* viewport-fit=cover is declared, so the HUD has to clear the notch and
+       the home indicator itself. */
+    padding:
+      max(clamp(16px,3.2vw,34px), env(safe-area-inset-top))
+      max(clamp(16px,3.2vw,34px), env(safe-area-inset-right))
+      max(clamp(16px,3.2vw,34px), env(safe-area-inset-bottom))
+      max(clamp(16px,3.2vw,34px), env(safe-area-inset-left));
   }
   .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
   .brand{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
@@ -78,7 +84,7 @@
 </style>
 </head>
 <body>
-<canvas id="stage" role="img" aria-label="粒子引力场画布：移动光标牵引粒子，按住反转力场"></canvas>
+<canvas id="stage" role="application" aria-label="粒子引力场：移动或拖动改变引力点，按住反转力场，1/2/3 切换模式"></canvas>
 <div class="glow" id="glow" aria-hidden="true"></div>
 
 <div class="hud">
@@ -178,6 +184,8 @@
     };
   }
 
+  var coreGlow = { grad: null, x: -999, y: -999 };
+
   function seed() {
     var n = particleCount();
     particles = new Array(n);
@@ -191,6 +199,8 @@
 
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var prevW = W;
+    var prevH = H;
     W = canvas.clientWidth;
     H = canvas.clientHeight;
     canvas.width = Math.round(W * DPR);
@@ -206,7 +216,19 @@
       pointer.tx = W / 2;
       pointer.ty = H / 2;
     }
-    seed();
+    // Mobile browsers fire resize when the address bar hides; reseeding wiped
+    // the whole cloud every time. Rescale the existing particles instead.
+    if (particles.length && prevW > 0 && prevH > 0) {
+      var sx = W / prevW;
+      var sy = H / prevH;
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.x *= sx; p.y *= sy; p.px *= sx; p.py *= sy;
+      }
+      updateReadout();
+    } else {
+      seed();
+    }
   }
 
   function updateReadout() {
@@ -243,11 +265,18 @@
     ctx.globalCompositeOperation = 'lighter';
 
     // Soft core glow so the well reads as a light source, not a hole.
-    var core = ctx.createRadialGradient(px, py, 0, px, py, 160);
-    core.addColorStop(0, 'rgba(255,190,140,0.11)');
-    core.addColorStop(0.45, 'rgba(150,110,255,0.055)');
-    core.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = core;
+    // Rebuilding a gradient every frame allocated an object per frame at 60fps;
+    // it only needs recreating when the attractor actually moves.
+    if (!coreGlow.grad || Math.abs(coreGlow.x - px) > 0.5 || Math.abs(coreGlow.y - py) > 0.5) {
+      var core = ctx.createRadialGradient(px, py, 0, px, py, 160);
+      core.addColorStop(0, 'rgba(255,190,140,0.11)');
+      core.addColorStop(0.45, 'rgba(150,110,255,0.055)');
+      core.addColorStop(1, 'rgba(0,0,0,0)');
+      coreGlow.grad = core;
+      coreGlow.x = px;
+      coreGlow.y = py;
+    }
+    ctx.fillStyle = coreGlow.grad;
     ctx.fillRect(px - 160, py - 160, 320, 320);
 
     for (var i = 0; i < particles.length; i++) {
@@ -262,8 +291,11 @@
       var ax = 0, ay = 0;
 
       if (mode === 2) {
-        ax = -uy * f * 1.2 + ux * f * 0.16;
-        ay = ux * f * 1.2 + uy * f * 0.16;
+        // "Press to invert" was documented but only wired to the other two
+        // modes, so holding a finger down in vortex mode did nothing.
+        var spin = invert ? -1 : 1;
+        ax = (-uy * f * 1.2 + ux * f * 0.16) * spin;
+        ay = (ux * f * 1.2 + uy * f * 0.16) * spin;
       } else {
         var sign = mode === 0 ? 1 : -1;
         if (invert) sign = -sign;

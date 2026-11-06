@@ -21,8 +21,19 @@ export function useProjectUrlState(projects) {
   const [state, setState] = useState(readUrlState);
   const stateRef = useRef(state);
   const timerRef = useRef(null);
+  // The close cycle has its own timer: it is not a URL write, it is the safety
+  // valve for webviews that swallow popstate. It used to be fire-and-forget,
+  // which meant a project opened within its 400ms window was closed again by
+  // the stale callback.
+  const closeTimerRef = useRef(null);
   const openedInPageRef = useRef(false);
   const closingRef = useRef(false);
+
+  const clearCloseTimer = useCallback(() => {
+    if (closeTimerRef.current === null) return;
+    window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = null;
+  }, []);
 
   const writeUrl = useCallback((next, method) => {
     const params = new URLSearchParams();
@@ -50,7 +61,13 @@ export function useProjectUrlState(projects) {
     }
   }, [writeUrl]);
 
-  useEffect(() => () => window.clearTimeout(timerRef.current), []);
+  useEffect(
+    () => () => {
+      window.clearTimeout(timerRef.current);
+      window.clearTimeout(closeTimerRef.current);
+    },
+    []
+  );
 
   // Browser back/forward is the source of truth here.
   useEffect(() => {
@@ -91,6 +108,10 @@ export function useProjectUrlState(projects) {
 
   const openProject = useCallback(
     project => {
+      // Opening supersedes any pending close: without this, a project opened
+      // inside the 400ms safety-valve window was closed again by the stale
+      // callback (it only checks that *some* preview is open).
+      clearCloseTimer();
       // Remember how the preview was entered: an in-page open can be undone with
       // history.back(), whereas a deep link (?p=slug pasted in the address bar)
       // has nothing of ours behind it, so it must be replaced instead.
@@ -98,7 +119,7 @@ export function useProjectUrlState(projects) {
       closingRef.current = false;
       apply({ preview: project.slug }, 'pushState');
     },
-    [apply]
+    [apply, clearCloseTimer]
   );
 
   const closeProject = useCallback(() => {
@@ -114,14 +135,16 @@ export function useProjectUrlState(projects) {
       window.history.back();
       // Safety valve: a few embedded webviews swallow popstate. Without this
       // the latch above would leave the close button permanently dead.
-      window.setTimeout(() => {
+      clearCloseTimer();
+      closeTimerRef.current = window.setTimeout(() => {
+        closeTimerRef.current = null;
         closingRef.current = false;
         if (stateRef.current.preview) apply({ preview: '' }, 'replaceState');
       }, 400);
       return;
     }
     apply({ preview: '' }, 'replaceState');
-  }, [apply]);
+  }, [apply, clearCloseTimer]);
 
   return {
     searchQuery: state.query,

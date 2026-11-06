@@ -21,6 +21,12 @@ function stubCtx() {
     save: noop, restore: noop, translate: noop, rotate: noop, scale: noop,
     beginPath: noop, closePath: noop, moveTo: noop, lineTo: noop,
     fill: noop, stroke: noop, fillRect: noop, clearRect: noop, fillText: noop,
+    drawImage: noop, clip: noop, setLineDash: noop, strokeRect: noop,
+    createPattern: () => ({ setTransform: noop }),
+    createLinearGradient: () => ({ addColorStop: noop }),
+    createRadialGradient: () => ({ addColorStop: noop }),
+    createImageData: (w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(w * h * 4) }),
+    putImageData: noop,
     measureText: (s) => {
       let units = 0;
       for (const ch of String(s)) {
@@ -57,6 +63,11 @@ function makeEl(tag, attrs = {}) {
     querySelector: () => null,
     getBoundingClientRect: () => ({ left: 0, top: 0, width: 400, height: 500 }),
     focus: noop0,
+    // The grain texture is baked into an offscreen canvas; the double has to
+    // hand one back or boot dies before any check runs.
+    width: 0,
+    height: 0,
+    getContext: () => makeCtx(),
     click() { (el._listeners.click || []).forEach(fn => fn({})); },
     classList: { add: noop0, remove: noop0 },
   };
@@ -64,6 +75,48 @@ function makeEl(tag, attrs = {}) {
   return el;
 }
 function noop0() {}
+
+function makeCtx() {
+  return {
+    canvas: null,
+    fillStyle: '#000',
+    globalAlpha: 1,
+    createImageData: (w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(w * h * 4) }),
+    putImageData: noop0,
+    getImageData: (x, y, w, h) => ({ data: new Uint8ClampedArray(w * h * 4) }),
+    createPattern: () => ({ setTransform: noop0 }),
+    drawImage: noop0,
+    fillRect: noop0,
+    clearRect: noop0,
+    save: noop0,
+    restore: noop0,
+    translate: noop0,
+    rotate: noop0,
+    scale: noop0,
+    beginPath: noop0,
+    closePath: noop0,
+    moveTo: noop0,
+    lineTo: noop0,
+    arc: noop0,
+    rect: noop0,
+    fill: noop0,
+    stroke: noop0,
+    strokeRect: noop0,
+    fillText: noop0,
+    measureText: (text) => ({ width: String(text).length * 8 }),
+    createLinearGradient: () => ({ addColorStop: noop0 }),
+    createRadialGradient: () => ({ addColorStop: noop0 }),
+    setLineDash: noop0,
+    clip: noop0,
+    filter: 'none',
+    font: '',
+    textAlign: 'left',
+    textBaseline: 'alphabetic',
+    lineWidth: 1,
+    lineCap: 'butt',
+    lineJoin: 'miter',
+  };
+}
 
 function fire(el, type, event) {
   (el._listeners[type] || []).forEach(fn => fn(Object.assign({
@@ -123,6 +176,9 @@ const sandbox = {
   navigator: { clipboard: { writeText: async () => {}, write: async () => {} } },
   setTimeout: (fn) => { fn(); return 0; },
   clearTimeout: noop0,
+  // Repaints are coalesced into a frame now; run it inline so the assertions
+  // observe the result immediately.
+  requestAnimationFrame: (fn) => { fn(0); return 0; },
   prompt: () => {},
   history: { replaceState: noop0 },
   localStorage: {
@@ -138,6 +194,7 @@ sandbox.window = {
   addEventListener: () => {},
   setTimeout: sandbox.setTimeout,
   clearTimeout: noop0,
+  requestAnimationFrame: sandbox.requestAnimationFrame,
   localStorage: sandbox.localStorage,
   matchMedia: () => ({ matches: false }),
   getComputedStyle: () => ({ getPropertyValue: () => '0px' }),

@@ -49,6 +49,7 @@
         linear-gradient(rgba(103, 232, 249, 0.035) 1px, transparent 1px),
         linear-gradient(90deg, rgba(103, 232, 249, 0.035) 1px, transparent 1px);
       background-size: 40px 40px;
+      -webkit-mask-image: linear-gradient(to bottom, black, transparent 92%);
       mask-image: linear-gradient(to bottom, black, transparent 92%);
     }
     h1, h2, h3, p { margin: 0; }
@@ -59,6 +60,7 @@
 
     .app-shell {
       width: min(1120px, calc(100% - 32px));
+      height: 100vh;
       height: 100svh;
       margin: 0 auto;
       overflow: hidden;
@@ -117,7 +119,7 @@
     }
     .hud-item { position: relative; padding: 13px 18px; border-right: 1px solid var(--line); }
     .hud-item:last-child { border-right: 0; }
-    .hud-label { display: block; color: var(--faint); font: 700 8px/1.4 var(--mono); letter-spacing: 0.13em; text-transform: uppercase; }
+    .hud-label { display: block; color: var(--faint); font: 700 9px/1.4 var(--mono); letter-spacing: 0.13em; text-transform: uppercase; }
     .hud-value { display: block; margin-top: 5px; color: var(--text); font: 700 19px/1 var(--mono); letter-spacing: -0.04em; }
     .hud-item.accent .hud-value { color: var(--cyan-bright); text-shadow: 0 0 14px rgba(34,211,238,0.28); }
     .hud-item.combo .hud-value { color: var(--lime); }
@@ -126,6 +128,9 @@
 
     .canvas-wrap { position: relative; min-height: 0; overflow: hidden; background: #04060a; }
     canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    /* UA stylesheet gives [hidden]{display:none}, but any author `display`
+       declaration wins over it — the NEW RECORD badge never hid. */
+    [hidden] { display: none !important; }
     .scanlines { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(255,255,255,0.012) 4px); }
     .vignette { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 110px rgba(0,0,0,0.65); }
 
@@ -205,7 +210,7 @@
       .game-frame { border-radius: 14px; }
       .hud-item { padding: 10px 9px; }
       .hud-value { font-size: 15px; }
-      .hud-label { font-size: 7px; }
+      .hud-label { font-size: 9px; }
       .overlay { padding: 18px; }
       .overlay p { font-size: 11px; }
       .target-legend { gap: 6px; }
@@ -335,6 +340,18 @@
 
   <script>
     (() => {
+      // Accessing localStorage throws in Safari's "block all cookies" mode and
+      // in sandboxed iframes, which used to abort this whole IIFE at the first
+      // read. Nothing here may run outside a try/catch.
+      function readStore(key) {
+        try { return localStorage.getItem(key); } catch { return null; }
+      }
+
+      function writeStore(key, value) {
+        try { localStorage.setItem(key, value); } catch { return false; }
+        return true;
+      }
+
       'use strict';
 
       const canvas = document.getElementById('gameCanvas');
@@ -382,8 +399,8 @@
         elapsed: 0,
         spawnTimer: 0,
         shake: 0,
-        muted: localStorage.getItem(MUTE_KEY) === '1',
-        best: Number.parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0,
+        muted: readStore(MUTE_KEY) === '1',
+        best: Number.parseInt(readStore(BEST_KEY) || '0', 10) || 0,
         targets: [],
         particles: [],
         rings: [],
@@ -459,7 +476,7 @@
         oscillator.stop(start + duration + 0.02);
       }
 
-      function playHit(type, points) {
+      function playHit(type) {
         if (type === 'gold') {
           tone(520, 0.07, 'triangle', 0.12);
           tone(780, 0.09, 'triangle', 0.11, 0.06);
@@ -486,7 +503,7 @@
       function toggleSound() {
         initAudio();
         state.muted = !state.muted;
-        localStorage.setItem(MUTE_KEY, state.muted ? '1' : '0');
+        writeStore(MUTE_KEY, state.muted ? '1' : '0');
         if (masterGain) masterGain.gain.value = state.muted ? 0 : 0.35;
         updateSoundButton();
         if (!state.muted) tone(660, 0.07, 'sine', 0.08);
@@ -555,7 +572,6 @@
         const newRecord = state.score > state.best;
         if (newRecord) {
           state.best = state.score;
-          localStorage.setItem(BEST_KEY, String(state.best));
         }
         const totalAttempts = state.hits + state.misses;
         const accuracy = totalAttempts ? Math.round((state.hits / totalAttempts) * 100) : 0;
@@ -566,6 +582,9 @@
         ui.finalLevel.textContent = state.level;
         ui.rank.textContent = getRank(state.score);
         ui.record.hidden = !newRecord;
+        // Persist last: a throwing write must not leave the game stuck in
+        // `gameover` with no result screen.
+        if (newRecord) writeStore(BEST_KEY, String(state.best));
         setOverlay();
         updateHud(true);
         ui.status.textContent = `测试完成 · 命中率 ${accuracy}% · 最高分 ${formatScore(state.best)}`;
@@ -632,6 +651,10 @@
         if (target.type === 'danger') {
           state.score = Math.max(0, state.score - 30);
           state.combo = 0;
+          // Danger taps were previously counted in neither hits nor misses,
+          // while a danger timing out counted as a miss — the reported
+          // accuracy was therefore always too high.
+          state.misses += 1;
           state.shake = reduceMotion ? 0 : 11;
           burst(target.x, target.y, colors.danger, 22, 1.1);
           floatText(target.x, target.y - 14, '-30', colors.danger);
@@ -782,6 +805,18 @@
         ctx.fillRect(0, scanY - 45, width, 90);
       }
 
+      let monoStack = '';
+
+      function fontStack() {
+        if (monoStack) return monoStack;
+        try {
+          monoStack = getComputedStyle(document.documentElement).getPropertyValue('--mono').trim() || 'monospace';
+        } catch {
+          monoStack = 'monospace';
+        }
+        return monoStack;
+      }
+
       function drawTarget(target) {
         const color = colors[target.type];
         const lifeRatio = clamp(target.life / target.maxLife, 0, 1);
@@ -829,7 +864,7 @@
             ctx.stroke();
             ctx.rotate(-target.rotation);
             ctx.fillStyle = color;
-            ctx.font = `800 ${Math.round(radius * 0.62)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')}`;
+            ctx.font = `800 ${Math.round(radius * 0.62)}px ${fontStack()}`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('+', 0, 1);
@@ -892,7 +927,7 @@
           ctx.fillStyle = floater.color;
           ctx.shadowColor = floater.color;
           ctx.shadowBlur = 12;
-          ctx.font = `800 ${Math.round(14 + (1 - alpha) * 5)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')}`;
+          ctx.font = `800 ${Math.round(14 + (1 - alpha) * 5)}px ${fontStack()}`;
           ctx.fillText(floater.text, floater.x, floater.y);
         }
         ctx.globalAlpha = 1;
@@ -926,18 +961,31 @@
         ctx.restore();
       }
 
+      let lastBarPercent = -1;
+      let lastLevelText = '';
+
       function updateHud(force = false) {
         const scoreText = formatScore(state.score);
         const comboText = `×${multiplier()}`;
         const timeText = state.remaining.toFixed(1);
         const bestText = formatScore(state.best);
+        const levelText = `LEVEL ${String(state.level).padStart(2, '0')} · TARGET VELOCITY ${(1 + (state.level - 1) * 0.18).toFixed(1)}×`;
+        const barPercent = Math.round(clamp((state.remaining / DURATION) * 100, 0, 100) * 10) / 10;
         if (force || ui.score.textContent !== scoreText) ui.score.textContent = scoreText;
         if (force || ui.combo.textContent !== comboText) ui.combo.textContent = comboText;
         if (force || ui.time.textContent !== timeText) ui.time.textContent = timeText;
         if (force || ui.best.textContent !== bestText) ui.best.textContent = bestText;
-        ui.menuBest.textContent = bestText;
-        ui.timeBar.style.width = `${clamp((state.remaining / DURATION) * 100, 0, 100)}%`;
-        ui.level.textContent = `LEVEL ${String(state.level).padStart(2, '0')} · TARGET VELOCITY ${(1 + (state.level - 1) * 0.18).toFixed(1)}×`;
+        // These three sat behind the menu overlay and were rewritten on every
+        // frame of the game for nothing.
+        if (force || ui.menuBest.textContent !== bestText) ui.menuBest.textContent = bestText;
+        if (levelText !== lastLevelText) {
+          lastLevelText = levelText;
+          ui.level.textContent = levelText;
+        }
+        if (barPercent !== lastBarPercent) {
+          lastBarPercent = barPercent;
+          ui.timeBar.style.width = `${barPercent}%`;
+        }
       }
 
       function frame(timestamp) {
@@ -945,8 +993,11 @@
         lastFrame = timestamp;
         visualTime += delta;
         if (state.mode === 'playing') updateGame(delta);
-        else updateParticles(delta);
-        draw();
+        else if (state.mode !== 'menu') updateParticles(delta);
+        // The menu overlay covers the canvas with a blurred backdrop; rendering
+        // a full effect stack behind it is pure battery drain on the screen
+        // users look at longest.
+        if (state.mode !== 'menu') draw();
         requestAnimationFrame(frame);
       }
 
@@ -965,11 +1016,8 @@
       document.getElementById('pauseRestartBtn').addEventListener('click', startGame);
       document.getElementById('resumeBtn').addEventListener('click', pauseGame);
       document.getElementById('homeBtn').addEventListener('click', () => {
+        resetState();
         state.mode = 'menu';
-        state.targets = [];
-        state.particles = [];
-        state.rings = [];
-        state.floaters = [];
         updateHud(true);
         setOverlay();
         ui.status.textContent = '等待启动 · 点击或触摸发光目标';
@@ -978,6 +1026,8 @@
       ui.soundBtn.addEventListener('click', toggleSound);
 
       document.addEventListener('keydown', event => {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        if (event.target.closest && event.target.closest('button, a, input, select, textarea')) return;
         if (event.code === 'Space') {
           event.preventDefault();
           if (state.mode === 'menu' || state.mode === 'gameover') startGame();

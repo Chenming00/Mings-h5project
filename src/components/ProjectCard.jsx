@@ -10,6 +10,13 @@ export default function ProjectCard({ project, index = 0, onClick, onOpenNew, on
     <article
       className="project-card animate-card-enter"
       style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
+      /* Tapping the description used to do nothing; the cover and the title
+         were the only live areas. The cover button stays the accessible target,
+         this only widens the pointer/touch hit region. */
+      onClick={(event) => {
+        if (event.target.closest('button, a')) return;
+        open();
+      }}
     >
       <div className="card-cover">
         <button className="cover-button" onClick={open} aria-label={`预览项目：${project.displayTitle}`}>

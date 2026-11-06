@@ -219,6 +219,9 @@
       .result-stats { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 640px) {
+      /* iOS Safari zooms the viewport when a focused field renders below 16px,
+         and does not zoom back out. */
+      .input, .select, input, select, textarea { font-size: 16px; }
       .page { width: calc(100% - 24px); padding-bottom: 26px; }
       .app-header { align-items: flex-start; flex-direction: column; gap: 16px; padding: 18px 0; }
       .header-actions { width: 100%; justify-content: space-between; }
@@ -310,6 +313,7 @@
                   <option value="45HQ">45HQ · High Cube</option>
                 </select>
                 <div class="field-hint">切换后自动填入常用最大载重，可手动修改</div>
+                <div class="field-error" id="containerTypeError"></div>
               </div>
               <div class="field">
                 <label for="safetyMargin">安全余量 %</label>
@@ -395,19 +399,19 @@
           <div class="result-body" id="resultBody">
             <div class="result-customer" id="resultCustomer">SMI（秘鲁） · 40HQ</div>
             <div class="result-primary">Required Containers</div>
-            <div class="result-count"><strong id="needContainers">77</strong><span>柜</span></div>
+            <div class="result-count"><strong id="needContainers">—</strong><span>柜</span></div>
             <div class="result-sub" id="resultSub">目标 1,760.00 MT · 每柜装载 23.000 MT</div>
             <div class="utilization">
-              <div class="utilization-head"><span>整批载重利用率</span><output id="utilizationRate">86.8%</output></div>
+              <div class="utilization-head"><span>整批载重利用率</span><output id="utilizationRate">—</output></div>
               <div class="utilization-track"><span id="utilizationBar"></span></div>
             </div>
             <div class="result-stats">
-              <div class="result-stat"><span>Actual Load</span><strong id="actualLoad">1,771 <small>MT</small></strong></div>
-              <div class="result-stat"><span>Total Bags</span><strong id="totalBags">1,540 <small>包</small></strong></div>
-              <div class="result-stat"><span>Surplus</span><strong id="surplusQty">11.00 <small>MT</small></strong></div>
-              <div class="result-stat"><span>Last CTN</span><strong id="lastContainer">100% <small>装载</small></strong></div>
-              <div class="result-stat"><span>Free Capacity</span><strong id="freeCapacity">269.5 <small>MT</small></strong></div>
-              <div class="result-stat"><span>Avg / CTN</span><strong id="averageLoad">23.00 <small>MT</small></strong></div>
+              <div class="result-stat"><span>Actual Load</span><strong id="actualLoad">— <small>MT</small></strong></div>
+              <div class="result-stat"><span>Total Bags</span><strong id="totalBags">— <small>包</small></strong></div>
+              <div class="result-stat"><span>Surplus</span><strong id="surplusQty">— <small>MT</small></strong></div>
+              <div class="result-stat"><span>Last CTN</span><strong id="lastContainer">— <small>装载</small></strong></div>
+              <div class="result-stat"><span>Free Capacity</span><strong id="freeCapacity">— <small>MT</small></strong></div>
+              <div class="result-stat"><span>Avg / CTN</span><strong id="averageLoad">— <small>MT</small></strong></div>
             </div>
             <div class="result-notice" id="resultNotice"></div>
           </div>
@@ -551,14 +555,30 @@
         };
       }
 
+      // Upper bounds are not cosmetic: without them Number.MAX_VALUE produces
+      // Infinity/NaN in the derived metrics, which then render verbatim.
+      const LIMITS = { targetQty: 1e7, maxPayload: 1e5, packs: 1e6, weight: 1e4 };
+
+      function inRange(value, max) {
+        return Number.isFinite(value) && value > 0 && value <= max;
+      }
+
       function validate(values) {
         setFieldError('customerName', values.customerName ? '' : '请输入客户或项目名称');
-        setFieldError('targetQty', Number.isFinite(values.targetQty) && values.targetQty > 0 ? '' : '请输入大于 0 的目标货量');
+        setFieldError('targetQty', inRange(values.targetQty, LIMITS.targetQty)
+          ? ''
+          : `请输入 0–${numberFormat.format(LIMITS.targetQty)} 之间的目标货量`);
         setFieldError('containerType', '');
         setFieldError('safetyMargin', Number.isFinite(values.safetyMargin) && values.safetyMargin >= 0 && values.safetyMargin <= 30 ? '' : '安全余量应在 0–30% 之间');
-        setFieldError('maxPayload', Number.isFinite(values.maxPayload) && values.maxPayload > 0 ? '' : '请输入大于 0 的最大载重');
-        setFieldError('packs', Number.isInteger(values.packs) && values.packs > 0 ? '' : '请输入大于 0 的整数包数');
-        setFieldError('weight', Number.isFinite(values.weight) && values.weight > 0 ? '' : '请输入大于 0 的单包重量');
+        setFieldError('maxPayload', inRange(values.maxPayload, LIMITS.maxPayload)
+          ? ''
+          : `请输入 0–${numberFormat.format(LIMITS.maxPayload)} 之间的最大载重`);
+        setFieldError('packs', Number.isInteger(values.packs) && values.packs > 0 && values.packs <= LIMITS.packs
+          ? ''
+          : `请输入 1–${numberFormat.format(LIMITS.packs)} 之间的整数包数`);
+        setFieldError('weight', inRange(values.weight, LIMITS.weight)
+          ? ''
+          : `请输入 0–${numberFormat.format(LIMITS.weight)} 之间的单包重量`);
         return !document.querySelector('.field.has-error');
       }
 
@@ -566,20 +586,34 @@
         return Number.parseFloat(value.toFixed(digits));
       }
 
-      function calculateResult(values) {
+      // The capacity maths is needed *before* deciding whether the inputs make
+      // a calculable plan: when a single bag outweighs the usable payload the
+      // old code bailed out with a bare `return null`, leaving the user with
+      // "please fix your input" and no field marked.
+      function capacityFor(values) {
         const usablePayload = round(values.maxPayload * (1 - values.safetyMargin / 100));
         const safeBagLimit = Math.max(0, Math.floor((usablePayload + 1e-9) / values.weight));
         const effectiveBags = Math.min(values.packs, safeBagLimit);
         const loadPerContainer = round(effectiveBags * values.weight);
+        return { usablePayload, safeBagLimit, effectiveBags, loadPerContainer };
+      }
+
+      function calculateResult(values) {
+        const { usablePayload, safeBagLimit, effectiveBags, loadPerContainer } = capacityFor(values);
         if (loadPerContainer <= 0) return null;
 
         const needContainers = Math.ceil(values.targetQty / loadPerContainer);
         const actualLoad = round(needContainers * loadPerContainer);
         const surplus = round(Math.max(0, actualLoad - values.targetQty));
         const totalBags = needContainers * effectiveBags;
-        const lastContainerLoad = round(actualLoad - (needContainers - 1) * loadPerContainer);
-        const lastContainerRatio = Math.min(100, (lastContainerLoad / loadPerContainer) * 100);
-        const averageLoad = round(actualLoad / needContainers);
+        // The plan fills every container, so the tail container carries what is
+        // left of the target after n-1 full ones: per - surplus. The old
+        // formula measured `actualLoad - (n-1)*per`, which is algebraically
+        // identical to `per`, so "tail 100%" and "average = per" were constants
+        // that carried no information.
+        const lastContainerLoad = round(loadPerContainer - surplus);
+        const lastContainerRatio = loadPerContainer > 0 ? (lastContainerLoad / loadPerContainer) * 100 : 0;
+        const averageLoad = needContainers > 0 ? round(values.targetQty / needContainers) : 0;
         const utilization = Math.min(100, (actualLoad / (needContainers * values.maxPayload)) * 100);
         const freeCapacity = round(Math.max(0, needContainers * values.maxPayload - actualLoad));
         const warnings = [];
@@ -639,13 +673,29 @@
         renderPrintReport(result);
       }
 
-      function renderEmpty() {
+      function renderEmpty(capacity, message) {
         currentResult = null;
         elements.resultBody.style.display = 'none';
         elements.resultEmpty.style.display = 'block';
+        elements.resultEmpty.textContent = message || '请先修正输入内容，计算结果会在这里显示。';
         elements.resultStatus.textContent = '等待有效输入';
         elements.copyBtn.disabled = true;
         elements.csvBtn.disabled = true;
+        // Derived numbers must not keep showing the previous plan while the
+        // panel says the input is invalid.
+        elements.perCont.textContent = capacity ? `${capacity.loadPerContainer.toFixed(3)} MT` : '—';
+        elements.safeBagLimit.textContent = capacity ? `${capacity.safeBagLimit} 包` : '—';
+        clearPrintReport();
+      }
+
+      // A stale print sheet used to survive invalid input, so "打印报告"
+      // produced the previous calculation.
+      function clearPrintReport() {
+        document.getElementById('printCustomer').textContent = '';
+        document.getElementById('printDate').textContent = '';
+        document.getElementById('printConfig').replaceChildren();
+        document.getElementById('printResults').replaceChildren();
+        document.getElementById('printNote').textContent = '';
       }
 
       function calculateAndRender() {
@@ -654,9 +704,17 @@
           renderEmpty();
           return;
         }
-        const result = calculateResult(values);
+        const capacity = capacityFor(values);
+        const result = capacity.loadPerContainer > 0 ? calculateResult(values) : null;
         if (!result) {
-          renderEmpty();
+          setFieldError(
+            'weight',
+            `单包重量 ${values.weight} MT 超过扣除安全余量后的可用载重 ${preciseFormat.format(capacity.usablePayload)} MT，每柜装不下任何一包。`
+          );
+          renderEmpty(
+            capacity,
+            `单包重量超过可用载重（${preciseFormat.format(capacity.usablePayload)} MT），请调整单包重量、最大载重或安全余量。`
+          );
           return;
         }
         elements.perCont.textContent = `${result.loadPerContainer.toFixed(3)} MT`;
@@ -664,26 +722,35 @@
         renderResult(result);
       }
 
-      function getSerializableState() {
-        return {
-          values: readValues(),
-          plans,
-          savedAt: new Date().toISOString()
-        };
-      }
+
+      let lastGoodValues = null;
 
       function scheduleSave() {
         clearTimeout(saveTimer);
         elements.saveState.textContent = '正在保存…';
-        saveTimer = setTimeout(() => {
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(getSerializableState()));
-            elements.saveState.textContent = '已自动保存';
-          } catch {
-            elements.saveState.textContent = '本地保存不可用';
-          }
-        }, 350);
+        saveTimer = setTimeout(flushSave, 350);
       }
+
+      // Persisting on every keystroke meant a half-typed number was written as
+      // NaN → null, so a refresh restored an empty, invalid form.
+      function flushSave() {
+        clearTimeout(saveTimer);
+        const values = readValues();
+        const usable = lastGoodValues && !validate(values) ? lastGoodValues : values;
+        if (usable === values) lastGoodValues = values;
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            values: usable,
+            plans,
+            savedAt: new Date().toISOString()
+          }));
+          elements.saveState.textContent = '已自动保存';
+        } catch {
+          elements.saveState.textContent = '本地保存不可用';
+        }
+      }
+
+      window.addEventListener('pagehide', flushSave);
 
       function restoreState() {
         try {
@@ -701,6 +768,7 @@
           elements.saveState.textContent = '已恢复上次配置';
           return true;
         } catch {
+          notify('本地缓存已损坏，已恢复默认参数');
           return false;
         }
       }
@@ -726,7 +794,7 @@
         const text = summaryText();
         let copied = false;
         if (navigator.clipboard && window.isSecureContext) {
-          try { await navigator.clipboard.writeText(text); copied = true; } catch {}
+          try { await navigator.clipboard.writeText(text); copied = true; } catch { /* clipboard unavailable */ }
         }
         if (!copied) {
           const textarea = document.createElement('textarea');
@@ -740,8 +808,13 @@
         notify(copied ? '计算摘要已复制' : '复制失败，请手动选择摘要内容');
       }
 
+      // A customer name starting with = + - @ (or a tab) is executed as a
+      // formula when the CSV is opened in Excel/WPS. Prefixing an apostrophe
+      // keeps the text readable and inert.
       function csvCell(value) {
-        return `"${String(value).replaceAll('"', '""')}"`;
+        let text = String(value);
+        if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+        return `"${text.replaceAll('"', '""')}"`;
       }
 
       function exportCsv() {
@@ -755,7 +828,9 @@
         const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
         const link = document.createElement('a');
         link.href = url;
-        link.download = `container-plan-${new Date().toISOString().slice(0, 10)}.csv`;
+        // toISOString() is UTC: east of Greenwich the file was dated yesterday
+      // between midnight and 08:00 local time.
+      link.download = `container-plan-${new Date().toLocaleDateString('sv-SE')}.csv`;
         document.body.appendChild(link);
         link.click();
         link.remove();

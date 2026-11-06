@@ -30,6 +30,10 @@
   button{font:inherit}
   body::before{
     content:"";position:fixed;inset:-28% -12% auto;height:76vh;
+    /* Older iOS (<16.2) drops color-mix() declarations entirely, which made
+       the dawn glow, the live dot ring and the control shadows disappear. Each
+       rule keeps a plain fallback first. */
+    background:radial-gradient(58% 62% at 50% 0%,rgba(255,255,255,.12),transparent 74%);
     background:radial-gradient(58% 62% at 50% 0%,color-mix(in srgb,var(--tint) 19%,transparent),transparent 74%);
     transition:background 2.4s ease;pointer-events:none;
   }
@@ -52,12 +56,14 @@
   .local-label{display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
   .live-dot{
     width:6px;height:6px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 4px rgba(255,255,255,.08);
     box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 10%,transparent);
     animation:breathe 3.2s ease-in-out infinite;
   }
   .meta b{
     max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    padding:7px 10px;border:1px solid color-mix(in srgb,var(--line) 76%,transparent);
+    padding:7px 10px;border:1px solid var(--line);
+    border:1px solid color-mix(in srgb,var(--line) 76%,transparent);
     border-radius:999px;font-weight:500;letter-spacing:1.1px;color:var(--muted);
     background:rgba(255,255,255,.24);
   }
@@ -230,7 +236,7 @@
     var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (saved && typeof saved.showSeconds === 'boolean') showSeconds = saved.showSeconds;
     if (saved && typeof saved.use24 === 'boolean') use24 = saved.use24;
-  } catch (error) {
+  } catch {
     /* Storage may be unavailable in private or embedded contexts. */
   }
 
@@ -245,7 +251,7 @@
   function savePreferences() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ showSeconds: showSeconds, use24: use24 }));
-    } catch (error) {
+    } catch {
       /* The clock still works when preferences cannot be persisted. */
     }
   }
@@ -261,7 +267,7 @@
     var zone = 'Local';
     try {
       zone = Intl.DateTimeFormat().resolvedOptions().timeZone || zone;
-    } catch (error) {
+    } catch {
       /* Intl timezone detection is optional. */
     }
     var offset = -now.getTimezoneOffset();
@@ -276,7 +282,9 @@
     var h = now.getHours();
     var m = now.getMinutes();
     var s = now.getSeconds();
-    var displayHour = use24 ? pad(h) : (h % 12 || 12);
+    // pad() in 12h mode as well: "9:05" → "10:05" changed the glyph count and
+    // the number block visibly jumped every time the hour crossed ten.
+    var displayHour = use24 ? pad(h) : pad(h % 12 || 12);
     var meridiem = h < 12 ? 'AM' : 'PM';
 
     setText(timeEl, 'time', displayHour + ':' + pad(m));
@@ -301,8 +309,16 @@
     var ratio = secondsOfDay / 86400;
     var width = (ratio * 100).toFixed(showSeconds ? 3 : 2) + '%';
     if (last.width !== width) {
+      // At 23:59:59 → 00:00:00 the width falls from 100% to 0%; with the CSS
+      // transition on, the line visibly ran backwards. Jump instead.
+      var wrapped = dateChanged && parseFloat(width) < 1;
+      if (wrapped) fillEl.style.transition = 'none';
       last.width = width;
       fillEl.style.width = width;
+      if (wrapped) {
+        void fillEl.offsetWidth;
+        fillEl.style.transition = '';
+      }
     }
     setText(pctEl, 'percent', '今日进度 ' + Math.floor(ratio * 100) + '%');
 
@@ -336,8 +352,12 @@
   }
 
   function updateControls() {
-    formatLabel.textContent = use24 ? '24 小时制' : '12 小时制';
+    // The label used to spell out the *current* mode, which read like an action
+    // ("24 小时制" while already in 24h). Keep it fixed and let aria-pressed and
+    // the title carry the state.
+    formatLabel.textContent = '24 小时制';
     formatBtn.setAttribute('aria-pressed', String(use24));
+    formatBtn.title = use24 ? '当前：24 小时制（T 切换）' : '当前：12 小时制（T 切换）';
     secondsLabel.textContent = showSeconds ? '显示秒' : '隐藏秒';
     secondsBtn.setAttribute('aria-pressed', String(showSeconds));
     secEl.classList.toggle('is-hidden', !showSeconds);
@@ -368,7 +388,7 @@
         ? document.exitFullscreen()
         : document.documentElement.requestFullscreen();
       if (operation && typeof operation.catch === 'function') operation.catch(failed);
-    } catch (error) {
+    } catch {
       failed();
     }
   }
@@ -415,10 +435,15 @@
     scheduleNext();
   });
 
-  if (typeof document.documentElement.requestFullscreen !== 'function' || typeof document.exitFullscreen !== 'function') {
+  // `requestFullscreen` can exist and still be refused (sandboxed iframes,
+  // permissions policy), so check the flag the browser actually reports.
+  var canFullscreen = typeof document.documentElement.requestFullscreen === 'function' &&
+    document.fullscreenEnabled !== false;
+  if (!canFullscreen) {
     fullBtn.disabled = true;
+    fullBtn.setAttribute('aria-pressed', 'false');
     fullLabel.textContent = '全屏不可用';
-    fullBtn.title = '当前浏览器不支持网页全屏';
+    fullBtn.title = '当前环境不允许网页全屏';
   }
 
   updateControls();

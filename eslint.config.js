@@ -15,6 +15,11 @@ export default defineConfig([
 
   // The React app, the standalone projects under public/projects, and the
   // ESM build scripts — all browser-or-ESM context.
+  //
+  // Note: this block only matches *files*. The projects are single HTML files
+  // whose <script> blocks are invisible to ESLint here, so `npm run lint`
+  // additionally runs scripts/lint-inline.js, which extracts those blocks and
+  // feeds them through this same config.
   {
     files: ['**/*.{js,jsx}'],
     extends: [

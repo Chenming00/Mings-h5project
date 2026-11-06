@@ -43,9 +43,16 @@
   /* ---------- layout ------------------------------------------ */
   function resize() {
     var box = stage.getBoundingClientRect();
+    // getBoundingClientRect() includes the stage's 14px padding, while the
+    // canvas is laid out inside it and then clamped by max-width:100%. Mixing
+    // the two made the CSS box ~4% off the design ratio.
+    // Guarded so the headless harnesses (no getComputedStyle) still boot.
+    var cs = typeof getComputedStyle === 'function' ? getComputedStyle(stage) : null;
+    var padX = cs ? (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0) : 0;
+    var padY = cs ? (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0) : 0;
     var dims = aspectDims();
     var d = dims.w / dims.h;
-    var availW = box.width, availH = box.height;
+    var availW = Math.max(1, box.width - padX), availH = Math.max(1, box.height - padY);
     var cssW, cssH;
     if (availW / availH > d) { cssH = availH; cssW = cssH * d; }
     else { cssW = availW; cssH = cssW / d; }
@@ -181,6 +188,8 @@
   }
 
   /* ---------- clock ------------------------------------------ */
+  var lastSync = 0;
+
   function frame(now) {
     requestAnimationFrame(frame);
     if (!last) last = now;
@@ -200,7 +209,9 @@
         else { state.t = REEL.DURATION; setPlaying(false); }
       }
       Audio.setTime(state.t);
-      syncTransport();
+      // Writing progress text + a CSS variable every frame is 60 layout reads a
+      // second for digits nobody can read that fast.
+      if (now - lastSync > 100) { lastSync = now; syncTransport(); }
     }
     render(state.t);
   }
@@ -231,6 +242,9 @@
   }
   function syncTransport() {
     ui.scrub.style.setProperty('--p', (state.t / REEL.DURATION * 100) + '%');
+    // role="slider" is meaningless to assistive tech without a value.
+    ui.scrub.setAttribute('aria-valuenow', state.t.toFixed(2));
+    ui.scrub.setAttribute('aria-valuetext', fmt(state.t) + ' / 30:00');
     ui.time.textContent = fmt(state.t) + ' / 30:00';
     /* chapter ticks */
     if (!ui.ticksBuilt) {
@@ -256,8 +270,11 @@
     state.clean = true;
     render(state.t);
     canvasBlob(function (blob) {
-      saveBlob(blob, 'motion-reel-' + state.aspect.replace(':', 'x') + '-' + state.t.toFixed(2) + '.png');
       state.clean = wasClean;
+      // toBlob() yields null when the canvas is tainted or memory is tight;
+      // createObjectURL(null) then threw inside the callback.
+      if (!blob) { toast('这一帧保存失败，请重试'); return; }
+      saveBlob(blob, 'motion-reel-' + state.aspect.replace(':', 'x') + '-' + state.t.toFixed(2) + '.png');
       toast('已保存 PNG 帧');
     });
   }
@@ -281,31 +298,48 @@
     if (astream && !state.muted && astream.getAudioTracks().length) {
       try {
         astream.getAudioTracks().forEach(function (tr) { stream.addTrack(tr); });
-      } catch (err) {
+      } catch (error) {
         /* some browsers refuse mixed tracks — fall back to a silent video */
-        console.warn('音轨合并失败，导出为无声视频', err);
+        console.warn('音轨合并失败，导出为无声视频', error);
       }
     }
 
-    var mime = 'video/webm;codecs=vp9';
-    if (!root.MediaRecorder || !MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
-    var rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12000000 });
+    // Safari has no WebM/VP9 at all. Constructing MediaRecorder with an mime it
+    // cannot honour throws NotSupportedError, which used to escape unhandled
+    // and leave state.exporting stuck true (canvas frozen forever).
+    if (!root.MediaRecorder) { toast('此浏览器不支持录制'); return; }
+    var candidates = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+    var mime = candidates.filter(function (m) {
+      try { return MediaRecorder.isTypeSupported(m); } catch { return false; }
+    })[0];
+    if (!mime) { toast('此浏览器不支持视频导出，请用 Chrome 或 Edge'); return; }
+
+    var rec;
+    try {
+      rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12000000 });
+    } catch (err) {
+      toast('录制初始化失败：' + (err && err.message ? err.message : '未知错误'));
+      return;
+    }
+
     var chunks = [];
+    var extension = mime.indexOf('mp4') !== -1 ? 'mp4' : 'webm';
     rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+    rec.onerror = function (event) {
+      toast('录制中断：' + ((event && event.error && event.error.message) || '未知错误'));
+      finishExport(false);
+    };
     rec.onstop = function () {
-      var blob = new Blob(chunks, { type: 'video/webm' });
-      saveBlob(blob, 'motion-reel-30s-' + state.aspect.replace(':', 'x') + '.webm');
-      state.exporting = false;
-      recording = null;
-      ui.rec.classList.remove('is-rec');
-      ui.recLabel.textContent = '导出 WebM';
-      ui.exportBar.classList.remove('is-on');
-      setPlaying(true);
-      toast('导出完成 · ' + (blob.size / 1048576).toFixed(1) + ' MB');
+      var blob = new Blob(chunks, { type: mime });
+      saveBlob(blob, 'motion-reel-30s-' + state.aspect.replace(':', 'x') + '.' + extension);
+      finishExport(true);
     };
 
     recording = rec;
     state.exporting = true;
+    // Audio must be running *before* captureStream grabs the track, otherwise
+    // the exported file is silently mute.
+    Audio.play(0);
     seekTo(0);
     ui.rec.classList.add('is-rec');
     ui.recLabel.textContent = '停止导出';
@@ -315,7 +349,6 @@
        audio keeps running and is re-locked to the same timeline */
     state.playing = false;
     ui.play.innerHTML = icon('play');
-    Audio.play(0);
     var t0 = performance.now();
     (function pump() {
       if (!state.exporting) return;
@@ -333,7 +366,23 @@
       requestAnimationFrame(pump);
     })();
   }
-  function stopExport() { if (recording) recording.stop(); }
+  function finishExport(ok) {
+    state.exporting = false;
+    recording = null;
+    ui.rec.classList.remove('is-rec');
+    ui.recLabel.textContent = '导出 WebM';
+    ui.exportBar.classList.remove('is-on');
+    // Only resume playback once the encoder is done; doing it from onstop while
+    // the clock was still pumping fought the export loop.
+    if (ok) setPlaying(true);
+    if (!ok) { render(state.t); syncTransport(); }
+  }
+
+  function stopExport() {
+    if (!recording) return;
+    var rec = recording;
+    try { rec.stop(); } catch { /* already stopped */ finishExport(false); }
+  }
 
   /* ---------- toast ------------------------------------------ */
   var toastEl, toastTimer;
@@ -404,9 +453,14 @@
       b.className = 'seg' + (k === state.aspect ? ' is-on' : '');
       b.textContent = ASPECTS[k].label;
       b.dataset.k = k;
+      b.setAttribute('aria-pressed', String(k === state.aspect));
       b.addEventListener('click', function () {
         state.aspect = k;
-        [].forEach.call(ui.aspect.children, function (c) { c.classList.toggle('is-on', c.dataset.k === k); });
+        [].forEach.call(ui.aspect.children, function (c) {
+          var on = c.dataset.k === k;
+          c.classList.toggle('is-on', on);
+          c.setAttribute('aria-pressed', String(on));
+        });
         resize();
         toast('画幅 ' + ASPECTS[k].label);
       });
@@ -422,6 +476,7 @@
     ui.hud.addEventListener('click', function () {
       state.hudOn = !state.hudOn;
       ui.hud.classList.toggle('is-off', !state.hudOn);
+      ui.hud.setAttribute('aria-pressed', String(state.hudOn));
     });
     ui.fps.addEventListener('click', function () {
       state.showFps = !state.showFps;
@@ -430,6 +485,7 @@
     ui.letterbox.addEventListener('click', function () {
       state.letterbox = !state.letterbox;
       ui.letterbox.classList.toggle('is-off', !state.letterbox);
+      ui.letterbox.setAttribute('aria-pressed', String(state.letterbox));
     });
 
     /* scrub: click + drag */
@@ -440,11 +496,16 @@
       scrubTo(e.clientX);
     });
     ui.scrub.addEventListener('pointermove', function (e) { if (dragging) scrubTo(e.clientX); });
-    ui.scrub.addEventListener('pointerup', function (e) {
+    var endDrag = function (e) {
       dragging = false;
       try { ui.scrub.releasePointerCapture(e.pointerId); }
       catch { /* capture may already be released */ }
-    });
+    };
+    ui.scrub.addEventListener('pointerup', endDrag);
+    // A cancelled gesture (scroll takeover, lost capture) used to leave
+    // `dragging` true, so the scrubber kept following the pointer.
+    ui.scrub.addEventListener('pointercancel', endDrag);
+    ui.scrub.addEventListener('lostpointercapture', function () { dragging = false; });
 
     /* chapter markers */
     var mk = document.getElementById('chapters');
@@ -459,7 +520,12 @@
 
     /* keyboard */
     document.addEventListener('keydown', function (e) {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      // Typing belongs to the field, and Space/Enter on a focused control must
+      // activate that control instead of hijacking the transport.
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      var tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+      if (e.target.closest && e.target.closest('button, a, [role="slider"], [contenteditable]')) return;
       var k = e.key.toLowerCase();
       if (k === ' ' || k === 'k') { e.preventDefault(); toggle(); }
       else if (k === 'arrowright') { seekTo(state.t + (e.shiftKey ? 5 : 1)); }
@@ -477,6 +543,17 @@
     });
 
     root.addEventListener('resize', debounce(resize, 120));
+
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) return;
+      // The reel clock is driven by rAF, which stops in the background while
+      // the audio clock keeps running; without pausing, returning to the tab
+      // jumped several chapters ahead.
+      if (state.playing) setPlaying(false);
+    });
+    root.addEventListener('pagehide', function () {
+      if (Audio.dispose) Audio.dispose();
+    });
   }
 
   function debounce(fn, ms) {
@@ -512,6 +589,10 @@
       Audio.setMuted(state.muted);
       setPlaying(true);
       overlay.classList.add('is-gone');
+      if (ui.transport) {
+        ui.transport.inert = false;
+        ui.transport.removeAttribute('aria-hidden');
+      }
       setTimeout(function () { overlay.remove(); }, 700);
     };
     overlay.addEventListener('click', start);

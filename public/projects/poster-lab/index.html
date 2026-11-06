@@ -11,7 +11,7 @@
     color-scheme:light;
     --bg:#f2f2ee;
     --ink:#15161a;
-    --muted:#8a8b86;
+    --muted:#6a6b66;
     --line:#dedfd7;
     --paper:#fff;
     --accent:#c9503a;
@@ -154,7 +154,7 @@
   canvas:active{cursor:grabbing}
   .caption{
     margin:14px auto 0;text-align:center;
-    font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#6f706a;
+    font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#5c5d57;
   }
 
   @media(max-width:860px){
@@ -167,6 +167,7 @@
   @media(prefers-reduced-motion:reduce){
     *{transition:none!important}
   }
+@media (max-width:720px){/* iOS zooms a focused field below 16px and never zooms back. !important beats the minified per-component rules above. */input,select,textarea,.input,.select{font-size:16px!important}}
 </style>
 </head>
 <body>
@@ -425,7 +426,10 @@
   function fitBoth(lines, maxWidth, availHeight, startSize, reserve) {
     var byWidth = fitSize(lines, maxWidth, startSize, 24);
     if (lines.length <= 1) return byWidth;
-    var byHeight = Math.floor((availHeight - (reserve || 20)) / (1.04 * (lines.length - 1)));
+    // One line deserves a full glyph box (ascent + descent ≈ 1em), every extra
+    // line only its leading. The old divisor measured baselines only, so tall
+    // blocks overflowed their area — by 102px on a 1:1 poster.
+    var byHeight = Math.floor((availHeight - (reserve || 20)) / (1 + 1.04 * (lines.length - 1)));
     return Math.max(24, Math.min(byWidth, byHeight));
   }
 
@@ -496,17 +500,36 @@
     return grainSeed / 0x7fffffff;
   }
 
-  function drawGrain(W, H) {
-    var count = Math.round(W * H / 900);
-    for (var i = 0; i < count; i++) {
-      var x = rand() * W;
-      var y = rand() * H;
-      var a = rand() * 0.05;
-      ctx.fillStyle = rand() > 0.5
-        ? 'rgba(0,0,0,' + a.toFixed(3) + ')'
-        : 'rgba(255,255,255,' + (a * 1.2).toFixed(3) + ')';
-      ctx.fillRect(x, y, 1.4, 1.4);
+  var grainTile = null;
+
+  // A 512² noise tile, generated once. The old version issued 1600–2300
+  // fillRect() calls per repaint; this composites the same texture in one pass.
+  function grainSource() {
+    if (grainTile) return grainTile;
+    var size = 512;
+    var tile = document.createElement('canvas');
+    tile.width = tile.height = size;
+    var g = tile.getContext('2d');
+    var image = g.createImageData(size, size);
+    // Seeded, so the tile is identical between preview and export.
+    seedRand();
+    for (var i = 0; i < image.data.length; i += 4) {
+      var v = rand() > 0.5 ? 255 : 0;
+      image.data[i] = image.data[i + 1] = image.data[i + 2] = v;
+      image.data[i + 3] = rand() * 26;
     }
+    g.putImageData(image, 0, 0);
+    grainTile = tile;
+    return tile;
+  }
+
+  function drawGrain(W, H) {
+    var pattern = ctx.createPattern(grainSource(), 'repeat');
+    if (!pattern) return;
+    ctx.save();
+    ctx.fillStyle = pattern;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
   }
 
   // ---------- shared poster furniture ------------------------------------
@@ -559,7 +582,8 @@
     var size = fitBoth(env.lines, maxWidth, area.height, 300, env.subLines.length ? 110 : 20);
     var lh = size * 1.04;
     var blockH = (env.lines.length - 1) * lh;
-    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 60);
+    var ascent = size * 0.82;
+    var y = area.top + ascent + state.pos.y * Math.max(0, area.height - blockH - ascent - 60);
 
     var ghost = function (color, alpha, dx, dy) {
       ctx.save();
@@ -595,10 +619,12 @@
     var size = fitBoth(env.lines, maxWidth, availH, 260, env.subLines.length ? 100 : 20);
     var lh = size * 1.04;
     var blockH = (env.lines.length - 1) * lh;
-    var y = area.top + state.pos.y * Math.max(0, availH - blockH - 30);
-    // Hard clamp: the block must never cross into the colour field.
-    y = Math.min(y + blockH, splitY - 44) - blockH;
-    y = Math.max(y, area.top);
+    var ascent = size * 0.82;
+    var y = area.top + ascent + state.pos.y * Math.max(0, availH - blockH - ascent - 30);
+    // Hard clamp: the block must never cross into the colour field. Baseline of
+    // the last line + descent is the real bottom of the ink.
+    y = Math.min(y + blockH + size * 0.18, splitY - 44) - blockH;
+    y = Math.max(y, area.top + ascent);
 
     ctx.font = font(size);
     ctx.fillStyle = p.ink;
@@ -669,7 +695,8 @@
     var blockH = (rows - 1) * lh;
 
     var area = titleArea(env);
-    var baseY = area.top + state.pos.y * Math.max(0, area.height - blockH - 60);
+    var ascent = size * 0.82;
+    var baseY = area.top + ascent + state.pos.y * Math.max(0, area.height - blockH - ascent - 60);
 
     var drawCols = function (dx, dy, alpha) {
       ctx.save();
@@ -723,7 +750,8 @@
     var size = fitBoth(env.lines, maxWidth, area.height, 230, env.subLines.length ? 110 : 20);
     var lh = size * 1.04;
     var blockH = (env.lines.length - 1) * lh;
-    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 40);
+    var ascent = size * 0.82;
+    var y = area.top + ascent + state.pos.y * Math.max(0, area.height - blockH - ascent - 40);
 
     var ghost = function (dx, dy, alpha) {
       ctx.save();
@@ -788,7 +816,8 @@
     var size = fitBoth(env.lines, maxWidth, area.height, 250, env.subLines.length ? 100 : 20);
     var lh = size * 1.04;
     var blockH = (env.lines.length - 1) * lh;
-    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 40);
+    var ascent = size * 0.82;
+    var y = area.top + ascent + state.pos.y * Math.max(0, area.height - blockH - ascent - 40);
 
     ctx.font = font(size);
     ctx.fillStyle = p.bg;
@@ -823,7 +852,8 @@
     var size = fitBoth(env.lines, maxWidth, area.height, 300, env.subLines.length ? 110 : 20);
     var lh = size * 1.04;
     var blockH = (env.lines.length - 1) * lh;
-    var y = area.top + state.pos.y * Math.max(0, area.height - blockH - 60);
+    var ascent = size * 0.82;
+    var y = area.top + ascent + state.pos.y * Math.max(0, area.height - blockH - ascent - 60);
 
     var ghost = function (dx, dy, alpha) {
       ctx.save();
@@ -879,23 +909,35 @@
     captionEl.textContent = ratio.label + ' · ' + p.name;
   }
 
+  var fadeTimer = null;
   function renderWithFade() {
     canvas.classList.add('fading');
-    window.setTimeout(function () {
+    window.clearTimeout(fadeTimer);
+    // Kept in step with the .18s transition; firing early made the new poster
+    // pop in before the old one had faded out.
+    fadeTimer = window.setTimeout(function () {
+      fadeTimer = null;
       render();
       canvas.classList.remove('fading');
-    }, 160);
+    }, 180);
   }
 
   // ---------- URL + storage ----------------------------------------------
   var STORE_KEY = 'poster-lab:v2';
+  // Bumped whenever the shape below changes; older payloads are dropped rather
+  // than half-applied.
+  var STATE_VERSION = 1;
 
   function stateToParams() {
     var params = new URLSearchParams();
-    if (state.text) params.set('text', state.text);
-    if (state.sub) params.set('sub', state.sub);
-    if (state.issue && state.issue !== DEFAULTS.issue) params.set('issue', state.issue);
-    if (state.credit) params.set('credit', state.credit);
+    // Always write the text fields, even when empty: skipping them meant
+    // "cleared the title" and "never touched the title" produced the same URL,
+    // so a refresh (or a share link) silently restored the default title.
+    params.set('v', String(STATE_VERSION));
+    params.set('text', state.text || '');
+    params.set('sub', state.sub || '');
+    params.set('issue', state.issue || '');
+    params.set('credit', state.credit || '');
     params.set('layout', state.layout);
     params.set('palette', String(state.palette));
     params.set('ratio', state.ratio);
@@ -905,6 +947,25 @@
       params.set('posy', Math.round(state.pos.y * 100));
     }
     return params;
+  }
+
+  function sanitizeStored(saved) {
+    if (!saved || typeof saved !== 'object') return null;
+    var next = {};
+    if (typeof saved.text === 'string') next.text = saved.text.slice(0, 40);
+    if (typeof saved.sub === 'string') next.sub = saved.sub.slice(0, 60);
+    if (typeof saved.issue === 'string') next.issue = saved.issue.slice(0, 8);
+    if (typeof saved.credit === 'string') next.credit = saved.credit.slice(0, 24);
+    if (LAYOUTS.indexOf(saved.layout) > -1) next.layout = saved.layout;
+    if (Number.isInteger(saved.palette) && saved.palette >= 0 && saved.palette < PALETTES.length) {
+      next.palette = saved.palette;
+    }
+    if (RATIOS[saved.ratio]) next.ratio = saved.ratio;
+    if (typeof saved.grain === 'boolean') next.grain = saved.grain;
+    if (saved.pos && Number.isFinite(saved.pos.x) && Number.isFinite(saved.pos.y)) {
+      next.pos = { x: saved.pos.x, y: saved.pos.y };
+    }
+    return Object.keys(next).length ? next : null;
   }
 
   function paramsToState(params) {
@@ -932,12 +993,12 @@
     urlWriteTimer = window.setTimeout(function () {
       var search = stateToParams().toString();
       var url = window.location.pathname + (search ? '?' + search : '');
-      try { window.history.replaceState(null, '', url); } catch (err) { /* ignore */ }
+      try { window.history.replaceState(null, '', url); } catch { /* ignore */ }
     }, 120);
   }
 
   function persist() {
-    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (err) { /* ignore */ }
+    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
   }
 
   // ---------- UI plumbing -------------------------------------------------
@@ -978,13 +1039,36 @@
     document.getElementById('clear-credit').hidden = !creditInput.value;
   }
 
+  // Every keystroke used to run a full repaint (up to 2.3k grain rects, 69
+  // measureText calls) plus a synchronous localStorage write and a
+  // history.replaceState. Coalesce all three.
+  var renderQueued = false;
+  var persistTimer = null;
+
+  function scheduleRender() {
+    if (renderQueued) return;
+    renderQueued = true;
+    window.requestAnimationFrame(function () {
+      renderQueued = false;
+      render();
+    });
+  }
+
+  function schedulePersist() {
+    window.clearTimeout(persistTimer);
+    persistTimer = window.setTimeout(function () {
+      persistTimer = null;
+      writeShareUrl();
+      persist();
+    }, 250);
+  }
+
   function apply(patch, options) {
     var opts = options || {};
     state = Object.assign({}, state, patch);
-    if (!opts.noRender) render();
+    if (!opts.noRender) scheduleRender();
     if (!opts.noSync) syncAllInputs();
-    writeShareUrl();
-    persist();
+    schedulePersist();
   }
 
   function buildPalettes() {
@@ -1072,7 +1156,7 @@
     dragging = false;
     suppressClick = false;
     if (canvas.setPointerCapture) {
-      try { canvas.setPointerCapture(event.pointerId); } catch (err) { /* ignore */ }
+      try { canvas.setPointerCapture(event.pointerId); } catch { /* ignore */ }
     }
   });
 
@@ -1152,15 +1236,17 @@
         var url = URL.createObjectURL(blob);
         triggerDownload(url);
         window.setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        var exported = state.issue;
         advanceIssue();
-        done('已导出 PNG · NO. ' + state.issue);
+        done('已导出 PNG · NO. ' + exported);
       }, 'image/png');
     } else {
+      var exported = state.issue;
       try {
         triggerDownload(canvas.toDataURL('image/png'));
         advanceIssue();
-        done('已导出 PNG');
-      } catch (err) {
+        done('已导出 PNG · NO. ' + exported);
+      } catch {
         done('导出失败，请重试');
       }
     }
@@ -1220,6 +1306,7 @@
   window.addEventListener('keydown', function (event) {
     var el = document.activeElement;
     var typing = el && ['INPUT', 'TEXTAREA'].indexOf(el.tagName) > -1;
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
     if ((event.key === 'r' || event.key === 'R') && !typing) shuffleBtn.click();
   });
 
@@ -1227,15 +1314,15 @@
   (function boot() {
     var params = new URLSearchParams(window.location.search);
     var patch = paramsToState(params);
-    var fromUrl = Object.keys(patch).length > 0;
-    if (fromUrl) {
-      state = Object.assign({}, state, patch);
-    } else {
-      try {
-        var stored = window.localStorage.getItem(STORE_KEY);
-        if (stored) state = Object.assign({}, state, JSON.parse(stored));
-      } catch (err) { /* ignore */ }
-    }
+    // Stored state is the baseline; the URL only overrides the fields it
+    // actually carries. The old "URL wins everything or nothing" rule meant a
+    // link with ?layout=stack silently discarded every local edit forever.
+    try {
+      var stored = window.localStorage.getItem(STORE_KEY);
+      var restored = sanitizeStored(JSON.parse(stored || 'null'));
+      if (restored) state = Object.assign({}, state, restored);
+    } catch { /* corrupt or blocked storage: fall back to defaults */ }
+    if (Object.keys(patch).length) state = Object.assign({}, state, patch);
     buildPalettes();
     syncAllInputs();
     render();

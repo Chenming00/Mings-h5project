@@ -121,18 +121,30 @@
   footer{margin-top:clamp(16px,3vw,26px);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11.5px}
   footer kbd{font:inherit;font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:#9aa4b2}
   .toast{
-    position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+    position:fixed;left:50%;bottom:max(26px, calc(12px + env(safe-area-inset-bottom)));transform:translate(-50%,14px);
     background:#1d222b;border:1px solid #313845;color:var(--ink);
     padding:9px 16px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;
     transition:opacity .2s,transform .2s;z-index:9;
   }
   .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.actionable{pointer-events:auto;cursor:pointer}
 
+  .scroll-hint{display:none}
   @media(max-width:620px){
-    .ruler,.row{grid-template-columns:52px repeat(16,minmax(0,1fr));gap:3px}
-    .track{font-size:9.5px;letter-spacing:.4px;padding-right:2px}
+    /* 16 steps cannot fit a 390px screen without 15px-wide cells, which is
+       below the 44px touch target and made the editor unusable. Let the grid
+       scroll horizontally instead of squeezing it. */
+    .sequencer{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;position:relative}
+    /* Fade at the right edge so the cropped column reads as "scroll me",
+       not as a layout bug. */
+    .sequencer::after{content:"";position:sticky;right:0;float:right;width:26px;height:1px;margin-top:-1px;
+      box-shadow:10px 0 18px 18px rgba(11,13,17,.85);pointer-events:none}
+    .scroll-hint{display:block;margin:8px 2px 0;font-size:10px;letter-spacing:.4px;color:#6b7280;text-align:right}
+    .scroll-hint span{display:inline-block}
+    .ruler,.row{grid-template-columns:52px repeat(16,minmax(0,1fr));gap:4px;min-width:640px}
+    .track{font-size:9.5px;letter-spacing:.4px;padding-right:2px;min-height:36px}
     .track .dot{display:none}
-    .cell{height:30px;border-radius:4px}
+    .cell{height:36px;border-radius:4px}
     .controls{justify-content:space-between}
   }
   @media(prefers-reduced-motion:reduce){
@@ -170,6 +182,7 @@
   </div>
 
   <div class="sequencer" id="sequencer" aria-label="节奏编辑器"></div>
+  <p class="scroll-hint" aria-hidden="true"><span>← 左右滑动查看全部 16 步 →</span></p>
 
   <footer>
     <span>点击格子编排 · 点左侧轨道名静音</span>
@@ -349,10 +362,19 @@
       if (!pattern[track.id][step] || muted[track.id]) continue;
       trigger(track.id, when + offset, track.gain);
     }
-    queue.push({ step: step, time: when });
+    queue.push({ step: step, time: when + offset });
   }
 
   function scheduler() {
+    // A long stall (GC, background tab, throttled interval) leaves nextNoteTime
+    // seconds behind the audio clock. Without this guard the loop schedules
+    // every missed step at once, and Web Audio fires them all immediately —
+    // one loud burst instead of a rhythm.
+    if (nextNoteTime < ctx.currentTime - 0.15) {
+      nextNoteTime = ctx.currentTime + 0.05;
+      currentStep = 0;
+      queue.length = 0;
+    }
     while (nextNoteTime < ctx.currentTime + 0.12) {
       scheduleStep(currentStep, nextNoteTime);
       nextNoteTime += stepDuration();
@@ -360,12 +382,14 @@
     }
   }
 
+  var paintRaf = 0;
+
   function paint() {
     while (queue.length && queue[0].time <= ctx.currentTime) {
       var item = queue.shift();
       highlight(item.step);
     }
-    if (playing) requestAnimationFrame(paint);
+    if (playing) paintRaf = requestAnimationFrame(paint);
   }
 
   function highlight(step) {
@@ -395,7 +419,7 @@
     nextNoteTime = ctx.currentTime + 0.06;
     scheduler();
     timer = setInterval(scheduler, 25);
-    requestAnimationFrame(paint);
+    paintRaf = requestAnimationFrame(paint);
   }
 
   function stop() {
@@ -404,6 +428,8 @@
     playBtn.textContent = '播放';
     clearInterval(timer);
     timer = null;
+    cancelAnimationFrame(paintRaf);
+    paintRaf = 0;
     queue = [];
     Object.keys(cells).forEach(function (id) {
       cells[id].forEach(function (cell) { cell.classList.remove('playing', 'hit'); });
@@ -413,8 +439,12 @@
   /* ---------- rendering ---------- */
 
   function buildSequencer() {
+    sequencer.setAttribute('role', 'grid');
+    sequencer.setAttribute('aria-label', '节奏编辑器，16 步 × 4 轨');
+
     var ruler = document.createElement('div');
     ruler.className = 'ruler';
+    ruler.setAttribute('role', 'presentation');
     ruler.innerHTML = '<span></span>' + Array.from({ length: STEPS }, function (_, i) {
       return '<i>' + (i % 4 === 0 ? (i / 4 + 1) : '·') + '</i>';
     }).join('');
@@ -423,6 +453,7 @@
     TRACKS.forEach(function (track) {
       var row = document.createElement('div');
       row.className = 'row';
+      row.setAttribute('role', 'row');
       row.style.setProperty('--c', track.color);
 
       var label = document.createElement('button');
@@ -445,8 +476,11 @@
         cell.className = 'cell' + (s % 4 === 0 ? ' beat-1' : '');
         cell.dataset.track = track.id;
         cell.dataset.step = String(s);
+        cell.setAttribute('role', 'gridcell');
         cell.setAttribute('aria-label', track.name + ' 第 ' + (s + 1) + ' 步');
         cell.setAttribute('aria-pressed', 'false');
+        // One tab stop for the whole grid; arrow keys move within it.
+        cell.tabIndex = -1;
         cell.style.setProperty('--c', track.color);
         cell.addEventListener('click', onCellClick);
         cells[track.id].push(cell);
@@ -454,7 +488,33 @@
       }
       sequencer.appendChild(row);
     });
+
+    var first = cells[TRACKS[0].id][0];
+    if (first) first.tabIndex = 0;
+    sequencer.addEventListener('keydown', onGridKeydown);
     syncedPaint();
+  }
+
+  function onGridKeydown(event) {
+    var cell = event.target.closest('.cell');
+    if (!cell) return;
+    var step = Number(cell.dataset.step);
+    var trackIndex = TRACKS.map(function (t) { return t.id; }).indexOf(cell.dataset.track);
+    var next = null;
+    if (event.key === 'ArrowRight') next = { trackIndex: trackIndex, step: step + 1 };
+    else if (event.key === 'ArrowLeft') next = { trackIndex: trackIndex, step: step - 1 };
+    else if (event.key === 'ArrowDown') next = { trackIndex: trackIndex + 1, step: step };
+    else if (event.key === 'ArrowUp') next = { trackIndex: trackIndex - 1, step: step };
+    else return;
+
+    if (next.step < 0 || next.step >= STEPS) return;
+    if (next.trackIndex < 0 || next.trackIndex >= TRACKS.length) return;
+    event.preventDefault();
+    var target = cells[TRACKS[next.trackIndex].id][next.step];
+    if (!target) return;
+    cell.tabIndex = -1;
+    target.tabIndex = 0;
+    target.focus();
   }
 
   function onCellClick(event) {
@@ -483,11 +543,14 @@
     });
   }
 
-  function toast(message) {
+  function toast(message, duration) {
     toastEl.textContent = message;
     toastEl.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1800);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove('show', 'actionable');
+      toastEl.onclick = null;
+    }, duration || 1800);
   }
 
   /* ---------- presets ---------- */
@@ -513,10 +576,39 @@
     if (!playing) toast('随机节奏已生成');
   }
 
+  var undoSnapshot = null;
+  var undoTimer = null;
+
+  function snapshotPattern() {
+    var copy = {};
+    TRACKS.forEach(function (track) { copy[track.id] = pattern[track.id].slice(); });
+    return copy;
+  }
+
+  function undoClear() {
+    if (!undoSnapshot) return;
+    TRACKS.forEach(function (track) { pattern[track.id] = undoSnapshot[track.id].slice(); });
+    undoSnapshot = null;
+    clearTimeout(undoTimer);
+    syncedPaint();
+    toast('已恢复');
+  }
+
   function clearAll() {
+    // The old version was irreversible: one tap — or Cmd/Ctrl+C, which used to
+    // land here because shortcuts ignored modifiers — wiped the whole pattern.
+    undoSnapshot = snapshotPattern();
     TRACKS.forEach(function (track) { pattern[track.id] = new Array(STEPS).fill(0); });
     syncedPaint();
-    toast('已清空');
+    toast('已清空 · 点此撤销', 8000);
+    toastEl.onclick = undoClear;
+    toastEl.classList.add('actionable');
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(function () {
+      undoSnapshot = null;
+      toastEl.onclick = null;
+      toastEl.classList.remove('actionable');
+    }, 8000);
   }
 
   /* ---------- wiring ---------- */
@@ -552,6 +644,16 @@
   });
 
   window.addEventListener('keydown', function (event) {
+    // Undo is the one shortcut that needs a modifier.
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'z') {
+      event.preventDefault();
+      undoClear();
+      return;
+    }
+    // Every other shortcut is a bare key; without this guard Cmd/Ctrl+C
+    // ("copy") also cleared the pattern.
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+
     var tag = (event.target.tagName || '').toLowerCase();
     var onControl = tag === 'input' || tag === 'textarea' || Boolean(event.target.closest && event.target.closest('button'));
     // Space belongs to the focused control when one is focused, otherwise it is
@@ -559,6 +661,14 @@
     if (event.code === 'Space' && !onControl) { event.preventDefault(); playing ? stop() : start(); }
     if (event.key === 'r' || event.key === 'R') randomize();
     if (event.key === 'c' || event.key === 'C') clearAll();
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden && playing) stop();
+  });
+  window.addEventListener('pagehide', function () {
+    if (playing) stop();
+    if (ctx && ctx.close) { try { ctx.close(); } catch { /* already closed */ } }
   });
 
   buildSequencer();

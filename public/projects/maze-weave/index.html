@@ -11,7 +11,7 @@
     color-scheme:light;
     --paper:#f6f4ee;
     --ink:#23262b;
-    --muted:#8b8780;
+    --muted:#6f6a62;
     --line:#ddd8cf;
     --accent:#c9503a;
     --panel:#fffdf8;
@@ -62,7 +62,9 @@
   .sizes button + button{border-left:1px solid var(--line)}
   .sizes button[aria-pressed="true"]{background:var(--ink);color:#f8f6f1}
 
-  footer{margin-top:auto;padding-top:20px;font-size:11px;color:#a29d94;line-height:1.9}
+  footer{margin-top:auto;padding-top:20px;font-size:11px;color:#736e66;line-height:1.9}
+  .save-hint{margin:10px 0 0;font-size:11px;color:var(--muted);line-height:1.7;min-height:0}
+  .save-hint:empty{display:none}
   footer kbd{font:inherit;font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:#7d786f}
 
   @media(max-width:520px){
@@ -105,6 +107,8 @@
     <button id="save">保存图片</button>
   </div>
 
+  <p class="save-hint" id="saveHint" aria-live="polite"></p>
+
   <footer>
     <kbd>空格</kbd> 重新生成 · <kbd>S</kbd> 切换解法
   </footer>
@@ -135,6 +139,8 @@
   var solution = null;
   var showSolution = false;
   var revealPath = 0;
+  var solutionTimer = null;
+  var rafId = 0;
   var finished = false;
   var steps = 0;
   var startedAt = 0;
@@ -143,7 +149,24 @@
 
   function idx(x, y) { return y * N + x; }
 
+  // One animation loop at a time. Repeated clicks used to start a second chain
+  // that raced the first one over the same grid.
+  function schedule() {
+    cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(loop);
+  }
+
+  // The auto-reveal is scheduled 260ms after carving finishes; without a handle
+  // a click on "regenerate" inside that window left it running against a grid
+  // that no longer existed, poisoning `solution` permanently.
+  function cancelSolutionTimer() {
+    if (solutionTimer === null) return;
+    clearTimeout(solutionTimer);
+    solutionTimer = null;
+  }
+
   function reset() {
+    cancelSolutionTimer();
     grid = new Array(N * N);
     for (var i = 0; i < N * N; i++) {
       grid[i] = { walls: [1, 1, 1, 1], visited: false, seen: false };
@@ -161,6 +184,9 @@
     startedAt = performance.now();
     solveBtn.setAttribute('aria-pressed', 'false');
     solveBtn.textContent = '显示解法';
+    // Clicking it mid-carve used to do nothing at all.
+    solveBtn.disabled = true;
+    solveBtn.title = '雕刻完成后可查看解法';
     statPath.textContent = '—';
     statSteps.textContent = '0';
     statSize.textContent = N + ' × ' + N;
@@ -171,7 +197,9 @@
   function resize() {
     var box = canvas.parentElement.getBoundingClientRect();
     var available = Math.min(box.width - 40, 560);
-    var side = Math.max(240, Math.min(available, window.innerHeight * 0.6));
+    // A 240px floor made the bitmap wider than the container below ~300px
+    // viewports, so CSS scaled it down and it rendered soft.
+    var side = Math.max(120, Math.min(available, window.innerHeight * 0.6));
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     size = Math.floor(side / N) * N;
     if (!size) size = Math.floor(side);
@@ -242,6 +270,10 @@
       }
     }
 
+    // An unfinished carve can leave the goal walled off; returning a one-cell
+    // path from here is what used to make the reveal permanently empty.
+    if (!visited[goal]) return null;
+
     var path = [];
     var cursor = goal;
     while (cursor !== -1) {
@@ -249,7 +281,8 @@
       if (cursor === start) break;
       cursor = prev[cursor];
     }
-    return path.reverse();
+    path.reverse();
+    return path[0] === start ? path : null;
   }
 
   function draw() {
@@ -316,7 +349,12 @@
   }
 
   function startSolution() {
+    if (!carveState.done) return;
     if (!solution) solution = solve();
+    if (!solution) {
+      statPath.textContent = '—';
+      return;
+    }
     showSolution = true;
     revealPath = reduceMotion ? solution.length : 1;
     solveBtn.setAttribute('aria-pressed', 'true');
@@ -325,7 +363,7 @@
     draw();
     // The carving loop has already stopped, so the reveal needs its own frames.
     lastFrame = 0;
-    requestAnimationFrame(loop);
+    schedule();
   }
 
   function hideSolution() {
@@ -338,9 +376,23 @@
 
   var lastFrame = 0;
 
+  var hiddenAt = 0;
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      hiddenAt = performance.now();
+      return;
+    }
+    if (!hiddenAt) return;
+    // A backgrounded tab stops rAF; without this the first frame back counted
+    // the whole pause as elapsed time and carved the entire maze at once.
+    startedAt += performance.now() - hiddenAt;
+    hiddenAt = 0;
+    lastFrame = 0;
+  });
+
   function loop(now) {
     if (!lastFrame) lastFrame = now;
-    var dt = now - lastFrame;
+    var dt = Math.min(now - lastFrame, 50);
     lastFrame = now;
 
     if (!carveState.done) {
@@ -355,16 +407,22 @@
       draw();
       if (carveState.done) {
         finished = true;
-        setTimeout(function () { startSolution(); }, reduceMotion ? 0 : 260);
+        solveBtn.disabled = false;
+        solveBtn.title = '';
+        cancelSolutionTimer();
+        solutionTimer = setTimeout(function () {
+          solutionTimer = null;
+          startSolution();
+        }, reduceMotion ? 0 : 260);
       }
-      requestAnimationFrame(loop);
+      schedule();
       return;
     }
 
     if (showSolution && solution && revealPath < solution.length) {
       revealPath = Math.min(solution.length, revealPath + Math.max(1, Math.round(dt / 14)));
       draw();
-      requestAnimationFrame(loop);
+      schedule();
       return;
     }
 
@@ -374,7 +432,7 @@
   function regenerate() {
     reset();
     lastFrame = 0;
-    requestAnimationFrame(loop);
+    schedule();
   }
 
   document.getElementById('regen').addEventListener('click', regenerate);
@@ -394,6 +452,12 @@
   });
 
   document.getElementById('save').addEventListener('click', function () {
+    // iOS Safari's `download` support is inconsistent: it may open the image
+    // instead of saving it. Say so rather than looking broken.
+    var hint = document.getElementById('saveHint');
+    if (hint && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      hint.textContent = '若未开始下载，请长按图片选择「存储到照片」。';
+    }
     var link = document.createElement('a');
     link.download = 'maze-' + N + 'x' + N + '.png';
     link.href = canvas.toDataURL('image/png');
@@ -427,7 +491,7 @@
   }
 
   reset();
-  requestAnimationFrame(loop);
+  schedule();
 })();
 </script>
 </body>

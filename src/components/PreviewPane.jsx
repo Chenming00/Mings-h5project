@@ -25,7 +25,11 @@ import { tagLabels } from '../data/projectPresentation';
 // every project under public/projects/ must stay first-party. To host
 // third-party work, serve it from a separate origin (e.g. projects.example.com)
 // and drop `allow-same-origin` from this list.
-const PREVIEW_SANDBOX = 'allow-scripts allow-same-origin allow-popups allow-forms allow-downloads';
+// `allow-modals` is required for the two resume/portfolio pages: without it the
+// HTML sandbox swallows window.print() (Chrome logs "Ignored call to print()"),
+// so "打印 / 存 PDF" did nothing in the one place people actually use it.
+const PREVIEW_SANDBOX =
+  'allow-scripts allow-same-origin allow-popups allow-forms allow-downloads allow-modals';
 
 export default function PreviewPane({ project, onClose, onOpenNew }) {
   const panelRef = useRef(null);
@@ -48,12 +52,28 @@ export default function PreviewPane({ project, onClose, onOpenNew }) {
 
   const handleFrameLoad = () => {
     setLoadedKey(reloadKey);
+    const frameWindow = frameRef.current?.contentWindow;
     try {
-      frameRef.current?.contentWindow?.addEventListener('keydown', handleFrameKeyDown);
+      // Remove first: an in-frame navigation fires onLoad again on the *same*
+      // window, and the old code just stacked a second listener on it.
+      frameWindow?.removeEventListener('keydown', handleFrameKeyDown);
+      frameWindow?.addEventListener('keydown', handleFrameKeyDown);
     } catch {
       /* Cross-origin fallback: the toolbar still exposes a close button. */
     }
   };
+
+  useEffect(
+    () => () => {
+      const frameWindow = frameRef.current?.contentWindow;
+      try {
+        frameWindow?.removeEventListener('keydown', handleFrameKeyDown);
+      } catch {
+        /* ignore */
+      }
+    },
+    [handleFrameKeyDown],
+  );
 
   useEffect(() => {
     if (!project) return;

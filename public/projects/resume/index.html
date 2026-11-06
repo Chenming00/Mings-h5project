@@ -141,7 +141,7 @@
     .footer a { display: inline-flex; align-items: center; gap: 6px; }
     .footer a:hover { color: var(--green); }
     .footer svg { width: 13px; height: 13px; }
-    .toast { position: fixed; left: 50%; bottom: 25px; transform: translate(-50%, 15px); border: 1px solid #cdd9c6; background: #f5f8f0; color: #315044; box-shadow: 0 5px 24px #2336271a; border-radius: 5px; padding: 12px 20px; font-size: 12px; opacity: 0; visibility: hidden; transition: opacity .2s, transform .2s; z-index: 20; max-width: calc(100% - 32px); }
+    .toast { position: fixed; left: 50%; bottom: max(25px, calc(12px + env(safe-area-inset-bottom))); transform: translate(-50%, 15px); border: 1px solid #cdd9c6; background: #f5f8f0; color: #315044; box-shadow: 0 5px 24px #2336271a; border-radius: 5px; padding: 12px 20px; font-size: 12px; opacity: 0; visibility: hidden; transition: opacity .2s, transform .2s; z-index: 20; max-width: calc(100% - 32px); }
     .toast.visible { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
     html[lang="en"] .name { font: 60px/1.1 var(--serif); letter-spacing: -2px; }
     html[lang="en"] .name-en { font: 23px/1.5 var(--sans); letter-spacing: .12em; margin-top: 10px; }
@@ -262,6 +262,8 @@
       *, *::before, *::after { transition: none !important; animation: none !important; }
     }
     @page { size: A4; margin: 10mm 14mm; }
+    /* Print stylesheet. Values here are the effective ones: an earlier pass
+       in this file repeated ~20 declarations that a later pass overrode. */
     @media print {
       html { scroll-behavior: auto; }
       body { background: #fff; font-size: 9pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -270,51 +272,45 @@
       .hero { padding: 0; }
       .hero::before { display: none; }
       .eyebrow { font-size: 7pt; }
-      .hero-grid { display: grid; grid-template-columns: 1fr 180px; gap: 20px; padding: 12px 0 13px; }
-      .name, html[lang="en"] .name { font-size: 29pt; }
-      .name-en { font-size: 18pt; display: inline; margin-left: 14px; }
+      .hero-grid { display: grid; grid-template-columns: 1fr 180px; gap: 20px; }
+      .name-en { display: inline; }
       html[lang="en"] .name-en { font-size: 13pt; }
       .position, html[lang="en"] .position { margin-top: 8px; font-size: 8pt; }
       .hero-note { display: block; margin: 0; padding: 0 0 0 15px; border-left: 1px solid var(--line); }
       .hero-note .small-label { display: block; font-size: 6pt; }
       .hero-note .degree { font-size: 16pt; margin-top: 3px; }
       .hero-note .school { font-size: 8pt; }
-      .hero-note p:last-child { display: block; font-size: 7pt; margin-top: 3px; }
+      .hero-note p:last-child { font-size: 7pt; margin-top: 3px; }
       .contact-strip { flex-direction: row; gap: 25px; padding: 7px 0; font-size: 8pt; }
       .contact-strip .contact-caption { display: none; }
       .contact-strip svg { display: none; }
       .body-grid { display: block; padding: 0; }
-      .cv-section { padding: 12px 0; scroll-margin: 0; }
-      .section-heading { margin-bottom: 9px; }
+      .cv-section { scroll-margin: 0; }
       .section-heading h2, html[lang="en"] .section-heading h2 { font-size: 11pt; }
       .section-heading .section-en { font-size: 6pt; }
       .section-number { font-size: 7pt; }
-      .summary { font-size: 8pt; line-height: 1.65; }
       .summary p + p { margin-top: 4px; }
       .highlights { display: none; }
       .education, .experience, .project, .skill-item { break-inside: avoid; page-break-inside: avoid; }
-      .education + .education { margin-top: 10px; padding-top: 10px; }
+      .education + .education { padding-top: 10px; }
       .entry-heading, html[lang="en"] .entry-heading { display: flex; flex-wrap: nowrap; gap: 10px; }
       .entry-heading h3, html[lang="en"] .entry-heading h3 { font-size: 9pt; }
       .entry-date { margin-top: 0; margin-left: auto; font-size: 7pt; }
       .institution-en { font-size: 7pt; }
       .degree-row { font-size: 8pt; margin-top: 3px; }
       .degree-badge { font-size: 6pt; padding: 1px 5px; }
-      .edu-detail, .honor { font-size: 7.5pt; margin-top: 3px; }
+      .edu-detail, .honor { margin-top: 3px; }
       .honor svg { display: none; }
       .timeline { padding-left: 13px; }
       .experience::before { left: -13px; width: 5px; height: 5px; }
       .timeline::before { left: 2px; }
-      .experience { padding-bottom: 13px; }
       .role-line { margin-top: 2px; font-size: 7.5pt; }
-      .bullets { margin-top: 5px; font-size: 8pt; line-height: 1.65; }
+      .bullets { margin-top: 5px; }
       .bullets li + li { margin-top: 2px; }
-      .project + .project { margin-top: 12px; padding-top: 10px; }
       .project-kind { font-size: 6pt; }
-      .skill-grid { grid-template-columns: 1fr 1fr; gap: 10px 25px; }
-      .skill-item h3 { font-size: 8pt; margin-bottom: 3px; }
+      .skill-item h3 { margin-bottom: 3px; }
       .skill-item h3 svg { display: none; }
-      .skill-item p { font-size: 7.5pt; line-height: 1.65; }
+      .skill-item p { line-height: 1.65; }
       .cv-section:last-child { padding-bottom: 0; }
       h2, h3, .section-heading { break-after: avoid; page-break-after: avoid; }
       p, li { orphans: 2; widows: 2; }
@@ -444,7 +440,7 @@
       </aside>
 
       <div class="main-column">
-        <section class="cv-section" id="overview" aria-labelledby="overview-heading">
+        <section class="cv-section" id="overview" tabindex="-1" aria-labelledby="overview-heading">
           <div class="section-heading"><span class="section-number">01</span><h2 id="overview-heading" data-i18n="overviewTitle">个人概览</h2><span class="section-en">Profile</span></div>
           <div class="summary">
             <p data-i18n="summary1"><strong>约翰霍普金斯大学金融学硕士</strong>，拥有一级市场投资、企业战略投资及采购供应链相关的三段实习经历。关注从行业研究、企业财务分析到投资决策支持的完整研究过程。</p>
@@ -639,7 +635,13 @@
       const languageButtons = [...languageSwitch.querySelectorAll("[data-language]")];
       const printButton = document.getElementById("print-button");
       const copyButton = document.getElementById("copy-email");
+      // portfolio writes the same key; the two pages used to disagree about it.
+      const LANGUAGE_KEY = "ming-resume-language";
       let language = "zh";
+      try {
+        const stored = window.localStorage.getItem(LANGUAGE_KEY);
+        if (stored === "en" || stored === "zh") language = stored;
+      } catch { /* storage blocked */ }
       let toastTimer;
       const notify = (message) => {
         const toast = document.getElementById("toast");
@@ -652,6 +654,7 @@
       function setLanguage(nextLanguage) {
         if (nextLanguage !== "zh" && nextLanguage !== "en") return;
         language = nextLanguage;
+        try { window.localStorage.setItem(LANGUAGE_KEY, language); } catch { /* storage blocked */ }
         document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
         for (const node of translatedNodes) {
           node.innerHTML = language === "en" ? (english[node.dataset.i18n] ?? chinese.get(node)) : chinese.get(node);

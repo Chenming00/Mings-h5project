@@ -156,6 +156,17 @@
     /* letters */
     var stagger = 0.075;
     var sweepW = L.W * 0.55;
+    // Measure the wordmark once and lay the glyphs out from its left edge.
+    // Every letter used to be drawn at L.cx, so all 27 of them stacked into a
+    // single white blob in the middle of the frame.
+    ctx.font = F.display(size, 800);
+    var glyphWidths = [];
+    var wordWidth = 0;
+    for (var g = 0; g < n; g++) {
+      glyphWidths[g] = ctx.measureText(NAME[g]).width;
+      wordWidth += glyphWidths[g];
+    }
+    var penX = L.cx - wordWidth / 2;
     for (var i = 0; i < n; i++) {
       var p = clamp01((lt - 0.15 - i * stagger) / 0.62);
       if (p <= 0) continue;
@@ -171,18 +182,20 @@
       var ink = mixHex(PAL.paper, PAL.cyan, hl * 0.85);
       var charIn = function () { return { dx: ghost }; };
       var charOut = function () { return { dx: -ghost }; };
+      var glyphX = penX + glyphWidths[i] / 2;
+      penX += glyphWidths[i];
 
-      K.drawText(ctx, NAME[i], L.cx, y0 + rise, {
+      K.drawText(ctx, NAME[i], glyphX, y0 + rise, {
         font: F.display(size, 800), align: 'center', baseline: 'middle',
         track: 0, alpha: a * 0.55, color: rgba(PAL.cyan, 1),
         charFn: charOut
       });
-      K.drawText(ctx, NAME[i], L.cx, y0 + rise, {
+      K.drawText(ctx, NAME[i], glyphX, y0 + rise, {
         font: F.display(size, 800), align: 'center', baseline: 'middle',
         track: 0, alpha: a * 0.55, color: rgba(PAL.magenta, 1),
         charFn: charIn
       });
-      K.drawText(ctx, NAME[i], L.cx, y0 + rise, {
+      K.drawText(ctx, NAME[i], glyphX, y0 + rise, {
         font: F.display(size, 800), align: 'center', baseline: 'middle',
         alpha: a, color: ink, blur: blur,
         glow: { c: rgba('#ffffff', 0.5), b: size * 0.18 }

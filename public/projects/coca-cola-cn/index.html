@@ -7,15 +7,16 @@
 <meta name="theme-color" content="#f40009">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23d81725'/%3E%3Cpath d='M9 9h14v4H13v6h10v4H9z' fill='white'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/500.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/800.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/900.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/great-vibes@5/index.css">
+<!-- Non-blocking: five CDN stylesheets were render-blocking on every load. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/400.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/400.css"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/500.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/500.css"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/800.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/800.css"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/900.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo@5/900.css"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/great-vibes@5/index.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/great-vibes@5/index.css"></noscript>
 <style>
 :root{
   --red:#f40009;--red-dark:#c50007;--red-deep:#8a0e18;
-  --ink:#161412;--ink-soft:#37322d;--muted:#6f6862;--faint:#a39b93;
+  --ink:#161412;--ink-soft:#37322d;--muted:#5f5852;--faint:#7a726a;
   --line:#e8e3dc;--line-2:#f1ede7;
   --paper:#ffffff;--surface:#f7f5f1;
   --cofco:#f40009;--cofco-bg:#fcebec;--cofco-line:#f6d7d9;--cofco-ink:#a30005;--cofco-sub:#b25a60;
@@ -45,7 +46,7 @@ header{position:sticky;top:0;z-index:15;background:rgba(255,255,255,.94);backdro
 .mark{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;color:#fff;background:var(--red);font-size:22px;line-height:1;border-radius:50%;font-style:normal;font-family:var(--font-script)}
 .top-actions{display:flex;align-items:center;gap:14px}
 .top-meta{font-size:12px;letter-spacing:.04em;color:var(--muted)}
-.hero{position:relative;overflow:hidden;background:var(--red);color:#fff;min-height:88vh;display:flex;align-items:center}
+.hero{position:relative;overflow:hidden;background:var(--red);color:#fff;min-height:88svh;display:flex;align-items:center}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(150,0,6,.28));pointer-events:none;z-index:0}
 .hero-inner{max-width:1360px;margin:auto;padding:110px 40px 190px;position:relative;z-index:3;width:100%}
 .hero .eyebrow{color:rgba(255,255,255,.85)}
@@ -97,6 +98,7 @@ header{position:sticky;top:0;z-index:15;background:rgba(255,255,255,.94);backdro
 .vs-line>b{font-size:18px;font-weight:800;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
 .vs.anim .vs-track i{transform:scaleX(0);transition:transform 1.1s var(--ease-expo)}
 .vs.anim.in .vs-track i{transform:scaleX(1)}
+.detail{scroll-margin-top:16px}
 .group-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .group-card{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--line);border-radius:var(--radius-lg);padding:30px 32px;display:flex;flex-direction:column;transition:transform .25s var(--ease-out),box-shadow .25s var(--ease-out)}
 .group-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
@@ -164,7 +166,7 @@ header{position:sticky;top:0;z-index:15;background:rgba(255,255,255,.94);backdro
 .tile:hover strong,.tile:hover span{color:#fff}
 .tile[aria-pressed=true]{background:var(--sel);border-color:var(--sel);box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--sel),0 16px 28px -14px rgba(0,0,0,.55);z-index:3;transform:scale(1.06)}
 .tile[aria-pressed=true] strong,.tile[aria-pressed=true] span{color:#fff}
-.tile.faded{opacity:.12}
+.tile.faded{opacity:.42;border-style:dashed}
 .map-label{grid-column:1/6;grid-row:1/3;align-self:center;margin:10px 0 0 8px;pointer-events:none}
 .map-label b{font-size:10px;letter-spacing:.2em;color:#c3bcb2;font-weight:800;display:block}
 .map-label span{font-family:var(--font-script);color:#e9e3d9;font-size:36px;line-height:1.15;display:block}
@@ -272,6 +274,7 @@ dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;b
 @media(max-width:800px){header{position:static}.hero{min-height:0}.hero-watermark{font-size:150px;top:4%}.hero-ribbon{height:80px;bottom:30px}.hstat{padding:0;border:0}.hstat+.hstat{border-left:0;padding:0}.hero-stats{gap:24px}.hstat b{font-size:42px}.atlas-grid{grid-template-columns:1fr}.detail{position:static;max-height:none;overflow:visible}.tilemap{min-width:0;grid-template-rows:repeat(10,54px)}.tile span{display:none}.map-scroll{overflow:visible}.map-label span{font-size:24px}.map-foot{display:flex}.detail h2{font-size:28px}.states-list{grid-template-columns:repeat(2,minmax(0,1fr))}.notes{grid-template-columns:1fr}.source-grid{grid-template-columns:1fr}.top-meta{font-size:11px}.mobile-pick{display:flex;gap:10px;align-items:center;margin-top:16px}.mobile-pick label{font-size:12px;color:var(--muted);flex-shrink:0}.mobile-pick select{flex:1;max-width:none;min-width:0;min-height:44px}.action-button{min-height:44px}.quick-states button{min-height:38px}.toggle button{min-height:38px}.state-chips button{min-height:36px}.region-tabs button{min-height:40px;padding:10px 10px}.back-explorer{display:inline-flex;align-items:center}.scroll-cue{display:none}.vs-row{grid-template-columns:80px 1fr}}
 @media(max-width:520px){.section{padding:48px 14px 6px}.band--dark .section{padding:48px 14px 28px}.hero-inner{padding:64px 16px 130px}.hero-cta .btn{width:100%;justify-content:center}.top{padding:12px 16px 10px;flex-wrap:wrap;gap:6px}.brand{font-size:11px;gap:8px;letter-spacing:.08em}.mark{width:30px;height:30px;font-size:19px}.top-meta{font-size:10px}.group-card{padding:22px}.group-stats{flex-wrap:wrap}.group-stats div{flex:1 1 40%;border-left:0!important;padding-left:0!important}.map-panel{padding:16px 12px}.toolbar{gap:8px}.search-wrap{min-width:100%}.toolbar select{max-width:100%;width:100%;padding-top:10px;padding-bottom:10px}.toggle{width:100%}.toggle button{flex:1}.quick-states{gap:6px}.quick-states>span{display:none}.quick-states button{flex:1;padding:8px 6px;font-size:12px;white-space:nowrap}.quick-states button:last-child{flex:1.5}.tilemap{gap:3px;grid-template-rows:repeat(10,38px)}.tile{border-radius:8px}.tile strong{font-size:13px}.map-label{margin-top:0}.map-label b{font-size:9px}.map-label span{font-size:20px}.map-foot{display:block;margin-top:6px;padding-top:12px;font-size:11px}.map-foot p{margin:6px 0 0}.map-hint{display:none}.detail{padding:22px 18px}.states-list{grid-template-columns:1fr}.state-row{padding:11px}.notes{gap:14px}.note{padding:20px}.source-directory{padding:0 14px 26px}.source-directory-card{padding:18px}.tl li{flex:0 0 250px}footer{flex-direction:column;align-items:flex-start;font-size:11px}.result-notice{font-size:12px}.map-scroll{padding:10px 0 8px}dialog{padding:20px}.vs-row{grid-template-columns:1fr;gap:6px}.vs-row>span{grid-row:auto}.vs-head{margin-bottom:16px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}.reveal{opacity:1!important;transform:none!important}.load-in{opacity:1;transform:none;animation:none}.fizz{display:none}.vs.anim .vs-track i{transform:scaleX(1)}}
+@media (max-width:720px){/* iOS zooms a focused field below 16px and never zooms back. !important beats the minified per-component rules above. */input,select,textarea,.input,.select{font-size:16px!important}}
 </style>
 </head>
 <body>
@@ -448,10 +451,10 @@ dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;b
  ],
  "notes": {
   "GD": "广东太古可口可乐有限公司是太古在中国内地销量最大的装瓶厂，服务超过 9,000 万名消费者，在广东含汽饮料市场占据领导地位。省内广州、惠州、三水各有一所生产厂房，湛江与茂名由广东太古可口可乐湛江有限公司单独供应。太古在佛山、东莞另设装瓶公司。珠海历史上曾有独立的珠海可口可乐饮料有限公司。",
-  "SC": "中粮可口可乐华中饮料有限公司位于长沙望城经济技术开发区，为湖南装瓶主体。2017 年重组时四川装瓶厂自可口可乐体系划入中粮。",
+  "SC": "四川的装瓶与分销由中粮可口可乐体系覆盖；2017 年重组后，四川装瓶厂自可口可乐体系划入中粮。具体主体与产能以官方披露为准。",
   "BJ": "中粮可口可乐饮料（北京）有限公司是中粮在北京地区唯一授权装瓶厂，前身始建于 1981 年、坐落丰台五里店，是新中国第一家可口可乐装瓶厂。",
   "SH": "上海申美饮料食品有限公司 1988 年成立，原为可口可乐与中方合资企业。2017 年 7 月太古购入股权后持股 54% 并取得管理权。申美覆盖上海、苏州、无锡、南通及嘉兴一带，是太古专营区内人均饮用量最高的区域。",
-  "XJ": "中粮可口可乐饮料（陕西）有限公司位于西安经济技术开发区，1995 年成立，在陕西各地建立了广泛销售网络。2025 年投产的西安新厂规划 7 条饮料生产线与 1 条糖浆线，服务西北市场。",
+  "XJ": "新疆的装瓶与分销由中粮可口可乐体系覆盖，与陕西、甘肃等西北市场同属一个供应网络。具体主体与产能以官方披露为准。",
   "JS": "江苏太古可口可乐饮料有限公司 1987 年成立，位于省会南京，运作 9 条生产线。太古中萃发展与太古饮料控股分别持有八成及两成权益。太古在苏州另设有装瓶公司。",
   "ZJ": "浙江太古可口可乐饮料有限公司 1987 年成立，在杭州营运一所设有七条生产线的厂房，并通过附属公司温州太古在温州营运另一所设有四条生产线的厂房。太古中萃与太古饮料控股分别持有六成及两成权益。",
   "CQ": "中粮重庆厂在 2017 年重组中自可口可乐体系划入中粮，与四川厂同批交接。",
@@ -461,7 +464,7 @@ dialog textarea{width:100%;min-height:240px;font:14px/1.7 inherit;padding:14px;b
   "HB": "湖北太古可口可乐饮料有限公司 1994 年成立，位于武汉经济技术开发区，运作 7 条生产线。太古持有该公司 95.8% 权益。湖北于 2017 年自中粮体系划入太古。",
   "YN": "云南太古可口可乐饮料有限公司 1995 年成立，位于昆明高新技术产业开发区，运作 4 条生产线。太古持有 95.1% 权益。",
   "HA": "河南由郑州太古可口可乐饮料有限公司供应，该公司 1995 年成立，并通过全资附属的漯河太古在漯河营运另一所厂房，合共 10 条生产线。2025 年 10 月投产的郑州新厂按 LEED 金级标准建设。",
-  "GS": "中粮在甘肃设有装瓶厂。2025 年投产的郑州厂设计年供应能力逾 100 万吨，可辐射周边区域。"
+  "GS": "甘肃的装瓶业务由中粮可口可乐体系覆盖，与西北其他省份共用区域供应网络。具体主体与产能以官方披露为准。"
  },
  "timeline": []
 }</script>
@@ -516,7 +519,10 @@ let region='';
 const qsel=s=>document.querySelector(s);
 const providers=a=>B.filter(b=>b.states.split(' ').includes(a));
 const stateName=s=>s.zh+(MUNI[s.a]||AUTONOMOUS[s.a]||SPECIAL[s.a]||'省');
-function selectState(a,fromUser=false){if(!STATES.some(s=>s.a===a))return;selected=a;if(!matching(STATES.find(s=>s.a===a))){qsel('#search').value='';qsel('#group-filter').value='';region=''}history.replaceState(null,'','#'+a);render();qsel('#detail').scrollTop=0;if(fromUser&&innerWidth<=800){qsel('#atlas').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}}
+// Only an explicit selection writes the hash. applyFilters() used to route its
+// auto-selection through here, which rewrote the address bar on every keystroke
+// and made Back unable to return to the previous province.
+function selectState(a,fromUser=false){if(!STATES.some(s=>s.a===a))return;selected=a;if(!matching(STATES.find(s=>s.a===a))){qsel('#search').value='';qsel('#group-filter').value='';region=''}history.replaceState(null,'','#'+a);render();qsel('#detail').scrollTop=0;if(fromUser&&innerWidth<=800){qsel('#detail').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}}
 function matching(s){const q=qsel('#search').value.trim().toLowerCase(),g=qsel('#group-filter').value;const exactCode=STATES.some(t=>t.a.toLowerCase()===q||t.abbr===q);const hay=[s.a,s.abbr,s.zh,s.en,ALIASES[s.a]||'',GROUP_NAME[s.group]||'',s.region].join(' ').toLowerCase();return(!g||s.group===g)&&(!region||s.region===region)&&(!q||(exactCode?s.a.toLowerCase()===q||s.abbr===q:hay.includes(q)))}
 function render(){
   qsel('#state-picker').value=selected;
@@ -525,30 +531,55 @@ function render(){
   document.querySelectorAll('.region-tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.region===region)));
   const chosen=B.find(b=>b.id===qsel('#group-filter').value);
   qsel('#filter-summary').hidden=!chosen;
-  if(chosen){qsel('#filter-summary').dataset.group=chosen.id;qsel('#filter-summary').textContent='正在查看 '+GROUP_NAME[chosen.id]+' 的供应省；右侧详情仍显示该省的全部已收录伙伴。'}
+  if(chosen){qsel('#filter-summary').dataset.group=chosen.id;qsel('#filter-summary').textContent='正在查看 '+GROUP_NAME[chosen.id]+' 的供应省；下方详情仍显示该省的全部已收录伙伴。'}
   const matches=STATES.filter(matching),active=STATES.find(s=>s.a===selected),p=providers(selected),filtered=!!(qsel('#search').value.trim()||qsel('#group-filter').value||region);
   document.querySelectorAll('.tile').forEach(el=>{el.setAttribute('aria-pressed',String(el.dataset.state===selected));el.classList.toggle('faded',!matches.some(s=>s.a===el.dataset.state))});
   qsel('#clear-filter').hidden=!filtered;
   qsel('#result-notice').textContent=filtered?(matches.length?'找到 '+matches.length+' 个省级市场；点击查看详情。':'没有匹配结果，请尝试其他省名或清除筛选。'):(view==='list'?'点击省名，查看供应详情。':'点击省份简称，查看供应详情。');
-  qsel('#states-list').innerHTML=matches.length?matches.sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN')).map(s=>'<button class="state-row" data-group="'+s.group+'" data-state="'+s.a+'" aria-pressed="'+(selected===s.a)+'"><span class="abbr">'+esc(s.abbr)+'</span><span class="state-name">'+esc(stateName(s))+'<small>'+s.a+' · '+esc(s.en)+' · '+GROUP_NAME[s.group]+'</small></span><span class="arrow" aria-hidden="true">↗</span></button>').join(''):'<div class="empty">没有匹配的省份。<br><button class="reset" id="reset-filter">清除筛选</button></div>';
+  qsel('#states-list').innerHTML=matches.length?matches.sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN')).map(s=>'<button class="state-row" data-group="'+s.group+'" data-state="'+s.a+'" aria-pressed="'+(selected===s.a)+'"><span class="abbr">'+esc(s.abbr)+'</span><span class="state-name">'+esc(stateName(s))+'<small>'+s.a+' · '+esc(s.en)+' · '+GROUP_NAME[s.group]+'</small></span><span class="arrow" aria-hidden="true">↗</span></button>').join(''):'<div class="empty">没有匹配的省份。<br><button class="reset" data-reset-filter>清除筛选</button></div>';
   qsel('#detail').innerHTML='<div class="detail-top"><span class="detail-code" data-group="'+active.group+'">'+active.a+' / '+active.group.toUpperCase()+'</span><span class="detail-region">'+esc(active.region)+'</span></div><h2>'+esc(stateName(active))+'</h2><p class="english">'+esc(active.en)+'</p><div class="detail-actions"><button class="action-button back-explorer" id="back-explorer">↑ 返回地图</button><button class="action-button" id="copy-state">复制本省资料</button></div><div class="state-summary">'+esc(DATA.notes[active.a]||'本省特许经营区域由'+GROUP_NAME[active.group]+'覆盖，装瓶与分销按特许区域经营。具体装瓶厂、覆盖县市与订货渠道请向当地装瓶商确认。')+'</div>'+(p.length?'<div class="scope-heading"><span class="filter-label" data-group="'+active.group+'">本省装瓶与分销伙伴</span><span class="count-label"><b>'+p.length+'</b> 家</span></div>':'')+p.map(b=>'<article class="bottler-card" data-group="'+b.id+'" id="bottler-'+b.id+'"><h3>'+esc(b.name)+'</h3><p class="group">'+esc(b.group)+'</p><p class="scope"><em>覆盖本省。</em>'+esc(b.note)+'</p><a class="source-link" data-group="'+b.id+'" href="'+esc(b.url)+'" target="_blank" rel="noopener noreferrer">官方来源 ↗</a></article>').join('')+'<p class="caveat">本页为省级特许经营区域概览。装瓶商 ≠ 每瓶饮料的生产厂址；餐饮现调与跨区调货可能来自其他区域。资料核对 '+esc(DATA.checkedAt)+'。</p>';
+}
+// The vs strip used to hardcode 19 / 12 while the group cards rendered
+// 19 / 15 from the same data. Every number here is now derived from B.
+function syncVs(){
+  const byId=id=>B.find(b=>b.id===id);
+  const prov=['cofco','swire'].map(id=>{const b=byId(id);return b?b.states.split(' ').filter(Boolean).length:0});
+  const plants=['cofco','swire'].map(id=>{const b=byId(id);return b?b.plants:0});
+  const fill=(row,values)=>{
+    if(!row)return;
+    const lines=row.querySelectorAll('.vs-line');
+    const total=values.reduce((a,b)=>a+b,0)||1;
+    values.forEach((v,i)=>{
+      const line=lines[i];if(!line)return;
+      const n=line.querySelector('b'),bar=line.querySelector('i');
+      if(n){n.dataset.count=String(v);n.textContent=String(v)}
+      if(bar)bar.style.setProperty('--w',(v/total*100).toFixed(1)+'%');
+    });
+  };
+  const rows=qsel('#vs').querySelectorAll('.vs-row');
+  fill(rows[0],prov);
+  fill(rows[1],plants);
+  // 港澳台 are separate jurisdictions, so the mainland count excludes them.
+  const mainland=STATES.filter(s=>!['HK','MO','TW'].includes(s.a)).length;
+  const hero=qsel('.hstat b[data-count]');
+  if(hero){hero.dataset.count=String(mainland);hero.textContent=String(mainland)}
 }
 function renderGroups(){
   qsel('#group-grid').innerHTML=B.map(b=>{const list=b.states.split(' ');return '<article class="group-card" data-group="'+b.id+'"><header><h3>'+esc(b.name)+'</h3><p class="group-desc">'+esc(b.group)+'</p></header><div class="group-stats"><div><b>'+list.length+'</b><span>省级市场</span></div><div><b>'+b.plants+'</b><span>家装瓶厂</span></div><div><b>'+esc(b.id==='cofco'?'46.8%':'49%')+'</b><span>覆盖人口</span></div></div><div class="state-chips">'+list.map(a=>'<button data-state="'+a+'" title="'+esc(STATES.find(s=>s.a===a).zh)+'">'+a+'</button>').join('')+'</div><footer><a class="source-link" data-group="'+b.id+'" href="'+esc(b.url)+'" target="_blank" rel="noopener noreferrer">官方来源 ↗</a><button class="action-button" data-bottler="'+b.id+'">只看它的省 ↗</button></footer></article>'}).join('');
 }
 function setView(v){view=v;qsel('#map-view').hidden=v!=='map';qsel('#list-view').hidden=v!=='list';qsel('#map-tab').setAttribute('aria-pressed',v==='map');qsel('#list-tab').setAttribute('aria-pressed',v==='list');if(!qsel('#search').value&&!qsel('#group-filter').value)qsel('#result-notice').textContent=v==='list'?'点击省名，查看供应详情。':'点击省份简称，查看供应详情。'}
 qsel('#map-tab').onclick=()=>setView('map');qsel('#list-tab').onclick=()=>setView('list');
-function applyFilters(){const matched=STATES.filter(matching);if(matched.length&&!matched.some(s=>s.a===selected)){selected=matched[0].a;history.replaceState(null,'','#'+selected)}render();if(!matched.length)qsel('#detail').innerHTML='<div class="detail-top"><span class="detail-code" data-group="cofco">NO MATCHES</span></div><h2>没有匹配结果</h2><p class="state-summary">试试中文省名、简称或英文名称，例如：广东、沪、Shanghai。</p><button class="reset" id="reset-filter">清除筛选</button>'}qsel('#search').oninput=applyFilters;qsel('#group-filter').onchange=applyFilters;
+function applyFilters(){const matched=STATES.filter(matching);if(matched.length&&!matched.some(s=>s.a===selected)){selected=matched[0].a}render();if(!matched.length)qsel('#detail').innerHTML='<div class="detail-top"><span class="detail-code" data-group="cofco">NO MATCHES</span></div><h2>没有匹配结果</h2><p class="state-summary">试试中文省名、简称或英文名称，例如：广东、沪、Shanghai。</p><button class="reset" data-reset-filter>清除筛选</button>'}qsel('#search').oninput=applyFilters;qsel('#group-filter').onchange=applyFilters;
 qsel('#region-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-region]');if(!b)return;region=b.dataset.region;applyFilters()});
 document.addEventListener('click',e=>{const el=e.target.closest('[data-state]');if(el){if(el.closest('#group-grid')){qsel('#search').value='';qsel('#group-filter').value='';region=''}if(el.classList.contains('faded')){qsel('#search').value='';qsel('#group-filter').value='';region=''}selectState(el.dataset.state,true);if(el.closest('#group-grid')&&innerWidth>800)qsel('#atlas').scrollIntoView({behavior:'smooth'});}if(e.target.id==='reset-filter'||e.target.id==='clear-filter'){qsel('#search').value='';qsel('#group-filter').value='';region='';render()}});
 qsel('#tilemap').addEventListener('keydown',e=>{const t=e.target.closest('.tile');if(!t)return;const dirs={ArrowRight:[1,0],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowUp:[0,-1]};const d=dirs[e.key];if(!d)return;e.preventDefault();const cur=STATES.find(s=>s.a===t.dataset.state);let best=null,bestScore=Infinity;for(const s of STATES){const dx=s.x-cur.x,dy=s.y-cur.y;if(d[0]&&Math.sign(dx)!==d[0]||d[1]&&Math.sign(dy)!==d[1]||dx===0&&dy===0)continue;if(d[0]&&dy!==0||d[1]&&dx!==0)continue;const score=d[0]?Math.abs(dx)*100+Math.abs(dy):Math.abs(dy)*100+Math.abs(dx);if(score<bestScore){bestScore=score;best=s}}if(!best){for(const s of STATES){const dx=s.x-cur.x,dy=s.y-cur.y;if(d[0]&&Math.sign(dx)!==d[0]||d[1]&&Math.sign(dy)!==d[1]||dx===0&&dy===0)continue;const score=(d[0]?Math.abs(dx):Math.abs(dy))*100+(d[0]?Math.abs(dy):Math.abs(dx));if(score<bestScore){bestScore=score;best=s}}}if(best){selectState(best.a);const nt=qsel('.tile[data-state="'+best.a+'"]');if(nt)nt.focus({preventScroll:true})}});
 qsel('#sources-button').onclick=()=>{const panel=qsel('#source-directory');panel.hidden=!panel.hidden;qsel('#sources-button').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)panel.scrollIntoView({behavior:'smooth',block:'start'})};
 window.addEventListener('hashchange',()=>{const a=location.hash.slice(1);if(STATES.some(s=>s.a===a)){qsel('#search').value='';qsel('#group-filter').value='';region='';selectState(a)}});
 function notify(message){qsel('#toast').textContent=message;qsel('#toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>qsel('#toast').hidden=true,2600)}
-function exportCSV(){const rows=[['省份简称','中文省名','英文名','地理大区','装瓶集团','控股方','装机厂数','官方来源','资料核对日期']];for(const s of [...STATES].sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN'))){const p=providers(s.a);if(!p.length)continue;rows.push([s.a,stateName(s),s.en,s.region,GROUP_NAME[s.group],s.group==='cofco'?'中粮集团（控股65%）':'太古集团',p[0].plants,p[0].url,DATA.checkedAt])}const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='中国可口可乐省装瓶集团对照表.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('已导出 '+(rows.length-1)+' 条省份与装瓶集团关联')}
+function exportCSV(){const rows=[['省份简称','中文省名','英文名','地理大区','装瓶集团','控股方','官方来源','资料核对日期']];for(const s of [...STATES].sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN'))){const p=providers(s.a);if(!p.length)continue;rows.push([s.a,stateName(s),s.en,s.region,GROUP_NAME[s.group],s.group==='cofco'?'中粮集团（控股65%）':'太古集团',p[0].plants,p[0].url,DATA.checkedAt])}const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='中国可口可乐省装瓶集团对照表.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('已导出 '+(rows.length-1)+' 条省份与装瓶集团关联')}
 qsel('#export-data').onclick=exportCSV;qsel('#export-hero').onclick=exportCSV;
 qsel('#close-dialog').onclick=()=>qsel('#copy-dialog').close();
-document.addEventListener('click',async e=>{const b=e.target.closest('[data-bottler]');if(b){qsel('#search').value='';qsel('#group-filter').value=b.dataset.bottler;region='';applyFilters();setView('list');qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#group-filter').focus({preventScroll:true})}if(e.target.id==='back-explorer'){qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#state-picker').focus({preventScroll:true})}if(e.target.id==='copy-state'){const s=STATES.find(x=>x.a===selected);const text=stateName(s)+' / '+s.en+' ('+s.a+')\n中国可口可乐装瓶与分销伙伴（省级概览）\n装瓶集团：'+GROUP_NAME[s.group]+'\n\n'+providers(selected).map(b=>b.name+'\n'+(DATA.notes[s.a]?DATA.notes[s.a]+'\n':'')+b.note+'\n来源：'+b.url).join('\n\n')+'\n\n资料核对：'+DATA.checkedAt+'。省级特许经营区域，非市级/县级清单；具体装瓶厂与订货请向当地装瓶商确认。';try{await navigator.clipboard.writeText(text);notify('已复制本省装瓶集团和官方来源')}catch(_){qsel('#copy-text').value=text;qsel('#copy-dialog').showModal();qsel('#copy-text').select()}}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-bottler]');if(b){qsel('#search').value='';qsel('#group-filter').value=b.dataset.bottler;region='';applyFilters();setView('list');qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#group-filter').focus({preventScroll:true})}if(e.target.id==='back-explorer'){qsel('#atlas').scrollIntoView({behavior:'smooth'});qsel('#state-picker').focus({preventScroll:true})}if(e.target.id==='copy-state'){const s=STATES.find(x=>x.a===selected);const text=stateName(s)+' / '+s.en+' ('+s.a+')\n中国可口可乐装瓶与分销伙伴（省级概览）\n装瓶集团：'+GROUP_NAME[s.group]+'\n\n'+providers(selected).map(b=>b.name+'\n'+(DATA.notes[s.a]?DATA.notes[s.a]+'\n':'')+b.note+'\n来源：'+b.url).join('\n\n')+'\n\n资料核对：'+DATA.checkedAt+'。省级特许经营区域，非市级/县级清单；具体装瓶厂与订货请向当地装瓶商确认。';try{await navigator.clipboard.writeText(text);notify('已复制本省装瓶集团和官方来源')}catch{qsel('#copy-text').value=text;qsel('#copy-dialog').showModal();qsel('#copy-text').select()}}});
 qsel('#tilemap').insertAdjacentHTML('beforeend',STATES.map(s=>'<button class="tile" data-group="'+s.group+'" data-state="'+s.a+'" style="grid-column:'+(s.x+1)+';grid-row:'+(s.y+1)+'" aria-label="'+esc(stateName(s))+' '+esc(s.en)+' '+GROUP_NAME[s.group]+'" title="'+esc(stateName(s))+' · '+GROUP_NAME[s.group]+'" aria-pressed="false"><strong>'+esc(s.abbr)+'</strong><span>'+esc(s.zh)+'</span></button>').join(''));
 qsel('#state-picker').innerHTML=[...STATES].sort((a,b)=>a.zh.localeCompare(b.zh,'zh-Hans-CN')).map(s=>'<option value="'+s.a+'">'+s.a+' · '+esc(stateName(s))+' / '+esc(s.en)+'</option>').join('');qsel('#state-picker').onchange=e=>selectState(e.target.value,true);
 qsel('#group-filter').insertAdjacentHTML('beforeend',B.map(b=>'<option value="'+b.id+'">'+esc(GROUP_NAME[b.id])+'</option>').join(''));
@@ -557,6 +588,7 @@ renderGroups();
 if(innerWidth<=800)setView('list');
 render();
 const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+syncVs();
 function animateCount(el){const n=parseInt(el.dataset.count||el.textContent,10);if(isNaN(n))return;el.textContent='0';const t0=performance.now(),dur=900;(function tick(t){const p=Math.min(1,(t-t0)/dur);el.textContent=String(Math.round(n*(1-Math.pow(1-p,3))));if(p<1)requestAnimationFrame(tick)})(t0)}
 if(!REDUCE){
   document.querySelectorAll('.hstat b').forEach(animateCount);
@@ -574,7 +606,7 @@ if(document.modelContext?.registerTool){
     inputSchema:{type:'object',properties:{province:{type:'string',description:'Chinese province abbreviation such as 广东/GD, or full name like 广东省'}},required:['province'],additionalProperties:false},
     annotations:{readOnlyHint:false,untrustedContentHint:false},
     execute(input){if(!input||typeof input.province!=='string'||Object.keys(input).some(k=>k!=='province'))throw new Error('Expected only province');const raw=input.province.trim();const s=STATES.find(t=>t.a===raw.toUpperCase()||t.zh===raw||t.zh+'省'===raw||t.zh+'市'===raw||t.zh+'自治区'===raw||t.zh+'特别行政区'===raw||t.en.toLowerCase()===raw.toLowerCase());if(!s)throw new Error('Unknown Chinese province or region: '+raw);qsel('#search').value='';qsel('#group-filter').value='';region='';selectState(s.a);return{province:s.a,name:stateName(s),checkedAt:DATA.checkedAt,coverage:'province-level overview',bottlingGroup:GROUP_NAME[s.group],groupNote:DATA.notes[s.a]||null,bottlers:providers(s.a).map(b=>({name:b.name,note:b.note,source:b.url}))}}
-  },{signal:lifecycle.signal})).catch(()=>{});}catch(_){}
+  },{signal:lifecycle.signal})).catch(()=>{});}catch { /* ignore */ }
   window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});
 }
 </script>

@@ -4,48 +4,12 @@
    render(t) across the whole 30s. Catches export-contract bugs (FX.scene etc.) */
 const fs = require('fs');
 const path = require('path');
+const { createCanvas: stubCanvas } = require('../lib/canvas-stub.cjs');
 const vm = require('vm');
 
 const PROJ = process.argv[2] || path.resolve(__dirname, '../../public/projects/motion-reel');
 const JS = file => fs.readFileSync(path.join(PROJ, 'js', file), 'utf8');
 
-/* ---- Canvas2D stub ---- */
-function stubCtx() {
-  const grad = { addColorStop() {} };
-  const noop = () => {};
-  const ctx = {
-    canvas: null,
-    globalAlpha: 1, globalCompositeOperation: 'source-over',
-    fillStyle: '#000', strokeStyle: '#000', lineWidth: 1, lineCap: 'butt',
-    lineJoin: 'miter', font: '10px sans-serif', filter: 'none',
-    shadowColor: '', shadowBlur: 0, shadowOffsetY: 0, shadowOffsetX: 0,
-    save: noop, restore: noop, translate: noop, rotate: noop, scale: noop,
-    transform: noop, setTransform: noop, resetTransform: noop,
-    beginPath: noop, closePath: noop, moveTo: noop, lineTo: noop, arc: noop,
-    arcTo: noop, ellipse: noop, rect: noop, quadraticCurveTo: noop, bezierCurveTo: noop,
-    fill: noop, stroke: noop, clip: noop, fillRect: noop, strokeRect: noop, clearRect: noop,
-    fillText: noop, strokeText: noop,
-    measureText: (s) => ({ width: String(s).length * 8 }),
-    createLinearGradient: () => grad,
-    createRadialGradient: () => grad,
-    createPattern: () => ({ setTransform: noop }),
-    putImageData: noop, getImageData: (x, y, w, h) => ({ data: new Uint8ClampedArray(4 * w * h) }),
-    createImageData: (w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(4 * w * h) }),
-    drawImage: noop, setLineDash: noop
-  };
-  return ctx;
-}
-function stubCanvas() {
-  const c = {
-    width: 300, height: 150, style: {},
-    getContext: () => c._ctx,
-    toBlob: (cb) => cb(Buffer.alloc(0)),
-    addEventListener: () => {}
-  };
-  c._ctx = stubCtx();
-  c._ctx.canvas = c;
-  return c;
-}
 
 /* ---- generic stub element for every id in index.html ---- */
 function stubEl(id) {

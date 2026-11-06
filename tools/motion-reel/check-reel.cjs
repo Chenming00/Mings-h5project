@@ -3,50 +3,12 @@
    Run: node scripts/check-reel.js                                            */
 const fs = require('fs');
 const path = require('path');
+const { createContext: stubCtx, createCanvas: stubCanvas } = require('../lib/canvas-stub.cjs');
 const vm = require('vm');
 
 const DIR = path.join(__dirname, '../../public/projects/motion-reel', 'js');
 
-/* ---- Canvas2D stub: records nothing, returns plausible objects ---- */
-function stubCtx() {
-  const grad = { addColorStop() {} };
-  const noop = () => {};
-  const ctx = {
-    canvas: null,
-    globalAlpha: 1, globalCompositeOperation: 'source-over',
-    fillStyle: '#000', strokeStyle: '#000', lineWidth: 1, lineCap: 'butt',
-    lineJoin: 'miter', font: '10px sans-serif', filter: 'none',
-    shadowColor: '', shadowBlur: 0, shadowOffsetY: 0, shadowOffsetX: 0,
-    save: noop, restore: noop, translate: noop, rotate: noop, scale: noop,
-    transform: noop, setTransform: noop, resetTransform: noop,
-    beginPath: noop, closePath: noop, moveTo: noop, lineTo: noop, arc: noop,
-    arcTo: noop, ellipse: noop, rect: noop, quadraticCurveTo: noop, bezierCurveTo: noop,
-    fill: noop, stroke: noop, clip: noop, fillRect: noop, strokeRect: noop, clearRect: noop,
-    fillText: noop, strokeText: noop,
-    measureText: (s) => ({ width: String(s).length * 8 }),
-    createLinearGradient: () => grad,
-    createRadialGradient: () => grad,
-    createPattern: () => ({ setTransform: noop }),
-    putImageData: noop, getImageData: (x, y, w, h) => ({ data: new Uint8ClampedArray(4 * w * h) }),
-    createImageData: (w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(4 * w * h) }),
-    drawImage: noop, setLineDash: noop
-  };
-  return ctx;
-}
 
-function stubCanvas(w, h) {
-  const c = {
-    width: w || 300, height: h || 150,
-    style: {},
-    getContext: () => c._ctx,
-    toBlob: (cb) => cb(new (require('buffer').Buffer)(0)),
-    captureStream: () => ({ getTracks: () => [] }),
-    addEventListener: () => {}
-  };
-  c._ctx = stubCtx();
-  c._ctx.canvas = c;
-  return c;
-}
 
 /* ---- minimal window/document ---- */
 const listeners = {};

@@ -28,7 +28,7 @@
 | 🏷️ 分类筛选 | 标签来自每个项目自己的 `data-tags`，侧边栏计数实时统计 |
 | 👁 内嵌预览 | 右侧面板直接运行作品，支持刷新、全屏、新标签页打开 |
 | 📊 双视图 | 卡片网格 / 紧凑列表，偏好写入 localStorage |
-| 🌗 深色模式 | 跟随系统偏好，可手动切换，且不闪白 |
+| 🌗 深色模式 | 首屏跟随系统偏好，之后记住手动选择，且不闪白 |
 | 🔗 深链分享 | `?p=` / `?q=` / `?tag=` 同步到地址栏，可收藏可分享 |
 | ♿ 键盘可用 | 焦点陷阱、Esc 关闭、`/` 聚焦搜索、跳转链接 |
 
@@ -212,8 +212,8 @@ public/projects/my-awesome-project/
 | `npm run dev` | 开发服务器（自动扫描项目） |
 | `npm run build` | 生产构建 |
 | `npm run preview` | 预览构建产物 |
-| `npm run lint` | ESLint |
-| `npm run verify` | 无头回归：motion-reel 渲染/音频、sbti 计时器 |
+| `npm run lint` | ESLint（含 `scripts/lint-inline.js`：把作品页里的内联 `<script>` 抽出来一起检） |
+| `npm run verify` | 无头回归：motion-reel 渲染/音频/启动、sbti 计时器、poster-lab 排版 |
 | `npm run check` | `lint` + `verify`，提交前跑这个 |
 | `npm run assets` | 位图转 WebP（需 `pip install pillow`） |
 

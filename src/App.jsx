@@ -57,7 +57,15 @@ export default function App() {
         if (!Array.isArray(data)) throw new Error('项目清单格式有误，请重新生成。');
         setProjects(data.map(enrichProject).sort((a, b) => a.displayOrder - b.displayOrder));
       } catch (fetchError) {
-        if (fetchError.name !== 'AbortError') setError(fetchError.message);
+        if (fetchError.name !== 'AbortError') {
+          // Browsers phrase this differently ("Failed to fetch", "NetworkError
+          // when attempting to fetch resource", …); the UI is Chinese.
+          setError(
+            fetchError instanceof TypeError
+              ? '网络连接中断，请检查网络后重试。'
+              : fetchError.message,
+          );
+        }
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -193,6 +201,7 @@ export default function App() {
               selectedTag={selectedTag}
               setSelectedTag={setSelectedTag}
               projectCount={projects.length}
+              loading={loading}
               viewMode={viewMode}
               setViewMode={setViewMode}
             />
@@ -208,7 +217,7 @@ export default function App() {
             )}
 
             {loading ? (
-              <div className="project-grid" aria-label="正在加载项目" aria-busy="true">
+              <div className="project-grid" role="status" aria-label="正在加载项目" aria-busy="true">
                 {[0, 1, 2].map((item) => (
                   <div key={item} className="card-skeleton">
                     <div />

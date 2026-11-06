@@ -205,6 +205,7 @@ kbd { display: inline-flex; min-width: 20px; height: 20px; align-items: center; 
 .question-card { display: flex; flex-direction: column; flex: 1; animation: question-in 320ms cubic-bezier(.2,.8,.2,1) both; }
 .question-meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .question-number { color: var(--cyan); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .question-title { width: 100%; max-width: 760px; margin-top: 24px; color: var(--text); font-size: clamp(22px, 3vw, 31px); line-height: 1.45; letter-spacing: -0.035em; white-space: pre-wrap; overflow-wrap: anywhere; }
 .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin-top: 30px; }
 .options .option:last-child:nth-child(odd) { grid-column: 1 / -1; }
@@ -213,6 +214,7 @@ kbd { display: inline-flex; min-width: 20px; height: 20px; align-items: center; 
 .option:hover { transform: translateY(-2px); border-color: rgba(103,232,249,0.45); background: rgba(103,232,249,0.06); color: var(--text); }
 .option.selected { border-color: var(--cyan-strong); background: rgba(34,211,238,0.11); color: var(--text); box-shadow: 0 0 24px rgba(34,211,238,0.08); }
 .option.selected::before { opacity: 1; }
+.option:focus-within { outline: 2px solid var(--cyan); outline-offset: 3px; }
 .option input { position: absolute; opacity: 0; pointer-events: none; }
 .option-code { flex: 0 0 26px; width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid var(--line); color: var(--cyan); font: 800 11px/1 var(--mono); }
 .option-label { padding-top: 3px; font-size: 13px; line-height: 1.7; }
@@ -230,7 +232,7 @@ kbd { display: inline-flex; min-width: 20px; height: 20px; align-items: center; 
 .result-top { display: grid; grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr); gap: 18px; padding: 26px 30px 0; }
 .poster-box, .type-box, .analysis-box, .dim-box, .note-box, .author-box { position: relative; overflow: hidden; border: 1px solid var(--line); background: rgba(255,255,255,0.025); }
 .poster-box { display: grid; grid-template-rows: 1fr auto; min-height: 360px; padding: 16px; background: radial-gradient(circle at 50% 0%, rgba(34,211,238,0.1), transparent 60%), rgba(3,7,11,0.44); }
-.poster-image { width: 100%; height: 100%; min-height: 270px; max-height: 480px; object-fit: contain; }
+.poster-image { width: 100%; height: 100%; min-height: 270px; max-height: 480px; object-fit: contain; aspect-ratio: 3 / 4; }
 .poster-box.no-image .poster-image { display: none; }
 .poster-caption { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.7; }
 .type-box { display: flex; flex-direction: column; justify-content: center; min-height: 360px; padding: 30px; }
@@ -393,7 +395,8 @@ kbd { display: inline-flex; min-width: 20px; height: 20px; align-items: center; 
           </aside>
 
           <div class="question-stage">
-            <div id="questionList" class="question-card" aria-live="polite"></div>
+            <div id="questionList" class="question-card"></div>
+            <p class="sr-only" id="questionAnnounce" aria-live="polite"></p>
             <div class="quiz-actions">
               <button id="prevQuestionBtn" class="btn-secondary" type="button">← 上一题 <kbd>←</kbd></button>
               <div class="answer-status" id="answerStatus">等待输入</div>
@@ -1164,9 +1167,63 @@ kbd { display: inline-flex; min-width: 20px; height: 20px; align-items: center; 
 const app = {
   shuffledQuestions: [],
   answers: {},
-  previewMode: false,
   currentIndex: 0
 };
+
+const ALL_QUESTIONS = [...questions, ...specialQuestions];
+const questionById = new Map(ALL_QUESTIONS.map(question => [question.id, question]));
+
+// A 31-question questionnaire with no storage is a questionnaire people
+// abandon: WeChat and iOS Safari reclaim backgrounded tabs, and one accidental
+// back tap used to throw away every answer.
+const PROGRESS_KEY = 'sbti:progress:v1';
+const PROGRESS_VERSION = 1;
+
+function saveProgress() {
+  try {
+    window.localStorage.setItem(PROGRESS_KEY, JSON.stringify({
+      version: PROGRESS_VERSION,
+      answers: app.answers,
+      currentIndex: app.currentIndex,
+      order: app.shuffledQuestions.map(question => question.id)
+    }));
+  } catch {
+    /* Storage can be blocked; the test itself still works. */
+  }
+}
+
+function clearProgress() {
+  try {
+    window.localStorage.removeItem(PROGRESS_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function readProgress() {
+  try {
+    const raw = window.localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    if (saved?.version !== PROGRESS_VERSION) return null;
+    if (!Array.isArray(saved.order) || !saved.order.length) return null;
+    // The question bank is part of the schema: if it changed, the saved order
+    // no longer maps to real questions and resuming would be meaningless.
+    const order = saved.order.map(id => questionById.get(id));
+    if (order.some(question => !question)) return null;
+    const answers = {};
+    for (const [id, value] of Object.entries(saved.answers || {})) {
+      if (questionById.has(id) && Number.isInteger(value)) answers[id] = value;
+    }
+    return {
+      order,
+      answers,
+      currentIndex: Number.isInteger(saved.currentIndex) ? saved.currentIndex : 0
+    };
+  } catch {
+    return null;
+  }
+}
 
 const screens = {
   intro: document.getElementById('intro'),
@@ -1175,6 +1232,7 @@ const screens = {
 };
 
 const questionList = document.getElementById('questionList');
+const questionAnnounce = document.getElementById('questionAnnounce');
 const questionRail = document.getElementById('questionRail');
 const progressBar = document.getElementById('progressBar');
 const progressText = document.getElementById('progressText');
@@ -1192,7 +1250,10 @@ function showScreen(name) {
     element.classList.toggle('active', key === name);
   });
   document.body.dataset.screen = name;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({
+    top: 0,
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+  });
 }
 
 function shuffle(array) {
@@ -1215,7 +1276,7 @@ function getVisibleQuestions() {
 
 function getQuestionMetaLabel(question) {
   if (question.special) return 'SUPPLEMENTARY SIGNAL';
-  return app.previewMode ? dimensionMeta[question.dim].name : `DIMENSION // ${question.dim}`;
+  return `DIMENSION // ${question.dim}`;
 }
 
 function clampQuestionIndex(index, total) {
@@ -1261,7 +1322,7 @@ function updateProgress() {
     : `还有 ${total - done} 道题未注入 · 完成全部题目后解锁报告。`;
   testHint.textContent = complete
     ? '扫描完成。你的电子魂魄正在等待最终编译。'
-    : '众生皆苦，唯有填完这 31 根赛博肋骨才能通往彼岸。';
+    : `众生皆苦，唯有填完这 ${total} 根赛博肋骨才能通往彼岸。`;
   answerStatus.textContent = currentAnswered ? 'SIGNAL RECORDED // 已记录' : 'WAITING INPUT // 等待输入';
   answerStatus.classList.toggle('ready', Boolean(currentAnswered));
   prevQuestionBtn.disabled = app.currentIndex === 0;
@@ -1306,6 +1367,9 @@ function renderQuestions() {
 
   renderQuestionRail(visibleQuestions);
   updateProgress();
+  // A live region wrapping the whole card re-read every option on each choice;
+  // announcing just the question is both shorter and more useful.
+  questionAnnounce.textContent = `第 ${app.currentIndex + 1} 题，共 ${visibleQuestions.length} 题：${question.text}`;
 }
 
 let advanceTimer = null;
@@ -1317,12 +1381,27 @@ function cancelAdvance() {
   }
 }
 
+// Selecting an answer only repaints the choice: rebuilding the whole card here
+// destroyed the focused radio, so keyboard users lost their place on every
+// answer and a tap landing at the 190ms boundary could hit a detached node.
+function paintSelection(question, value) {
+  questionList.querySelectorAll('.option').forEach(label => {
+    const input = label.querySelector('input');
+    const selected = Number(input.value) === value;
+    label.classList.toggle('selected', selected);
+    input.checked = selected;
+  });
+}
+
 function selectAnswer(question, value) {
   app.answers[question.id] = value;
   if (question.id === 'drink_gate_q1' && value !== 3) {
     delete app.answers['drink_gate_q2'];
   }
-  renderQuestions();
+  paintSelection(question, value);
+  renderQuestionRail(getVisibleQuestions());
+  updateProgress();
+  saveProgress();
   cancelAdvance();
   advanceTimer = window.setTimeout(() => {
     advanceTimer = null;
@@ -1331,8 +1410,11 @@ function selectAnswer(question, value) {
     if (app.currentIndex < visibleQuestions.length - 1) {
       app.currentIndex += 1;
       renderQuestions();
+      // The card is replaced wholesale on advance, so move focus with it
+      // instead of dropping back to <body>.
+      questionList.querySelector('.question-panel')?.focus({ preventScroll: true });
     }
-  }, 190);
+  }, 450);
 }
 
 function moveQuestion(offset) {
@@ -1340,6 +1422,7 @@ function moveQuestion(offset) {
   const visibleQuestions = getVisibleQuestions();
   app.currentIndex = clampQuestionIndex(app.currentIndex + offset, visibleQuestions.length);
   renderQuestions();
+  saveProgress();
 }
 
     function sumToLevel(score) {
@@ -1457,6 +1540,8 @@ function renderDimList(result) {
 
     function renderResult() {
       const result = computeResult();
+      // The run is over; resuming it would contradict the result screen.
+      clearProgress();
       const type = result.finalType;
 
       document.getElementById('resultModeKicker').textContent = result.modeKicker;
@@ -1474,6 +1559,13 @@ function renderDimList(result) {
       const posterImage = document.getElementById('posterImage');
       const imageSrc = TYPE_IMAGES[type.code];
       if (imageSrc) {
+        // A missing/blocked webp used to render the browser's broken-image icon
+        // with an empty alt, inside a box that had no reserved height.
+        posterImage.onerror = () => {
+          posterImage.removeAttribute('src');
+          posterImage.alt = '';
+          posterBox.classList.add('no-image');
+        };
         posterImage.src = imageSrc;
         posterImage.alt = `${type.code}（${type.cn}）`;
         posterBox.classList.remove('no-image');
@@ -1488,8 +1580,8 @@ function renderDimList(result) {
     }
 
 
-  function startTest(preview = false) {
-    app.previewMode = preview;
+  function startTest() {
+    clearProgress();
     app.answers = {};
     app.currentIndex = 0;
     const shuffledRegular = shuffle(questions);
@@ -1503,11 +1595,28 @@ function renderDimList(result) {
     showScreen('test');
   }
 
-  document.getElementById('startBtn').addEventListener('click', () => startTest(false));
+  document.getElementById('startBtn').addEventListener('click', () => startTest());
   document.getElementById('backIntroBtn').addEventListener('click', () => showScreen('intro'));
   submitBtn.addEventListener('click', renderResult);
-  document.getElementById('restartBtn').addEventListener('click', () => startTest(false));
-  document.getElementById('toTopBtn').addEventListener('click', () => showScreen('intro'));
+  document.getElementById('restartBtn').addEventListener('click', () => startTest());
+  document.getElementById('toTopBtn').addEventListener('click', () => {
+    clearProgress();
+    showScreen('intro');
+  });
+
+  // Resume an interrupted run. readProgress() already rejected anything that
+  // does not match the current question bank.
+  const savedProgress = readProgress();
+  if (savedProgress) {
+    app.shuffledQuestions = savedProgress.order;
+    app.answers = savedProgress.answers;
+    app.currentIndex = Math.min(
+      Math.max(0, savedProgress.currentIndex),
+      Math.max(0, getVisibleQuestions().length - 1)
+    );
+    renderQuestions();
+    showScreen('test');
+  }
   prevQuestionBtn.addEventListener('click', () => moveQuestion(-1));
   nextQuestionBtn.addEventListener('click', () => moveQuestion(1));
 
@@ -1517,9 +1626,14 @@ function renderDimList(result) {
       (target.matches('input, textarea, select') || target.isContentEditable);
     if (isTyping) return;
 
-    if (screens.intro.classList.contains('active') && event.key === 'Enter' && target.tagName !== 'BUTTON') {
+    // Ctrl/Cmd/Alt combinations belong to the browser (Ctrl+A "select all"
+    // used to pick option A).
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+    if (screens.intro.classList.contains('active') && event.key === 'Enter' &&
+        !target.closest('a, button, input, select, textarea')) {
       event.preventDefault();
-      startTest(false);
+      startTest();
       return;
     }
 

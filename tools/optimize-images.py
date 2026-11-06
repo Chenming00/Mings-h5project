@@ -45,8 +45,9 @@ def convert(path: Path, quality: int) -> tuple[int, int]:
     before = path.stat().st_size
     out = path.with_suffix(".webp")
     with Image.open(path) as image:
-        # PNG screenshots and illustrations are usually already palette/RGBA;
-        # EXIF orientation has to be honoured before the metadata is dropped.
+        # PNG screenshots and illustrations are usually already palette/RGBA.
+        # Predictable geometry matters because the pages position these images
+        # by aspect ratio, so originals are expected to be upright already.
         image = image.convert("RGBA" if image.mode in ("RGBA", "LA", "P") else "RGB")
         image.save(out, "WEBP", quality=quality, method=6)
     return before, out.stat().st_size

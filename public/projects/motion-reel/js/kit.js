@@ -72,7 +72,10 @@
       var rot = (mod && mod.rot) || 0;
 
       ctx.save();
-      if (mod && mod.blur) { ctx.filter = 'blur(' + mod.blur.toFixed(2) + 'px)'; }
+      // Callers pass `blur` at the top level (scenes rely on it for the
+      // "focus pull" entrance); only charFn's own blur was honoured.
+      var blurAmount = (mod && mod.blur) || o.blur || 0;
+      if (blurAmount) { ctx.filter = 'blur(' + blurAmount.toFixed(2) + 'px)'; }
       ctx.translate(sx + cw / 2 + dx, y + dy);
       if (rot || scale !== 1) { ctx.rotate(rot); ctx.scale(scale, scale); }
       ctx.translate(-cw / 2, 0);
